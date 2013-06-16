@@ -59,20 +59,15 @@
 // through the use of variable argument macros called variadic
 // macros, it is possible to support macro overloading to some
 // extent
-#ifndef	MAC_OVERLOAD2
-#define	MAC_OVERLOAD2(_1, _2, FUNC, ...)	FUNC
-#endif
-#ifndef	MAC_OVERLOAD3
-#define	MAC_OVERLOAD3(_1, _2, _3, FUNC, ...)	FUNC
-#endif
-#ifndef	MAC_OVERLOAD4
-#define	MAC_OVERLOAD4(_1, _2, _3, _4, FUNC, ...)	FUNC
-#endif
-#ifndef	MAC_OVERLOAD5
-#define	MAC_OVERLOAD5(_1, _2, _3, _4, _5, FUNC, ...)	FUNC
-#endif
-#ifndef	MAC_OVERLOAD6
-#define	MAC_OVERLOAD6(_1, _2, _3, _4, _5, _6, FUNC, ...)	FUNC
+#ifndef	Macro
+#define	Macro(x)	x
+#define	Macro2(_1, _2, func, ...)	func
+#define	Macro3(_1, _2, _3, func, ...)	func
+#define	Macro4(_1, _2, _3, _4, func, ...)	func
+#define	Macro5(_1, _2, _3, _4, _5, func, ...)	func
+#define	Macro6(_1, _2, _3, _4, _5, _6, func, ...)	func
+#define	Macro7(_1, _2, _3, _4, _5, _6, _7, func, ...)	func
+#define	Macro8(_1, _2, _3, _4, _5, _6, _7, _8, func, ...)	func
 #endif
 
 
@@ -128,9 +123,12 @@ TypeInternalBuffer	TypeBuffer;
 
 // Function:
 // GetBit(src, off, bit_no)
+// GetBit(off, bit_no)
 // 
 // Returns the value of bit at the specified bit number (bit_no)
-// from the specified source address with offset (src + off).
+// from the specified source address with offset (src + off). If
+// source address (src) is not specified, then this library's
+// internal buffer is used as the source
 // 
 // Parameters:
 // src:		the base address of stored data
@@ -140,30 +138,14 @@ TypeInternalBuffer	TypeBuffer;
 // Returns:
 // bit_value:	the value of the specified bit (0 or 1)
 // 
-#define	GetBitE(src, off, bit_no)	\
-	(((byte*)src)[off + (bit_no >> 3)] >> (bit_no & 7) & 1)
+#define	GetBitExt(src, off, bit_no)	\
+	((*(((byte*)src) + off + (bit_no >> 3)) >> (bit_no & 7)) & 1)
 
-#define	GetBitT(off, bit_no)	\
-	GetBitE(TypeBuffer, off, bit_no)
+#define	GetBitInt(off, bit_no)	\
+	GetBitExt(&TypeBuffer, off, bit_no)
 
 #define GetBit(...)	\
-	MAC_OVERLOAD2(__VA_ARGS__, GetBitE, GetBitT)(__VA_ARGS__)
-
-
-
-// Function:
-// GetBit(off, bit_no)
-// 
-// Returns the value of bit at the specified bit number (bit_no)
-// from this library's internal buffer with offset (TypeBuffer + off)
-// 
-// Parameters:
-// off:		offset from which bit index starts
-// bit_no:	the index of the bit (starts from 0)
-// 
-// Returns:
-// bit_value:	the value of the specified bit (0 or 1)
-// 
+	Macro(Macro3(__VA_ARGS__, GetBitExt, GetBitInt)(__VA_ARGS__))
 
 
 

@@ -5,18 +5,19 @@
 #include <stdlib.h>
 #include "Embedded_Type.h"
 
-/*
+
 byte buff[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	int bit = GetBit(buff, 1, 0);
+	// TypeBuffer.Byte[2] = 2;
+	int bit = GetBit(buff, 0, 16);
 	printf("The bit is: %d\n", bit);
 	// wait for keypress before exit
 	system("PAUSE");
 	return 0;
 }
-*/
+/*
 // variadic_macros.cpp
 #include <stdio.h>
 #define EMPTY
@@ -40,3 +41,4 @@ int main() {
    // MACRO("error\n", EMPTY);   would cause C2059
    system("PAUSE");
 }
+*/
