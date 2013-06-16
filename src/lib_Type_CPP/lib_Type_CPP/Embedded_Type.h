@@ -211,4 +211,30 @@ TypeInternalBuffer	TypeBuffer;
 
 
 
+// Function:
+// GetByte(src, off)
+// GetByte(off)
+// 
+// Returns the byte value at the specified source address with 
+// offset (src + off). If source address (src) is not specified,
+// then this library's internal buffer is used as the source.
+// 
+// Parameters:
+// src:			the base address of stored data
+// off:			offset of the byte value
+// 
+// Returns:
+// byte_value:	the value of the specified byte (0 to 255)
+// 
+#define	GetByteExt(src, off)	\
+	(*(((byte*)src) + off))
+
+#define	GetByteInt(off)	\
+	GetByteExt(&TypeBuffer, off)
+
+#define GetByte(...)	\
+	Macro(Macro2(__VA_ARGS__, GetByteExt, GetByteInt)(__VA_ARGS__))
+
+
+
 #endif
