@@ -237,4 +237,30 @@ TypeInternalBuffer	TypeBuffer;
 
 
 
+// Function:
+// GetChar(src, off)
+// GetChar(off)
+// 
+// Returns the char value at the specified source address with 
+// offset (src + off). If source address (src) is not specified,
+// then this library's internal buffer is used as the source.
+// 
+// Parameters:
+// src:			the base address of stored data
+// off:			offset of the char value
+// 
+// Returns:
+// char_value:	the value of the specified char (all ASCII characters)
+// 
+#define	GetCharExt(src, off)	\
+	(*(((char*)src) + off))
+
+#define	GetCharInt(off)	\
+	GetCharExt(&TypeBuffer, off)
+
+#define GetChar(...)	\
+	Macro(Macro2(__VA_ARGS__, GetCharExt, GetCharInt)(__VA_ARGS__))
+
+
+
 #endif

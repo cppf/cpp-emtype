@@ -10,9 +10,9 @@ byte buff[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	TypeBuffer.Byte[3] = 4;
-	byte byteval = GetByte(3);
-	printf("The byte is: %d\n", byteval);
+	TypeBuffer.Byte[3] = 65;
+	char charval = GetChar(buff, 3);
+	printf("The byte is: %c\n", charval);
 
 	// wait for keypress before exit
 	system("PAUSE");
