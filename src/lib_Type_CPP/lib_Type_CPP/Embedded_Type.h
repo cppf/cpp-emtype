@@ -1,9 +1,21 @@
 /*
- * Type Library
+ * Embedded_Type Library
  *
  * This library converts data from one type
  * to another
  */
+
+
+
+#ifndef	_Embedded_Type_h_
+#define	_Embedded_Type_h_
+
+
+
+// Requisite headers
+#include <stdio.h>
+
+
 
 // When arrays are used with this library, their length
 // is indicated with a length field before any array
@@ -42,7 +54,30 @@
 
 
 
+// Simulate macro overloading
+// By default, C++ does not support macro overloading, but
+// through the use of variable argument macros called variadic
+// macros, it is possible to support macro overloading to some
+// extent
+#ifndef	MAC_OVERLOAD2
+#define	MAC_OVERLOAD2(_1, _2, FUNC, ...)	FUNC
+#endif
+#ifndef	MAC_OVERLOAD3
+#define	MAC_OVERLOAD3(_1, _2, _3, FUNC, ...)	FUNC
+#endif
+#ifndef	MAC_OVERLOAD4
+#define	MAC_OVERLOAD4(_1, _2, _3, _4, FUNC, ...)	FUNC
+#endif
+#ifndef	MAC_OVERLOAD5
+#define	MAC_OVERLOAD5(_1, _2, _3, _4, _5, FUNC, ...)	FUNC
+#endif
+#ifndef	MAC_OVERLOAD6
+#define	MAC_OVERLOAD6(_1, _2, _3, _4, _5, _6, FUNC, ...)	FUNC
+#endif
+
+
 // shorthand datatypes
+typedef unsigned char byte;
 typedef signed char	sbyte;
 typedef int int16;
 typedef unsigned int uint;
@@ -105,8 +140,14 @@ TypeInternalBuffer	TypeBuffer;
 // Returns:
 // bit_value:	the value of the specified bit (0 or 1)
 // 
-#define	GetBit(src, off, bit_no)	\
+#define	GetBitE(src, off, bit_no)	\
 	(((byte*)src)[off + (bit_no >> 3)] >> (bit_no & 7) & 1)
+
+#define	GetBitT(off, bit_no)	\
+	GetBitE(TypeBuffer, off, bit_no)
+
+#define GetBit(...)	\
+	MAC_OVERLOAD2(__VA_ARGS__, GetBitE, GetBitT)(__VA_ARGS__)
 
 
 
@@ -123,8 +164,44 @@ TypeInternalBuffer	TypeBuffer;
 // Returns:
 // bit_value:	the value of the specified bit (0 or 1)
 // 
-#define	GetBit(off, bit_no)	\
-	GetBit(TypeBuffer, off, bit_no)
 
 
 
+// Function:
+// GetNibble(src, off, nibble_no)
+// 
+// Returns the value of nibble at the specified nibble number (nibble_no)
+// from the specified source address with offset (src + off).
+// 
+// Parameters:
+// src:			the base address of stored data
+// off:			offset from which nibble index starts
+// nibble_no:	the index of the nibble (starts from 0)
+// 
+// Returns:
+// nibble_value:	the value of the specified nibble (0 to 15 or 0x0 to 0xF)
+// 
+#define	GetNibbleE(src, off, nibble_no)	\
+	(((byte*)src)[off + (nibble_no >> 1)] >> ((nibble_no & 1) << 2) & 0xF)
+
+
+
+// Function:
+// GetBit(off, nibble_no)
+// 
+// Returns the value of nibble at the specified nibble number (nibble_no)
+// from this library's internal buffer with offset (TypeBuffer + off)
+// 
+// Parameters:
+// off:			offset from which nibble index starts
+// nibble_no:	the index of the nibble (starts from 0)
+// 
+// Returns:
+// nibble_value:	the value of the specified nibble (0 to 15 or 0x0 to 0xF)
+// 
+#define	GetNibbleT(off, nibble_no)	\
+	GetNibbleE(TypeBuffer, off, nibble_no)
+
+
+
+#endif
