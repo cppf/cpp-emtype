@@ -151,9 +151,12 @@ TypeInternalBuffer	TypeBuffer;
 
 // Function:
 // GetNibble(src, off, nibble_no)
+// GetNibble(off, nibble_no)
 // 
 // Returns the value of nibble at the specified nibble number (nibble_no)
-// from the specified source address with offset (src + off).
+// from the specified source address with offset (src + off). if source
+// address (src) is not specified, then this library's internal buffer
+// is used as the source
 // 
 // Parameters:
 // src:			the base address of stored data
@@ -163,8 +166,14 @@ TypeInternalBuffer	TypeBuffer;
 // Returns:
 // nibble_value:	the value of the specified nibble (0 to 15 or 0x0 to 0xF)
 // 
-#define	GetNibbleE(src, off, nibble_no)	\
-	(((byte*)src)[off + (nibble_no >> 1)] >> ((nibble_no & 1) << 2) & 0xF)
+#define	GetNibbleExt(src, off, nibble_no)	\
+	((*(((byte*)src) + off + (nibble_no >> 1)) >> ((nibble_no & 1) << 2)) & 0xF)
+
+#define	GetNibbleInt(off, nibble_no)	\
+	GetNibbleExt(&TypeBuffer, off, nibble_no)
+
+#define GetNibble(...)	\
+	Macro(Macro3(__VA_ARGS__, GetNibbleExt, GetNibbleInt)(__VA_ARGS__))
 
 
 
@@ -181,8 +190,6 @@ TypeInternalBuffer	TypeBuffer;
 // Returns:
 // nibble_value:	the value of the specified nibble (0 to 15 or 0x0 to 0xF)
 // 
-#define	GetNibbleT(off, nibble_no)	\
-	GetNibbleE(TypeBuffer, off, nibble_no)
 
 
 
