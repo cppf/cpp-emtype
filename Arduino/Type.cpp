@@ -40,6 +40,8 @@
 #define	TYPE_BUFFER_SIZE		32
 #endif
 
+
+
 // shorthand datatypes
 typedef signed char	sbyte;
 typedef int int16;
@@ -61,3 +63,23 @@ typedef struct _ulong64
 	ulong Ulong[2];
 }ulong64;
 
+
+
+// internal buffer
+typedef union _TypeInternalBuffer
+{
+	byte	Data[TYPE_BUFFER_SIZE];
+	byte	Byte[16];
+	sbyte	Sbyte[16];
+	char	Char[16];
+	int		Int[8];
+	uint	Uint[8];
+	int16	Int16[8];
+	uint16	Uint16[8];
+	long	Long[4];
+	ulong	Ulong[4];
+	long32	Long32[4];
+	ulong32	Ulong32[4];
+	float	Float[4];
+	double	Double[2];
+}TypeInternalBuffer;
