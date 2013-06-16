@@ -92,17 +92,39 @@ TypeInternalBuffer	TypeBuffer;
 
 
 // Function:
-// GetBit(bit_no)
+// GetBit(src, off, bit_no)
 // 
 // Returns the value of bit at the specified bit number (bit_no)
-// from this library's internal buffer
+// from the specified source address with offset (src + off).
 // 
 // Parameters:
+// src:		the base address of stored data
+// off:		offset from which bit index starts
 // bit_no:	the index of the bit (starts from 0)
 // 
 // Returns:
 // bit_value:	the value of the specified bit (0 or 1)
 // 
-#define	GetBit(bit_no)	\
-	(TypeBuffer[bit_no >> 3] >> (bit_no & 7) & 1)
+#define	GetBit(src, off, bit_no)	\
+	(((byte*)src)[off + (bit_no >> 3)] >> (bit_no & 7) & 1)
+
+
+
+// Function:
+// GetBit(off, bit_no)
+// 
+// Returns the value of bit at the specified bit number (bit_no)
+// from this library's internal buffer with offset (TypeBuffer + off)
+// 
+// Parameters:
+// off:		offset from which bit index starts
+// bit_no:	the index of the bit (starts from 0)
+// 
+// Returns:
+// bit_value:	the value of the specified bit (0 or 1)
+// 
+#define	GetBit(off, bit_no)	\
+	GetBit(TypeBuffer, off, bit_no)
+
+
 
