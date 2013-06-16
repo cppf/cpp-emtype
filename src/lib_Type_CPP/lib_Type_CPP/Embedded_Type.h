@@ -95,6 +95,14 @@ typedef struct _ulong64
 
 
 
+// shorthand constants
+#ifndef TRUE
+#define TRUE	1
+#define	FALSE	0
+#endif
+
+
+
 // internal buffer format
 typedef union _TypeInternalBuffer
 {
@@ -128,7 +136,7 @@ TypeInternalBuffer	TypeBuffer;
 // Returns the value of bit at the specified bit number (bit_no)
 // from the specified source address with offset (src + off). If
 // source address (src) is not specified, then this library's
-// internal buffer is used as the source
+// internal buffer is used as the source.
 // 
 // Parameters:
 // src:		the base address of stored data
@@ -154,9 +162,9 @@ TypeInternalBuffer	TypeBuffer;
 // GetNibble(off, nibble_no)
 // 
 // Returns the value of nibble at the specified nibble number (nibble_no)
-// from the specified source address with offset (src + off). if source
+// from the specified source address with offset (src + off). If source
 // address (src) is not specified, then this library's internal buffer
-// is used as the source
+// is used as the source.
 // 
 // Parameters:
 // src:			the base address of stored data
@@ -178,18 +186,28 @@ TypeInternalBuffer	TypeBuffer;
 
 
 // Function:
-// GetBit(off, nibble_no)
+// GetBoolean(src, off)
+// GetBoolean(off)
 // 
-// Returns the value of nibble at the specified nibble number (nibble_no)
-// from this library's internal buffer with offset (TypeBuffer + off)
+// Returns the boolean value at the specified source address with 
+// offset (src + off). If source address (src) is not specified,
+// then this library's internal buffer is used as the source.
 // 
 // Parameters:
-// off:			offset from which nibble index starts
-// nibble_no:	the index of the nibble (starts from 0)
+// src:			the base address of stored data
+// off:			offset of the boolean value
 // 
 // Returns:
-// nibble_value:	the value of the specified nibble (0 to 15 or 0x0 to 0xF)
+// boolean_value:	the value of the specified boolean (true or false)
 // 
+#define	GetBooleanExt(src, off)	\
+	(*(((byte*)src) + off) == 0)? FALSE : TRUE;
+
+#define	GetBooleanInt(off)	\
+	GetBooleanExt(&TypeBuffer, off)
+
+#define GetBoolean(...)	\
+	Macro(Macro2(__VA_ARGS__, GetBooleanExt, GetBooleanInt)(__VA_ARGS__))
 
 
 
