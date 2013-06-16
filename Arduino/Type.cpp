@@ -65,7 +65,7 @@ typedef struct _ulong64
 
 
 
-// internal buffer
+// internal buffer format
 typedef union _TypeInternalBuffer
 {
 	byte	Data[TYPE_BUFFER_SIZE];
@@ -83,3 +83,26 @@ typedef union _TypeInternalBuffer
 	float	Float[4];
 	double	Double[2];
 }TypeInternalBuffer;
+
+
+
+// internal buffer
+TypeInternalBuffer	TypeBuffer;
+
+
+
+// Function:
+// GetBit(bit_no)
+// 
+// Returns the value of bit at the specified bit number (bit_no)
+// from this library's internal buffer
+// 
+// Parameters:
+// bit_no:	the index of the bit (starts from 0)
+// 
+// Returns:
+// bit_value:	the value of the specified bit (0 or 1)
+// 
+#define	GetBit(bit_no)	\
+	(TypeBuffer[bit_no >> 3] >> (bit_no & 7) & 1)
+
