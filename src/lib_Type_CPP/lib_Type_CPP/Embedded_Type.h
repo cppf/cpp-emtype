@@ -544,4 +544,106 @@ TypeInternalBuffer	TypeBuffer;
 
 
 
+// Function:
+// DoReverse(src, off, len)
+// 
+// Reverses the data stored at the source address (src + off)
+// of specified length (len). The data at the source is directly
+// reversed, and hence if the original data is required, then
+// it is suggested to make a copy of it. If source base address
+// is not specified, this library's internal buffer is assumed
+// as the source base address.
+// 
+// Parameters:
+// src:		the base address of source data
+// off:		offset to the actual data to be reversed (src + off)
+// len:		length of data to be reversed
+// 
+// Returns:
+// <type>_value:	the value of the (bigger) assembled data type
+// 
+void DoReverseExt(void* src, int off, int len)
+{
+	char byt;
+	char *bg, *ed;
+	for(bg=(char*)src, ed=bg+len-1; bg<ed; bg++, ed--)
+	{
+		byt = *bg;
+		*bg = *ed;
+		*ed = byt;
+	}
+}
+
+#define	DoReverseInt(off, len)	\
+	DoReverseExt(&TypeBuffer, off, len)
+
+#define	DoReverse(...)	\
+	Macro(Macro3(__VA_ARGS__, DoReverseExt, DoReverseInt)(__VA_ARGS__))
+
+
+
+// Function:
+// DoReverse(src, off, len)
+// 
+// Reverses the data stored at the source address (src + off)
+// of specified length (len). The data at the source is directly
+// reversed, and hence if the original data is required, then
+// it is suggested to make a copy of it. If source base address
+// is not specified, this library's internal buffer is assumed
+// as the source base address.
+// 
+// Parameters:
+// src:		the base address of source data
+// off:		offset to the actual data to be reversed (src + off)
+// len:		length of data to be reversed
+// 
+// Returns:
+// <type>_value:	the value of the (bigger) assembled data type
+// 
+void DoReverseExt(void* src, int off, int len)
+{
+	char byt;
+	char *bg, *ed;
+	for(bg=(char*)src, ed=bg+len-1; bg<ed; bg++, ed--)
+	{
+		byt = *bg;
+		*bg = *ed;
+		*ed = byt;
+	}
+}
+
+#define	DoReverseInt(off, len)	\
+	DoReverseExt(&TypeBuffer, off, len)
+
+#define	DoReverse(...)	\
+	Macro(Macro3(__VA_ARGS__, DoReverseExt, DoReverseInt)(__VA_ARGS__))
+
+
+
+// Function:
+// PutHexFromBin(dst, dst_off, src, src_off, len, opt)
+// 
+// Stores hexadecimal string of the soure binary data (src + src_off)
+// of specified length (len) at the destination address (dst + dst_off).
+// The options (opt) specify how the conversion is to be performed,
+// and it takes as input a set of flags. If source base address is
+// not specified, this library's internal buffer is assumed as the
+// source base address. Destination address (dst + dst_off) is to be
+// specified always, which is where the converted hex string will be
+// stored.
+// 
+// Parameters:
+// dst:		the base address of destination
+// dst_off:	the destination offset where the hex string will be stored (dst + dst_off)
+// src:		the base address of source binary data
+// off:		offset to the binary data to be converted (src + src_off)
+// len:		length of data to be converted
+// opt:		conversion options ()
+// 
+// Returns:
+// nothing
+// 
+
+
+
 #endif
