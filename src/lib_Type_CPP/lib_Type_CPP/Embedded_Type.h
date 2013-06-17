@@ -72,15 +72,16 @@
 
 
 // shorthand datatypes
-typedef unsigned char byte;
-typedef signed char	sbyte;
-typedef int int16;
-typedef unsigned int uint;
-typedef unsigned int uint16;
-typedef long long32;
-typedef unsigned long ulong;
-typedef unsigned long ulong32;
-typedef char* string;
+typedef unsigned char	byte;
+typedef signed char		sbyte;
+typedef unsigned short	ushort;
+typedef short			int16;
+typedef unsigned short	uint16;
+typedef unsigned int	uint;
+typedef int				long32;
+typedef unsigned int	ulong32;
+typedef unsigned long	ulong;
+typedef char*			string;
 #ifndef null
 #define null ((void*)0)
 #endif
@@ -260,6 +261,110 @@ TypeInternalBuffer	TypeBuffer;
 
 #define GetChar(...)	\
 	Macro(Macro2(__VA_ARGS__, GetCharExt, GetCharInt)(__VA_ARGS__))
+
+
+
+// Function:
+// GetShort(src, off)
+// GetShort(off)
+// 
+// Returns the short value at the specified source address with 
+// offset (src + off). If source address (src) is not specified,
+// then this library's internal buffer is used as the source.
+// 
+// Parameters:
+// src:			the base address of stored data
+// off:			offset of the short value
+// 
+// Returns:
+// short_value:	the value of the specified short (16 bits)
+// 
+#define	GetShortExt(src, off)	\
+	(*((short*)(((byte*)src) + off)))
+
+#define	GetShortInt(off)	\
+	GetShortExt(&TypeBuffer, off)
+
+#define GetShort(...)	\
+	Macro(Macro2(__VA_ARGS__, GetShortExt, GetShortInt)(__VA_ARGS__))
+
+
+
+// Function:
+// GetUshort(src, off)
+// GetUshort(off)
+// 
+// Returns the ushort value at the specified source address with 
+// offset (src + off). If source address (src) is not specified,
+// then this library's internal buffer is used as the source.
+// 
+// Parameters:
+// src:			the base address of stored data
+// off:			offset of the ushort value
+// 
+// Returns:
+// ushort_value:	the value of the specified ushort (16 bits)
+// 
+#define	GetUshortExt(src, off)	\
+	(*((ushort*)(((byte*)src) + off)))
+
+#define	GetUshortInt(off)	\
+	GetUshortExt(&TypeBuffer, off)
+
+#define GetUshort(...)	\
+	Macro(Macro2(__VA_ARGS__, GetUshortExt, GetUshortInt)(__VA_ARGS__))
+
+
+
+// Function:
+// GetInt16(src, off)
+// GetInt16(off)
+// 
+// Returns the int16 value at the specified source address with 
+// offset (src + off). If source address (src) is not specified,
+// then this library's internal buffer is used as the source.
+// 
+// Parameters:
+// src:			the base address of stored data
+// off:			offset of the int16 value
+// 
+// Returns:
+// int16_value:	the value of the specified ushort (16 bits)
+// 
+#define	GetUshortExt(src, off)	\
+	(*((ushort*)(((byte*)src) + off)))
+
+#define	GetUshortInt(off)	\
+	GetUshortExt(&TypeBuffer, off)
+
+#define GetUshort(...)	\
+	Macro(Macro2(__VA_ARGS__, GetUshortExt, GetUshortInt)(__VA_ARGS__))
+
+
+
+// Function:
+// GetUshort(src, off)
+// GetUshort(off)
+// 
+// Returns the ushort value at the specified source address with 
+// offset (src + off). If source address (src) is not specified,
+// then this library's internal buffer is used as the source.
+// 
+// Parameters:
+// src:			the base address of stored data
+// off:			offset of the ushort value
+// 
+// Returns:
+// ushort_value:	the value of the specified ushort (16 bits)
+// 
+#define	GetUshortExt(src, off)	\
+	(*((ushort*)(((byte*)src) + off)))
+
+#define	GetUshortInt(off)	\
+	GetUshortExt(&TypeBuffer, off)
+
+#define GetUshort(...)	\
+	Macro(Macro2(__VA_ARGS__, GetUshortExt, GetUshortInt)(__VA_ARGS__))
 
 
 
