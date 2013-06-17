@@ -583,42 +583,55 @@ void DoReverseExt(void* src, int off, int len)
 
 
 // Function:
-// GetSum(src, off, len)
+// Get<Byte/Ushort/Uint16>Sum(src, off, len)
 // 
-// Reverses the data stored at the source address (src + off)
-// of specified length (len). The data at the source is directly
-// reversed, and hence if the original data is required, then
-// it is suggested to make a copy of it. If source base address
-// is not specified, this library's internal buffer is assumed
-// as the source base address.
+// Finds the sum of all bytes/ushorts at the specified source
+// address (src + off) of the specified length (len). If source
+// base address is not specified, this library's internal buffer
+// is assumed as the source base address. This can be used to
+// calculate checksums.
 // 
 // Parameters:
 // src:		the base address of source data
-// off:		offset to the actual data to be reversed (src + off)
-// len:		length of data to be reversed
+// off:		offset to the data to be summed (src + off)
+// len:		length of data to be summed
 // 
 // Returns:
-// <type>_value:	the value of the (bigger) assembled data type
+// <type>_value:	the summed value
 // 
-/*
-void DoReverseExt(void* src, int off, int len)
+byte GetByteSumExt(void* src, int off, int len)
 {
-	char byt;
-	char *bg, *ed;
-	for(bg=(char*)src, ed=bg+len-1; bg<ed; bg++, ed--)
-	{
-		byt = *bg;
-		*bg = *ed;
-		*ed = byt;
-	}
+    byte sum = 0;
+    byte* bsrc = ((byte*)src) + off;
+    for(; len>0; len--, bsrc++)
+    { sum += *bsrc; }
+    return sum;
 }
 
-#define	DoReverseInt(off, len)	\
-	DoReverseExt(&TypeBuffer, off, len)
+#define	GetByteSumInt(off, len)	\
+	GetByteSumExt(&TypeBuffer, off, len)
 
-#define	DoReverse(...)	\
-	Macro(Macro3(__VA_ARGS__, DoReverseExt, DoReverseInt)(__VA_ARGS__))
-*/
+#define	GetByteSum(...)	\
+	Macro(Macro3(__VA_ARGS__, GetByteSumExt, GetByteSumInt)(__VA_ARGS__))
+
+ushort GetUshortSumExt(void* src, int off, int len)
+{
+    ushort sum = 0;
+    ushort* bsrc = ((ushort*)src) + off;
+	len >>= 1;
+    for(; len>0; len--, bsrc++)
+    { sum += *bsrc; }
+    return sum;
+}
+
+#define	GetUshortSumInt(off, len)	\
+	GetUshortSumExt(&TypeBuffer, off, len)
+
+#define	GetUshortSum(...)	\
+	Macro(Macro3(__VA_ARGS__, GetUshortSumExt, GetUshortSumInt)(__VA_ARGS__))
+
+#define	GetUint16Sum		GetUshortSum
+
 
 
 // Function:

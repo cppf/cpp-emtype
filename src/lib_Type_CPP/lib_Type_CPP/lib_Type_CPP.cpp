@@ -6,13 +6,12 @@
 #include "Embedded_Type.h"
 
 
-byte buff[] = {0, 0, 0, 0, 4, 5, 6, 7, 8, 9};
+byte buff[] = {1, 0, 2, 0, 4, 5, 6, 7, 8, 9};
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	TypeBuffer.Byte[2] = 1;
-	DoReverse(0, 8);
-	printf("The short is: %f\n", ToDouble(1000, 25));
+	TypeBuffer.Byte[2] = 2;
+	printf("The short is: %d\n", GetUint16Sum(0, 4));
 
 	// wait for keypress before exit
 	system("PAUSE");
