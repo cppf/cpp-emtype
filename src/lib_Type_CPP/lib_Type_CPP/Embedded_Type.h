@@ -71,7 +71,20 @@
 #endif
 
 
+
+// shorthand constants
+#ifndef null
+#define null ((void*)0)
+#endif
+#ifndef TRUE
+#define TRUE	1
+#define	FALSE	0
+#endif
+
+
+
 // shorthand datatypes
+typedef bool			boolean;
 typedef unsigned char	byte;
 typedef signed char		sbyte;
 typedef unsigned short	ushort;
@@ -82,25 +95,33 @@ typedef int				long32;
 typedef unsigned int	ulong32;
 typedef unsigned long	ulong;
 typedef char*			string;
-#ifndef null
-#define null ((void*)0)
-#endif
 typedef struct _long64
 {
-	long Long[2];
+	long32 Long32[2];
 }long64;
 typedef struct _ulong64
 {
-	ulong Ulong[2];
+	ulong32 Ulong32[2];
 }ulong64;
-
-
-
-// shorthand constants
-#ifndef TRUE
-#define TRUE	1
-#define	FALSE	0
-#endif
+typedef	boolean*	booleans;
+typedef char*		chars;
+typedef byte*		bytes;
+typedef sbyte*		sbytes;
+typedef short*		shorts;
+typedef ushort*		ushorts;
+typedef int16*		int16s;
+typedef uint16*		uint16s;
+typedef int*		ints;
+typedef uint*		uints;
+typedef long32*		long32s;
+typedef ulong32*	ulong32s;
+typedef long*		longs;
+typedef ulong*		ulongs;
+typedef long64*		long64s;
+typedef ulong64*	ulong64s;
+typedef float*		floats;
+typedef double*		doubles;
+typedef string*		strings;
 
 
 
@@ -272,6 +293,81 @@ TypeInternalBuffer	TypeBuffer;
 
 #define	GetString(...)	\
 	Macro(GetType(string, __VA_ARGS__))
+
+
+
+// Function:
+// Get<type>s(src, off)
+// Get<type>s(off)
+// 
+// Returns the <type> values at the specified source address with 
+// offset (src + off). If source address (src) is not specified,
+// then this library's internal buffer is used as the source.
+// 
+// Parameters:
+// src:			the base address of stored data
+// off:			offset of the <type> values
+// 
+// Returns:
+// <type>_values:	the values of the specified <type> 
+//					(array of values or pointer to values)
+// 
+
+#define GetChars(...)	\
+	Macro(GetStype(chars, __VA_ARGS__))
+
+#define GetBytes(...)	\
+	Macro(GetStype(bytes, __VA_ARGS__))
+
+#define GetBooleans(...)	\
+	Macro(GetStype(booleans, __VA_ARGS__))
+
+#define	GetShorts(...)	\
+	Macro(GetType(shorts, __VA_ARGS__))
+
+#define	GetUshorts(...)	\
+	Macro(GetType(ushorts, __VA_ARGS__))
+
+#define	GetInt16s(...)	\
+	Macro(GetType(int16s, __VA_ARGS__))
+
+#define	GetUint16s(...)	\
+	Macro(GetType(uint16s, __VA_ARGS__))
+
+#define	GetInts(...)	\
+	Macro(GetType(ints, __VA_ARGS__))
+
+#define	GetUints(...)	\
+	Macro(GetType(uints, __VA_ARGS__))
+
+#define	GetLong32s(...)	\
+	Macro(GetType(long32s, __VA_ARGS__))
+
+#define	GetUlong32s(...)	\
+	Macro(GetType(ulong32s, __VA_ARGS__))
+
+#define	GetLongs(...)	\
+	Macro(GetType(longs, __VA_ARGS__))
+
+#define	GetUlongs(...)	\
+	Macro(GetType(ulongs, __VA_ARGS__))
+
+#define	GetLong64s(...)	\
+	Macro(GetType(long64s, __VA_ARGS__))
+
+#define	GetUlong64s(...)	\
+	Macro(GetType(ulong64s, __VA_ARGS__))
+
+#define	GetFloats(...)	\
+	Macro(GetType(floats, __VA_ARGS__))
+
+#define	GetDoubles(...)	\
+	Macro(GetType(doubles, __VA_ARGS__))
+
+#define	GetStrings(...)	\
+	Macro(GetType(strings, __VA_ARGS__))
+
+
 
 
 
