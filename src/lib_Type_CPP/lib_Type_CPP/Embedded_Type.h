@@ -84,25 +84,19 @@
 
 
 // shorthand datatypes
-typedef bool			boolean;
-typedef unsigned char	byte;
-typedef signed char		sbyte;
-typedef unsigned short	ushort;
-typedef short			int16;
-typedef unsigned short	uint16;
-typedef unsigned int	uint;
-typedef int				long32;
-typedef unsigned int	ulong32;
-typedef unsigned long	ulong;
-typedef char*			string;
-typedef struct _long64
-{
-	long32 Long32[2];
-}long64;
-typedef struct _ulong64
-{
-	ulong32 Ulong32[2];
-}ulong64;
+typedef bool				boolean;
+typedef unsigned char		byte;
+typedef signed char			sbyte;
+typedef unsigned short		ushort;
+typedef short				int16;
+typedef unsigned short		uint16;
+typedef unsigned int		uint;
+typedef int					long32;
+typedef unsigned int		ulong32;
+typedef unsigned long		ulong;
+typedef char*				string;
+typedef long long			long64;
+typedef unsigned long long	ulong64;
 
 
 
@@ -499,33 +493,33 @@ TypeInternalBuffer	TypeBuffer;
 
 #define	ToUlong32		ToUint
 
-#define	ToLongInt(uint1, uint0)	\
-	ToType2(Uint, Long, long, uint1, uint0)
+#define	ToLong			ToInt
 
-#define	ToLongSrt(ushort3, ushort2, ushort1, ushort0)	\
-	ToType4(Ushort, Long, long, ushort3, ushort2, ushort1, ushort0)
+#define	ToUlong			ToUint
 
-#define	ToLongByt(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)	\
-	ToType8(Byte, Long, long, byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)
+#define	ToLong64Int(uint1, uint0)	\
+	ToType2(Uint, Long64, long64, uint1, uint0)
 
-#define	ToLong(...)	\
-	Macro(Macro8(__VA_ARGS__, ToLongByt, _7, _6, _5, ToLongSrt, _3, ToLongInt)(__VA_ARGS__))
+#define	ToLong64Srt(ushort3, ushort2, ushort1, ushort0)	\
+	ToType4(Ushort, Long64, long64, ushort3, ushort2, ushort1, ushort0)
 
-#define	ToUlongInt(uint1, uint0)	\
-	ToType2(Uint, Ulong, ulong, uint1, uint0)
+#define	ToLong64Byt(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)	\
+	ToType8(Byte, Long64, long64, byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)
 
-#define	ToUlongSrt(ushort3, ushort2, ushort1, ushort0)	\
-	ToType4(Ushort, Ulong, ulong, ushort3, ushort2, ushort1, ushort0)
+#define	ToLong64(...)	\
+	Macro(Macro8(__VA_ARGS__, ToLong64Byt, _7, _6, _5, ToLong64Srt, _3, ToLong64Int)(__VA_ARGS__))
 
-#define	ToUlongByt(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)	\
-	ToType8(Byte, Ulong, ulong, byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)
+#define	ToUlong64Int(uint1, uint0)	\
+	ToType2(Uint, Ulong64, ulong64, uint1, uint0)
 
-#define	ToUlong(...)	\
-	Macro(Macro8(__VA_ARGS__, ToUlongByt, _7, _6, _5, ToUlongSrt, _3, ToUlongInt)(__VA_ARGS__))
+#define	ToUlong64Srt(ushort3, ushort2, ushort1, ushort0)	\
+	ToType4(Ushort, Ulong64, ulong64, ushort3, ushort2, ushort1, ushort0)
 
-#define	ToLong64		ToLong
+#define	ToUlong64Byt(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)	\
+	ToType8(Byte, Ulong64, ulong64, byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)
 
-#define	ToUlong64		ToUlong
+#define	ToUlong64(...)	\
+	Macro(Macro8(__VA_ARGS__, ToUlong64Byt, _7, _6, _5, ToUlong64Srt, _3, ToUlong64Int)(__VA_ARGS__))
 
 #define	ToFloatSrt(ushort1, ushort0)	\
 	ToType2(Ushort, Float, float, ushort1, ushort0)

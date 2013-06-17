@@ -10,7 +10,9 @@ byte buff[] = {0, 0, 0, 0, 4, 5, 6, 7, 8, 9};
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	printf("The short is: %d\n", ToShort(2, 1));
+	double x = ToDouble(2, 8);
+	long64 y = GetLong64(&x, 0);
+	printf("The short is: %f\n", ToDouble(1000, 25));
 
 	// wait for keypress before exit
 	system("PAUSE");
