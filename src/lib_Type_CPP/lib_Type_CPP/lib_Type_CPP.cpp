@@ -10,10 +10,9 @@ byte buff[] = {0, 0, 0, 0, 4, 5, 6, 7, 8, 9};
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	PutNibble(0, 2, 5);
-	PutNibble(0, 0, 7);
-	int shortval = GetInt(0);
-	printf("The short is: %d\n", shortval);
+	PutFloat(1, 1.1f);
+	float shortval = GetFloat(1);
+	printf("The short is: %f\n", shortval);
 
 	// wait for keypress before exit
 	system("PAUSE");

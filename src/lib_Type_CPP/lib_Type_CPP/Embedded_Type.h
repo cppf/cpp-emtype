@@ -428,95 +428,94 @@ TypeInternalBuffer	TypeBuffer;
 
 
 
-/*
 // Function:
-// Get<type>(src, off)
-// Get<type>(off)
+// Put<type>(dest, off, value)
+// Put<type>(off, value)
 // 
-// Returns the <type> value at the specified source address with 
-// offset (src + off). If source address (src) is not specified,
-// then this library's internal buffer is used as the source.
+// Stores the value of <type> at the specified destination
+// address with offset (dst + off). If destination address
+// (dst) is not specified, then this library's internal
+// buffer is used as the destination.
 // 
 // Parameters:
-// src:			the base address of stored data
-// off:			offset of the <type> value
+// dst:		the base address of destination
+// off:		offset where <type> value is stored
+// value:	the value of <type> to be stored
 // 
 // Returns:
-// <type>_value:	the value of the specified <type>
+// nothing
 // 
-#define	GetStypeExt(type, src, off)	\
-	(*(((type*)src) + off))
+#define	PutStypeExt(type, dst, off, value)	\
+	(*(((type*)dst) + off) = value)
 
-#define	GetStypeInt(type, off)	\
-	GetStypeExt(type, &TypeBuffer, off)
+#define	PutStypeInt(type, off, value)	\
+	PutStypeExt(type, &TypeBuffer, off, value)
 
-#define GetStype(...)	\
-	Macro(Macro3(__VA_ARGS__, GetStypeExt, GetStypeInt)(__VA_ARGS__))
+#define PutStype(...)	\
+	Macro(Macro4(__VA_ARGS__, PutStypeExt, PutStypeInt)(__VA_ARGS__))
 
-#define	GetTypeExt(type, src, off)	\
-	(*((type*)(((byte*)src) + off)))
+#define	PutTypeExt(type, dst, off, value)	\
+	(*((type*)(((byte*)dst) + off)) = value)
 
-#define	GetTypeInt(type, off)	\
-	GetTypeExt(type, &TypeBuffer, off)
+#define	PutTypeInt(type, off, value)	\
+	PutTypeExt(type, &TypeBuffer, off, value)
 
-#define	GetType(...) \
-	Macro(Macro3(__VA_ARGS__, GetTypeExt, GetTypeInt)(__VA_ARGS__))
+#define	PutType(...) \
+	Macro(Macro4(__VA_ARGS__, PutTypeExt, PutTypeInt)(__VA_ARGS__))
 
-#define GetChar(...)	\
-	Macro(GetStype(char, __VA_ARGS__))
+#define PutChar(...)	\
+	Macro(PutStype(char, __VA_ARGS__))
 
-#define GetByte(...)	\
-	Macro(GetStype(byte, __VA_ARGS__))
+#define PutByte(...)	\
+	Macro(PutStype(byte, __VA_ARGS__))
 
-#define GetBoolean(...)	\
-	Macro(((GetByte(__VA_ARGS__) == 0)? FALSE : TRUE))
+#define PutBoolean(...)	\
+	Macro(((PutByte(__VA_ARGS__) == 0)? FALSE : TRUE))
 
-#define	GetShort(...)	\
-	Macro(GetType(short, __VA_ARGS__))
+#define	PutShort(...)	\
+	Macro(PutType(short, __VA_ARGS__))
 
-#define	GetUshort(...)	\
-	Macro(GetType(ushort, __VA_ARGS__))
+#define	PutUshort(...)	\
+	Macro(PutType(ushort, __VA_ARGS__))
 
-#define	GetInt16(...)	\
-	Macro(GetType(int16, __VA_ARGS__))
+#define	PutInt16(...)	\
+	Macro(PutType(int16, __VA_ARGS__))
 
-#define	GetUint16(...)	\
-	Macro(GetType(uint16, __VA_ARGS__))
+#define	PutUint16(...)	\
+	Macro(PutType(uint16, __VA_ARGS__))
 
-#define	GetInt(...)	\
-	Macro(GetType(int, __VA_ARGS__))
+#define	PutInt(...)	\
+	Macro(PutType(int, __VA_ARGS__))
 
-#define	GetUint(...)	\
-	Macro(GetType(uint, __VA_ARGS__))
+#define	PutUint(...)	\
+	Macro(PutType(uint, __VA_ARGS__))
 
-#define	GetLong32(...)	\
-	Macro(GetType(long32, __VA_ARGS__))
+#define	PutLong32(...)	\
+	Macro(PutType(long32, __VA_ARGS__))
 
-#define	GetUlong32(...)	\
-	Macro(GetType(ulong32, __VA_ARGS__))
+#define	PutUlong32(...)	\
+	Macro(PutType(ulong32, __VA_ARGS__))
 
-#define	GetLong(...)	\
-	Macro(GetType(long, __VA_ARGS__))
+#define	PutLong(...)	\
+	Macro(PutType(long, __VA_ARGS__))
 
-#define	GetUlong(...)	\
-	Macro(GetType(ulong, __VA_ARGS__))
+#define	PutUlong(...)	\
+	Macro(PutType(ulong, __VA_ARGS__))
 
-#define	GetLong64(...)	\
-	Macro(GetType(long64, __VA_ARGS__))
+#define	PutLong64(...)	\
+	Macro(PutType(long64, __VA_ARGS__))
 
-#define	GetUlong64(...)	\
-	Macro(GetType(ulong64, __VA_ARGS__))
+#define	PutUlong64(...)	\
+	Macro(PutType(ulong64, __VA_ARGS__))
 
-#define	GetFloat(...)	\
-	Macro(GetType(float, __VA_ARGS__))
+#define	PutFloat(...)	\
+	Macro(PutType(float, __VA_ARGS__))
 
-#define	GetDouble(...)	\
-	Macro(GetType(double, __VA_ARGS__))
+#define	PutDouble(...)	\
+	Macro(PutType(double, __VA_ARGS__))
 
-#define	GetString(...)	\
-	Macro(GetType(string, __VA_ARGS__))
-*/
-
+#define	PutString(...)	\
+	Macro(PutType(string, __VA_ARGS__))
 
 
 
