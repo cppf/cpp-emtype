@@ -417,14 +417,14 @@ TypeInternalBuffer	TypeBuffer;
 // Returns:
 // nothing
 // 
-#define	PutNibbleExt(src, off, nibble_no)	\
-	((*(((byte*)src) + off + (nibble_no >> 1)) >> ((nibble_no & 1) << 2)) & 0xF)
+#define	PutNibbleExt(dst, off, nibble_no, nibble_value)	\
+	(*(((byte*)dst) + off + (nibble_no >> 1)) = (*(((byte*)dst) + off + (nibble_no >> 1)) & (~(0xF << ((nibble_no & 1) << 2)))) | (nibble_value << ((nibble_no & 1) << 2)))
 
-#define	PutNibbleInt(off, nibble_no)	\
-	PutNibbleExt(&TypeBuffer, off, nibble_no)
+#define	PutNibbleInt(off, nibble_no, nibble_value)	\
+	PutNibbleExt(&TypeBuffer, off, nibble_no, nibble_value)
 
 #define PutNibble(...)	\
-	Macro(Macro3(__VA_ARGS__, PutNibbleExt, PutNibbleInt)(__VA_ARGS__))
+	Macro(Macro4(__VA_ARGS__, PutNibbleExt, PutNibbleInt)(__VA_ARGS__))
 
 
 

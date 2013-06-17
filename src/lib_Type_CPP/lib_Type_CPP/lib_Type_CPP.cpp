@@ -10,8 +10,8 @@ byte buff[] = {0, 0, 0, 0, 4, 5, 6, 7, 8, 9};
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	PutBit(0, 16, 1);
-	PutBit(1, 0, 0);
+	PutNibble(0, 2, 5);
+	PutNibble(0, 0, 7);
 	int shortval = GetInt(0);
 	printf("The short is: %d\n", shortval);
 
