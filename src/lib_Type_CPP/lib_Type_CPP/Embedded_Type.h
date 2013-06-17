@@ -103,25 +103,6 @@ typedef struct _ulong64
 {
 	ulong32 Ulong32[2];
 }ulong64;
-typedef	boolean*	booleans;
-typedef char*		chars;
-typedef byte*		bytes;
-typedef sbyte*		sbytes;
-typedef short*		shorts;
-typedef ushort*		ushorts;
-typedef int16*		int16s;
-typedef uint16*		uint16s;
-typedef int*		ints;
-typedef uint*		uints;
-typedef long32*		long32s;
-typedef ulong32*	ulong32s;
-typedef long*		longs;
-typedef ulong*		ulongs;
-typedef long64*		long64s;
-typedef ulong64*	ulong64s;
-typedef float*		floats;
-typedef double*		doubles;
-typedef string*		strings;
 
 
 
@@ -132,14 +113,18 @@ typedef union _TypeInternalBuffer
 	byte	Byte[16];
 	sbyte	Sbyte[16];
 	char	Char[16];
-	int		Int[8];
-	uint	Uint[8];
+	short	Short[8];
+	ushort	Ushort[8];
 	int16	Int16[8];
 	uint16	Uint16[8];
-	long	Long[4];
-	ulong	Ulong[4];
+	int		Int[4];
+	uint	Uint[4];
 	long32	Long32[4];
 	ulong32	Ulong32[4];
+	long	Long[2];
+	ulong	Ulong[2];
+	long64	Long64[2];
+	ulong64	Ulong64[2];
 	float	Float[4];
 	double	Double[2];
 }TypeInternalBuffer;
@@ -297,79 +282,6 @@ TypeInternalBuffer	TypeBuffer;
 
 
 // Function:
-// Get<type>s(src, off)
-// Get<type>s(off)
-// 
-// Returns the <type> values at the specified source address with 
-// offset (src + off). If source address (src) is not specified,
-// then this library's internal buffer is used as the source.
-// 
-// Parameters:
-// src:			the base address of stored data
-// off:			offset of the <type> values
-// 
-// Returns:
-// <type>_values:	the values of the specified <type> 
-//					(array of values or pointer to values)
-// 
-
-#define GetChars(...)	\
-	Macro(GetStype(chars, __VA_ARGS__))
-
-#define GetBytes(...)	\
-	Macro(GetStype(bytes, __VA_ARGS__))
-
-#define GetBooleans(...)	\
-	Macro(GetStype(booleans, __VA_ARGS__))
-
-#define	GetShorts(...)	\
-	Macro(GetType(shorts, __VA_ARGS__))
-
-#define	GetUshorts(...)	\
-	Macro(GetType(ushorts, __VA_ARGS__))
-
-#define	GetInt16s(...)	\
-	Macro(GetType(int16s, __VA_ARGS__))
-
-#define	GetUint16s(...)	\
-	Macro(GetType(uint16s, __VA_ARGS__))
-
-#define	GetInts(...)	\
-	Macro(GetType(ints, __VA_ARGS__))
-
-#define	GetUints(...)	\
-	Macro(GetType(uints, __VA_ARGS__))
-
-#define	GetLong32s(...)	\
-	Macro(GetType(long32s, __VA_ARGS__))
-
-#define	GetUlong32s(...)	\
-	Macro(GetType(ulong32s, __VA_ARGS__))
-
-#define	GetLongs(...)	\
-	Macro(GetType(longs, __VA_ARGS__))
-
-#define	GetUlongs(...)	\
-	Macro(GetType(ulongs, __VA_ARGS__))
-
-#define	GetLong64s(...)	\
-	Macro(GetType(long64s, __VA_ARGS__))
-
-#define	GetUlong64s(...)	\
-	Macro(GetType(ulong64s, __VA_ARGS__))
-
-#define	GetFloats(...)	\
-	Macro(GetType(floats, __VA_ARGS__))
-
-#define	GetDoubles(...)	\
-	Macro(GetType(doubles, __VA_ARGS__))
-
-#define	GetStrings(...)	\
-	Macro(GetType(strings, __VA_ARGS__))
-
-
-
-// Function:
 // PutBit(dst, off, bit_no, bit_value)
 // PutBit(off, bit_no, bit_value)
 // 
@@ -429,7 +341,7 @@ TypeInternalBuffer	TypeBuffer;
 
 
 // Function:
-// Put<type>(dest, off, value)
+// Put<type>(dst, off, value)
 // Put<type>(off, value)
 // 
 // Stores the value of <type> at the specified destination
@@ -516,6 +428,125 @@ TypeInternalBuffer	TypeBuffer;
 
 #define	PutString(...)	\
 	Macro(PutType(string, __VA_ARGS__))
+
+
+
+// Function:
+// To<type>(smaller_data_types)
+// 
+// Assembles smaller data types to a bigger data type. The
+// assembling is done in little endian format, which means
+// that the smaller data representing the least significant
+// part should come first, and the smaller data representing
+// the most significant part should come last.
+// 
+// Parameters:
+// smaller_data_types:	list of bytes, shorts, ints, etc.
+// 
+// Returns:
+// <type>_value:	the value of the (bigger) assembled data type
+// 
+#define	ToNibble(bit3, bit2, bit1, bit0)	\
+	((bit3 << 3) | (bit2 << 2) | (bit1 << 1) | bit0)
+
+#define ToByteNib(nibble1, nibble0)	\
+	((nibble1 << 4) | nibble0)
+
+#define	ToByteBit(bit7, bit6, bit5, bit4, bit3, bit2, bit1, bit0)	\
+	ToByteNib(ToNibble(bit7, bit6, bit5, bit4), ToNibble(bit3, bit2, bit1, bit0))
+
+#define ToByte(...)	\
+	Macro(Macro8(__VA_ARGS__, ToByteBit, _7, _6, _5, _4, _3, ToByteNib)(__VA_ARGS__))
+
+#define	ToType2(var, type, ret, rtype)	\
+	(((TypeBuffer.var[0] = type##0) & (TypeBuffer.var[1] = type##1) & 0)? (rtype)0 : TypeBuffer.ret[0])
+
+#define	ToType4(var, type, ret, rtype)	\
+	(((TypeBuffer.var[0] = type##0) & (TypeBuffer.var[1] = type##1) & (TypeBuffer.var[2] = type##2) & (TypeBuffer.var[3] = type##3) & 0)? (rtype)0 : TypeBuffer.ret[0])
+
+#define ToType8(var, type, ret, rtype)	\
+	(((TypeBuffer.var[0] = type##0) & (TypeBuffer.var[1] = type##1) & (TypeBuffer.var[2] = type##2) & (TypeBuffer.var[3] = type##3) & (TypeBuffer.var[4] = type##4) & (TypeBuffer.var[5] = type##5) & (TypeBuffer.var[6] = type##6) & (TypeBuffer.var[7] = type##7) & 0)? (rtype)0 : TypeBuffer.ret[0])
+
+#define	ToShort(byte0, byte1)	\
+	Macro(ToType2(Byte, byte, Short, short))
+
+#define	ToUshort(byte0, byte1)	\
+	Macro(ToType2(Byte, byte, Ushort, ushort))
+
+#define	ToInt16			ToShort
+
+#define	ToUint16		ToUshort
+
+#define	ToIntSrt(ushort1, ushort0)	\
+	Macro(ToType2(Ushort, ushort, Int, int))
+
+#define	ToIntByt(byte3, byte2, byte1, byte0)	\
+	Macro(ToType4(Byte, byte, Int, int))
+
+#define	ToInt(...)	\
+	Macro(Macro4(__VA_ARGS__, ToIntByt, _3, ToIntSrt)(__VA_ARGS__))
+
+#define	ToUintSrt(ushort1, ushort0)	\
+	Macro(ToType2(Ushort, ushort, Uint, uint))
+
+#define	ToUintByt(byte3, byte2, byte1, byte0)	\
+	Macro(ToType4(Byte, byte, Uint, uint))
+
+#define	ToUint(...)	\
+	Macro(Macro4(__VA_ARGS__, ToUintByt, _3, ToUintSrt)(__VA_ARGS__))
+
+#define	ToLong32		ToInt
+
+#define	ToUlong32		ToUint
+
+#define	ToLongInt(uint1, uint0)	\
+	Macro(ToType2(Uint, uint, Long, long))
+
+#define	ToLongSrt(ushort3, ushort2, ushort1, ushort0)	\
+	Macro(ToType4(Ushort, ushort, Long, long))
+
+#define	ToLongByt(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)	\
+	Macro(ToType8(Byte, byte, Long, long))
+
+#define	ToLong(...)	\
+	Macro(Macro8(__VA_ARGS__, ToLongByt, _7, _6, _5, ToLongSrt, _3, ToLongInt)(__VA_ARGS__))
+
+#define	ToUlongInt(uint1, uint0)	\
+	Macro(ToType2(Uint, uint, Ulong, ulong))
+
+#define	ToUlongSrt(ushort3, ushort2, ushort1, ushort0)	\
+	Macro(ToType4(Ushort, ushort, Ulong, ulong))
+
+#define	ToUlongByt(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)	\
+	Macro(ToType8(Byte, byte, Ulong, ulong))
+
+#define	ToUlong(...)	\
+	Macro(Macro8(__VA_ARGS__, ToUlongByt, _7, _6, _5, ToUlongSrt, _3, ToUlongInt)(__VA_ARGS__))
+
+#define	ToLong64		ToLong
+
+#define	ToUlong64		ToUlong
+
+#define	ToFloatSrt(ushort1, ushort0)	\
+	Macro(ToType2(Ushort, ushort, Float, float))
+
+#define	ToFloatByt(byte3, byte2, byte1, byte0)	\
+	Macro(ToType4(Byte, byte, Float, float))
+
+#define	ToFloat(...)	\
+	Macro(Macro4(__VA_ARGS__, ToFloatByt, _3, ToFloatSrt)(__VA_ARGS__))
+
+#define	ToDoubleInt(uint1, uint0)	\
+	Macro(ToType2(Uint, uint, Double, double))
+
+#define	ToDoubleSrt(ushort3, ushort2, ushort1, ushort0)	\
+	Macro(ToType4(Ushort, ushort, Double, double))
+
+#define	ToDoubleByt(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)	\
+	Macro(ToType8(Byte, byte, Double, double))
+
+#define	ToDouble(...)	\
+	Macro(Macro8(__VA_ARGS__, ToDoubleByt, _7, _6, _5, ToDoubleSrt, _3, ToDoubleInt)(__VA_ARGS__))
 
 
 
