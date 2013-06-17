@@ -369,6 +369,155 @@ TypeInternalBuffer	TypeBuffer;
 
 
 
+// Function:
+// PutBit(dst, off, bit_no, bit_value)
+// PutBit(off, bit_no, bit_value)
+// 
+// Stores the value of bit at the specified bit number (bit_no)
+// to the specified destination address with offset (dst + off).
+// If destination address (dst) is not specified, then this
+// library's internal buffer is used as the destination.
+// 
+// Parameters:
+// dst:		the base address of destination
+// off:		offset from which bit index starts
+// bit_no:	the index of the bit (starts from 0)
+// bit_value:	the value of the specified bit (0 or 1)
+// 
+// Returns:
+// nothing
+// 
+#define	PutBitExt(dst, off, bit_no, bit_value)	\
+	((bit_value == 0)?(*(((byte*)dst) + off + (bit_no >> 3)) &= ~(1 << ((byte)bit_no & (byte)7))) : (*(((byte*)dst) + off + (bit_no >> 3)) |= (1 << ((byte)bit_no & (byte)7))))
+
+#define	PutBitInt(off, bit_no, bit_value)	\
+	PutBitExt(&TypeBuffer, off, bit_no, bit_value)
+
+#define PutBit(...)	\
+	Macro(Macro4(__VA_ARGS__, PutBitExt, PutBitInt)(__VA_ARGS__))
+
+
+
+// Function:
+// PutNibble(dst, off, nibble_no, nibble_value)
+// PutNibble(off, nibble_no, nibble_value)
+// 
+// Stores the value of nibble at the specified nibble number
+// (nibble_no) to the specified destination address with
+// offset (dst + off). If destination address (dst) is not
+// specified, then this library's internal buffer is used
+// as the destination.
+// 
+// Parameters:
+// dst:		the base address of destination
+// off:		offset from which nibble index starts
+// nibble_no:	the index of the nibble (starts from 0)
+// nibble_value:	the value of the specified nibble (0 to 15 or 0x0 to 0xF)
+// 
+// Returns:
+// nothing
+// 
+#define	PutNibbleExt(src, off, nibble_no)	\
+	((*(((byte*)src) + off + (nibble_no >> 1)) >> ((nibble_no & 1) << 2)) & 0xF)
+
+#define	PutNibbleInt(off, nibble_no)	\
+	PutNibbleExt(&TypeBuffer, off, nibble_no)
+
+#define PutNibble(...)	\
+	Macro(Macro3(__VA_ARGS__, PutNibbleExt, PutNibbleInt)(__VA_ARGS__))
+
+
+
+/*
+// Function:
+// Get<type>(src, off)
+// Get<type>(off)
+// 
+// Returns the <type> value at the specified source address with 
+// offset (src + off). If source address (src) is not specified,
+// then this library's internal buffer is used as the source.
+// 
+// Parameters:
+// src:			the base address of stored data
+// off:			offset of the <type> value
+// 
+// Returns:
+// <type>_value:	the value of the specified <type>
+// 
+#define	GetStypeExt(type, src, off)	\
+	(*(((type*)src) + off))
+
+#define	GetStypeInt(type, off)	\
+	GetStypeExt(type, &TypeBuffer, off)
+
+#define GetStype(...)	\
+	Macro(Macro3(__VA_ARGS__, GetStypeExt, GetStypeInt)(__VA_ARGS__))
+
+#define	GetTypeExt(type, src, off)	\
+	(*((type*)(((byte*)src) + off)))
+
+#define	GetTypeInt(type, off)	\
+	GetTypeExt(type, &TypeBuffer, off)
+
+#define	GetType(...) \
+	Macro(Macro3(__VA_ARGS__, GetTypeExt, GetTypeInt)(__VA_ARGS__))
+
+#define GetChar(...)	\
+	Macro(GetStype(char, __VA_ARGS__))
+
+#define GetByte(...)	\
+	Macro(GetStype(byte, __VA_ARGS__))
+
+#define GetBoolean(...)	\
+	Macro(((GetByte(__VA_ARGS__) == 0)? FALSE : TRUE))
+
+#define	GetShort(...)	\
+	Macro(GetType(short, __VA_ARGS__))
+
+#define	GetUshort(...)	\
+	Macro(GetType(ushort, __VA_ARGS__))
+
+#define	GetInt16(...)	\
+	Macro(GetType(int16, __VA_ARGS__))
+
+#define	GetUint16(...)	\
+	Macro(GetType(uint16, __VA_ARGS__))
+
+#define	GetInt(...)	\
+	Macro(GetType(int, __VA_ARGS__))
+
+#define	GetUint(...)	\
+	Macro(GetType(uint, __VA_ARGS__))
+
+#define	GetLong32(...)	\
+	Macro(GetType(long32, __VA_ARGS__))
+
+#define	GetUlong32(...)	\
+	Macro(GetType(ulong32, __VA_ARGS__))
+
+#define	GetLong(...)	\
+	Macro(GetType(long, __VA_ARGS__))
+
+#define	GetUlong(...)	\
+	Macro(GetType(ulong, __VA_ARGS__))
+
+#define	GetLong64(...)	\
+	Macro(GetType(long64, __VA_ARGS__))
+
+#define	GetUlong64(...)	\
+	Macro(GetType(ulong64, __VA_ARGS__))
+
+#define	GetFloat(...)	\
+	Macro(GetType(float, __VA_ARGS__))
+
+#define	GetDouble(...)	\
+	Macro(GetType(double, __VA_ARGS__))
+
+#define	GetString(...)	\
+	Macro(GetType(string, __VA_ARGS__))
+*/
+
+
 
 
 #endif

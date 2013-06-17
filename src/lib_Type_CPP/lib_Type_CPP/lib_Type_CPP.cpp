@@ -6,12 +6,13 @@
 #include "Embedded_Type.h"
 
 
-byte buff[] = {0, 0, 1, 0, 4, 5, 6, 7, 8, 9};
+byte buff[] = {0, 0, 0, 0, 4, 5, 6, 7, 8, 9};
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	TypeBuffer.Byte[3] = 65;
-	int shortval = GetInt(buff, 0);
+	PutBit(0, 16, 1);
+	PutBit(1, 0, 0);
+	int shortval = GetInt(0);
 	printf("The short is: %d\n", shortval);
 
 	// wait for keypress before exit
