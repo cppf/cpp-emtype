@@ -458,39 +458,39 @@ TypeInternalBuffer	TypeBuffer;
 #define ToByte(...)	\
 	Macro(Macro8(__VA_ARGS__, ToByteBit, _7, _6, _5, _4, _3, ToByteNib)(__VA_ARGS__))
 
-#define	ToType2(var, type, ret, rtype)	\
-	(((TypeBuffer.var[0] = type##0) & (TypeBuffer.var[1] = type##1) & 0)? (rtype)0 : TypeBuffer.ret[0])
+#define	ToType2(var, ret, rtype, dat1, dat0)	\
+	(((TypeBuffer.var[0] = dat0) & (TypeBuffer.var[1] = dat1) & 0)? (rtype)0 : TypeBuffer.ret[0])
 
-#define	ToType4(var, type, ret, rtype)	\
-	(((TypeBuffer.var[0] = type##0) & (TypeBuffer.var[1] = type##1) & (TypeBuffer.var[2] = type##2) & (TypeBuffer.var[3] = type##3) & 0)? (rtype)0 : TypeBuffer.ret[0])
+#define	ToType4(var, ret, rtype, dat3, dat2, dat1, dat0)	\
+	(((TypeBuffer.var[0] = dat0) & (TypeBuffer.var[1] = dat1) & (TypeBuffer.var[2] = dat2) & (TypeBuffer.var[3] = dat3) & 0)? (rtype)0 : TypeBuffer.ret[0])
 
-#define ToType8(var, type, ret, rtype)	\
-	(((TypeBuffer.var[0] = type##0) & (TypeBuffer.var[1] = type##1) & (TypeBuffer.var[2] = type##2) & (TypeBuffer.var[3] = type##3) & (TypeBuffer.var[4] = type##4) & (TypeBuffer.var[5] = type##5) & (TypeBuffer.var[6] = type##6) & (TypeBuffer.var[7] = type##7) & 0)? (rtype)0 : TypeBuffer.ret[0])
+#define ToType8(var, ret, rtype, dat7, dat6, dat5, dat4, dat3, dat2, dat1, dat0)	\
+	(((TypeBuffer.var[0] = dat0) & (TypeBuffer.var[1] = dat1) & (TypeBuffer.var[2] = dat2) & (TypeBuffer.var[3] = dat3) & (TypeBuffer.var[4] = dat4) & (TypeBuffer.var[5] = dat5) & (TypeBuffer.var[6] = dat6) & (TypeBuffer.var[7] = dat7) & 0)? (rtype)0 : TypeBuffer.ret[0])
 
-#define	ToShort(byte0, byte1)	\
-	Macro(ToType2(Byte, byte, Short, short))
+#define	ToShort(byte1, byte0)	\
+	ToType2(Byte, Short, short, byte1, byte0)
 
 #define	ToUshort(byte0, byte1)	\
-	Macro(ToType2(Byte, byte, Ushort, ushort))
+	ToType2(Byte, Short, short, byte1, byte0)
 
 #define	ToInt16			ToShort
 
 #define	ToUint16		ToUshort
 
 #define	ToIntSrt(ushort1, ushort0)	\
-	Macro(ToType2(Ushort, ushort, Int, int))
+	ToType2(Ushort, Int, int, ushort1, ushort0)
 
 #define	ToIntByt(byte3, byte2, byte1, byte0)	\
-	Macro(ToType4(Byte, byte, Int, int))
+	ToType4(Byte, Int, int, byte3, byte2, byte1, byte0)
 
 #define	ToInt(...)	\
 	Macro(Macro4(__VA_ARGS__, ToIntByt, _3, ToIntSrt)(__VA_ARGS__))
 
 #define	ToUintSrt(ushort1, ushort0)	\
-	Macro(ToType2(Ushort, ushort, Uint, uint))
+	ToType2(Ushort, Uint, uint, ushort1, ushort0)
 
 #define	ToUintByt(byte3, byte2, byte1, byte0)	\
-	Macro(ToType4(Byte, byte, Uint, uint))
+	ToType4(Byte, Uint, uint, byte3, byte2, byte1, byte0)
 
 #define	ToUint(...)	\
 	Macro(Macro4(__VA_ARGS__, ToUintByt, _3, ToUintSrt)(__VA_ARGS__))
@@ -500,25 +500,25 @@ TypeInternalBuffer	TypeBuffer;
 #define	ToUlong32		ToUint
 
 #define	ToLongInt(uint1, uint0)	\
-	Macro(ToType2(Uint, uint, Long, long))
+	ToType2(Uint, Long, long, uint1, uint0)
 
 #define	ToLongSrt(ushort3, ushort2, ushort1, ushort0)	\
-	Macro(ToType4(Ushort, ushort, Long, long))
+	ToType4(Ushort, Long, long, ushort3, ushort2, ushort1, ushort0)
 
 #define	ToLongByt(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)	\
-	Macro(ToType8(Byte, byte, Long, long))
+	ToType8(Byte, Long, long, byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)
 
 #define	ToLong(...)	\
 	Macro(Macro8(__VA_ARGS__, ToLongByt, _7, _6, _5, ToLongSrt, _3, ToLongInt)(__VA_ARGS__))
 
 #define	ToUlongInt(uint1, uint0)	\
-	Macro(ToType2(Uint, uint, Ulong, ulong))
+	ToType2(Uint, Ulong, ulong, uint1, uint0)
 
 #define	ToUlongSrt(ushort3, ushort2, ushort1, ushort0)	\
-	Macro(ToType4(Ushort, ushort, Ulong, ulong))
+	ToType4(Ushort, Ulong, ulong, ushort3, ushort2, ushort1, ushort0)
 
 #define	ToUlongByt(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)	\
-	Macro(ToType8(Byte, byte, Ulong, ulong))
+	ToType8(Byte, Ulong, ulong, byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)
 
 #define	ToUlong(...)	\
 	Macro(Macro8(__VA_ARGS__, ToUlongByt, _7, _6, _5, ToUlongSrt, _3, ToUlongInt)(__VA_ARGS__))
@@ -528,22 +528,22 @@ TypeInternalBuffer	TypeBuffer;
 #define	ToUlong64		ToUlong
 
 #define	ToFloatSrt(ushort1, ushort0)	\
-	Macro(ToType2(Ushort, ushort, Float, float))
+	ToType2(Ushort, Float, float, ushort1, ushort0)
 
 #define	ToFloatByt(byte3, byte2, byte1, byte0)	\
-	Macro(ToType4(Byte, byte, Float, float))
+	ToType4(Byte, Float, float, byte3, byte2, byte1, byte0)
 
 #define	ToFloat(...)	\
 	Macro(Macro4(__VA_ARGS__, ToFloatByt, _3, ToFloatSrt)(__VA_ARGS__))
 
 #define	ToDoubleInt(uint1, uint0)	\
-	Macro(ToType2(Uint, uint, Double, double))
+	ToType2(Uint, Double, double, uint1, uint0)
 
 #define	ToDoubleSrt(ushort3, ushort2, ushort1, ushort0)	\
-	Macro(ToType4(Ushort, ushort, Double, double))
+	ToType4(Ushort, Double, double, ushort3, ushort2, ushort1, ushort0)
 
 #define	ToDoubleByt(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)	\
-	Macro(ToType8(Byte, byte, Double, double))
+	ToType8(Byte, Double, double, byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)
 
 #define	ToDouble(...)	\
 	Macro(Macro8(__VA_ARGS__, ToDoubleByt, _7, _6, _5, ToDoubleSrt, _3, ToDoubleInt)(__VA_ARGS__))
