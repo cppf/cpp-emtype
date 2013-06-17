@@ -583,7 +583,7 @@ void DoReverseExt(void* src, int off, int len)
 
 
 // Function:
-// DoReverse(src, off, len)
+// GetSum(src, off, len)
 // 
 // Reverses the data stored at the source address (src + off)
 // of specified length (len). The data at the source is directly
@@ -600,6 +600,7 @@ void DoReverseExt(void* src, int off, int len)
 // Returns:
 // <type>_value:	the value of the (bigger) assembled data type
 // 
+/*
 void DoReverseExt(void* src, int off, int len)
 {
 	char byt;
@@ -617,7 +618,7 @@ void DoReverseExt(void* src, int off, int len)
 
 #define	DoReverse(...)	\
 	Macro(Macro3(__VA_ARGS__, DoReverseExt, DoReverseInt)(__VA_ARGS__))
-
+*/
 
 
 // Function:
