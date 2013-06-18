@@ -14,7 +14,7 @@
 
 // Requisite headers
 #include <stdio.h>
-
+#include <string.h>
 
 
 // When arrays are used with this library, their length
@@ -654,8 +654,6 @@ ushort GetUshortSumExt(void* src, int off, int len)
 // len:		length of data to be converted
 // opt:		conversion options (TYPE_ADD_SPACE, TYPE_ADD_CHAR, TYPE_BIG_ENDIAN)
 // 
-//
-
 // Returns:
 // nothing
 // 
@@ -707,12 +705,11 @@ void PutHexFromBinExt(string dst, int dst_off, void* src, int src_off, int len, 
 // 
 // Stores hexadecimal string of the soure binary data (src + src_off)
 // of specified length (len) at the destination address (dst + dst_off).
-// The options (opt) specify how the conversion is to be performed,
-// and it takes as input a set of flags. If source base address is
-// not specified, this library's internal buffer is assumed as the
-// source base address. Destination address (dst + dst_off) is to be
-// specified always, which is where the converted hex string will be
-// stored.
+// The options (opt) specify how the conversion is to be performed, and
+// it takes as input a set of flags. If destination base address is not 
+// specified, this library's internal buffer is assumed as the destination 
+// base address. Source address (src + src_off) is to be specified always, 
+// which is where the original hex string is stored.
 // 
 // Parameters:
 // dst:		the base address of destination
@@ -720,27 +717,26 @@ void PutHexFromBinExt(string dst, int dst_off, void* src, int src_off, int len, 
 // src:		the base address of source binary data
 // src_off:	offset to the binary data to be converted (src + src_off)
 // len:		length of data to be converted
-// opt:		conversion options (TYPE_ADD_SPACE, TYPE_ADD_CHAR, TYPE_BIG_ENDIAN)
-// 
+// opt:		conversion options (TYPE_HAS_SPACE, TYPE_HAS_CHAR, TYPE_BIG_ENDIAN)
 //
-
 // Returns:
 // nothing
 // 
-void PutBinFromHex(string dst, int dst_off, void* src, int src_off, int len, byte opt)
+void PutBinFromHex(void* dst, int dst_off, int len, string src, int src_off, byte opt)
 {
-	byte* cbin = (opt & TYPE_BIG_ENDIAN)? (byte*)src : ((byte*)src)+len-1;
-	dst += dst_off; cbin += src_off;
-	int stp = (opt & TYPE_BIG_ENDIAN)? 1 : -1;
+	char* hsrt = src + src_off;
+	char* hsrc = hsrt + strlen(src) - 1;
+	byte* cbin = dst_off + ((opt & TYPE_BIG_ENDIAN)?  ((byte*)dst)+len-1: (byte*)dst);
+	int stp = (opt & TYPE_BIG_ENDIAN)? -1 : 1;
 	for(int i=0; i<len; i++, cbin+=stp)
 	{
-		*dst = TYPE_BIN_TO_HEX(*cbin >> 4); dst++;
-		*dst = TYPE_BIN_TO_HEX(*cbin & 0xF); dst++;
-		if(opt & TYPE_ADD_CHAR) { *dst = (*cbin < 32 || *cbin > 127)? '.' : *cbin; dst++; }
-		if(opt & TYPE_ADD_SPACE) { *dst = ' '; dst++; }
+		if(opt & TYPE_HAS_SPACE) hsrc--;
+		if(opt & TYPE_HAS_CHAR) hsrc--;
+		*cbin = (hsrc < hsrt)? 0 : TYPE_HEX_TO_BIN(*hsrc); hsrc--;
+		*cbin |= (hsrc < hsrt)? 0 : TYPE_HEX_TO_BIN(*hsrc) << 4; hsrc--;
 	}
-	*dst = '\0';
 }
+
 
 
 #endif
