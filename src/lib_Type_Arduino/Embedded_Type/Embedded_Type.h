@@ -1,6 +1,6 @@
 /*
 ----------------------------------------------------------------------------------------
-	Embedded_Type: Library header file for C/C++
+	Embedded_Type: Library header file for Ardino
 	File: Embedded_Type.h
 
     This file is part of Embedded_Type. For more details, go through
@@ -26,8 +26,9 @@
 /*
 	Embedded_Type is a generic type conversion library for Arduino/Processing/Java/C/C++.
 	It has been developed mainly for simplifying the process of writing wireless communication
-	programs on Arduino and Processing. To use it (in C/C++), simply include this header file
-	in the main code.
+	programs on Arduino and Processing. To use it (in Arduino), copy the directory, this file
+	is in to arduino_root_folder/libraries/. Then restart Arduino, goto Sketch->Add Library->
+	Embedded_Type.
 */
 
 
@@ -38,8 +39,7 @@
 
 
 // Requisite headers
-#include <stdio.h>
-#include <string.h>
+#include <Arduino.h>
 
 
 
@@ -73,15 +73,13 @@
 
 
 // shorthand datatypes
-typedef bool				boolean;
-typedef unsigned char		byte;
 typedef signed char			sbyte;
 typedef unsigned short		ushort;
 typedef short				int16;
 typedef unsigned short		uint16;
 typedef unsigned int		uint;
-typedef int					long32;
-typedef unsigned int		ulong32;
+typedef long				long32;
+typedef unsigned long		ulong32;
 typedef unsigned long		ulong;
 typedef char*				string;
 typedef long long			long64;
@@ -535,7 +533,6 @@ TypeInternalBuffer	TypeBuffer;
 // ToString?
 
 
-
 // Function:
 // DoReverse(src, off, len)
 // 
@@ -623,6 +620,8 @@ ushort GetUshortSumExt(void* src, int off, int len)
 	Macro(Macro3(__VA_ARGS__, GetUshortSumExt, GetUshortSumInt)(__VA_ARGS__))
 
 #define	GetUint16Sum		GetUshortSum
+
+#define	GetUintSum			GetUshortSum
 
 
 

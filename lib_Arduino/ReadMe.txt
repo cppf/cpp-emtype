@@ -1,7 +1,6 @@
-/*
 ----------------------------------------------------------------------------------------
-	Embedded_Type: Testing and debugging source code (Visual Studio)
-	File: lib_Type_CPP.cpp
+	Embedded_Type: Readme file for Arduino header file
+	File: Readme.txt
 
     This file is part of Embedded_Type. For more details, go through
 	Readme.txt. For copyright information, go through copyright.txt.
@@ -19,30 +18,11 @@
     You should have received a copy of the GNU General Public License
     along with Embedded_Type.  If not, see <http://www.gnu.org/licenses/>.
 ----------------------------------------------------------------------------------------
-*/
+	
+	
+Embedded_Type is a generic type conversion library for Arduino/Processing/Java/C/C++.
+It has been developed mainly for simplifying the process of writing wireless communication
+programs on Arduino and Processing. To use it (in Arduino), copy the directory Embedded_Type
+to arduino_root_folder/libraries/. Then restart Arduino, goto Sketch->Add Library->
+Embedded_Type.
 
-
-
-#include "stdafx.h"
-#include <stdlib.h>
-#include "Embedded_Type.h"
-
-
-
-byte buff[] = {1, 0, 2, 0, 4, 5, 6, 7, 8, 9};
-
-
-
-int _tmain(int argc, _TCHAR* argv[])
-{
-	char str[128];
-	TypeBuffer.Byte[1] = 65;
-	PutHexFromBin(str, 0, 0, 2, TYPE_LITTLE_ENDIAN | TYPE_ADD_SPACE | TYPE_ADD_CHAR);
-	strcpy(str, "103");
-	PutBinFromHex(buff, 0, 4, str, 0, TYPE_LITTLE_ENDIAN);
-	printf("The short is: %s\n", str);
-
-	// wait for keypress before exit
-	system("PAUSE");
-	return 0;
-}

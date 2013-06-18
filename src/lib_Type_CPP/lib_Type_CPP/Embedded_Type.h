@@ -17,7 +17,7 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+    along with Embedded_Type.  If not, see <http://www.gnu.org/licenses/>.
 ----------------------------------------------------------------------------------------
 */
 
@@ -440,6 +440,8 @@ TypeInternalBuffer	TypeBuffer;
 #define ToByte(...)	\
 	Macro(Macro8(__VA_ARGS__, ToByteBit, _7, _6, _5, _4, _3, ToByteNib)(__VA_ARGS__))
 
+#define	ToChar			ToByte	
+
 #define	ToType2(var, ret, rtype, dat1, dat0)	\
 	(((TypeBuffer.var[0] = dat0) & (TypeBuffer.var[1] = dat1) & 0)? (rtype)0 : TypeBuffer.ret[0])
 
@@ -529,6 +531,8 @@ TypeInternalBuffer	TypeBuffer;
 
 #define	ToDouble(...)	\
 	Macro(Macro8(__VA_ARGS__, ToDoubleByt, _7, _6, _5, ToDoubleSrt, _3, ToDoubleInt)(__VA_ARGS__))
+
+// ToString?
 
 
 
@@ -710,7 +714,7 @@ void PutHexFromBinExt(string dst, int dst_off, void* src, int src_off, int len, 
 // Returns:
 // nothing
 // 
-void PutBinFromHex(void* dst, int dst_off, int len, string src, int src_off, byte opt)
+void PutBinFromHexExt(void* dst, int dst_off, int len, string src, int src_off, byte opt)
 {
 	char* hsrt = src + src_off;
 	char* hsrc = hsrt + strlen(src) - 1;
@@ -724,6 +728,12 @@ void PutBinFromHex(void* dst, int dst_off, int len, string src, int src_off, byt
 		*cbin |= (hsrc < hsrt)? 0 : TYPE_HEX_TO_BIN(*hsrc) << 4; hsrc--;
 	}
 }
+
+#define	PutBinFromHexInt(dst_off, len, src, src_off, opt)	\
+	PutBinFromHexExt(&TypeBuffer, dst_off, len, src, src_off, opt)
+
+#define	PutBinFromHex(...)	\
+	Macro(Macro6(__VA_ARGS__, PutBinFromHexExt, PutBinFromHexInt)(__VA_ARGS__))
 
 
 

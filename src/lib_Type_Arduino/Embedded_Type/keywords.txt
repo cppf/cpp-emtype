@@ -1,0 +1,113 @@
+#######################################
+# Syntax Coloring Map For Type
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+bool		KEYWORD1
+sbyte		KEYWORD1
+ushort		KEYWORD1
+int16		KEYWORD1
+uint16		KEYWORD1
+uint		KEYWORD1
+long32		KEYWORD1
+ulong32		KEYWORD1
+ulong		KEYWORD1
+string		KEYWORD1
+long64		KEYWORD1
+ulong64		KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+GetBit			KEYWORD2
+GetNibble		KEYWORD2
+GetChar			KEYWORD2
+GetByte			KEYWORD2
+GetBoolean		KEYWORD2
+GetShort		KEYWORD2
+GetUshort		KEYWORD2
+GetInt16		KEYWORD2
+GetUint16		KEYWORD2
+GetInt			KEYWORD2
+GetUint			KEYWORD2
+GetLong32		KEYWORD2
+GetUlong32		KEYWORD2
+GetLong			KEYWORD2
+GetUlong		KEYWORD2
+GetLong64		KEYWORD2
+GetUlong64		KEYWORD2
+GetFloat		KEYWORD2
+GetDouble		KEYWORD2
+GetString		KEYWORD2
+
+PutBit			KEYWORD2
+PutNibble		KEYWORD2
+PutChar			KEYWORD2
+PutByte			KEYWORD2
+PutBoolean		KEYWORD2
+PutShort		KEYWORD2
+PutUshort		KEYWORD2
+PutInt16		KEYWORD2
+PutUint16		KEYWORD2
+PutInt			KEYWORD2
+PutUint			KEYWORD2
+PutLong32		KEYWORD2
+PutUlong32		KEYWORD2
+PutLong			KEYWORD2
+PutUlong		KEYWORD2
+PutLong64		KEYWORD2
+PutUlong64		KEYWORD2
+PutFloat		KEYWORD2
+PutDouble		KEYWORD2
+PutString		KEYWORD2
+
+ToNibble		KEYWORD2
+ToChar			KEYWORD2
+ToByte			KEYWORD2
+ToShort			KEYWORD2
+ToUshort		KEYWORD2
+ToInt16			KEYWORD2
+ToUint16		KEYWORD2
+ToInt			KEYWORD2
+ToUint			KEYWORD2
+ToLong32		KEYWORD2
+ToUlong32		KEYWORD2
+ToLong			KEYWORD2
+ToUlong			KEYWORD2
+ToLong64		KEYWORD2
+ToUlong64		KEYWORD2
+ToFloat			KEYWORD2
+ToDouble		KEYWORD2
+
+DoReverse		KEYWORD2
+GetByteSum		KEYWORD2
+GetUshortSum	KEYWORD2
+GetUint16Sum	KEYWORD2
+GetUintSum		KEYWORD2
+PutHexFromBin	KEYWORD2
+PutBinFromHex	KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+TypeBuffer	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+TRUE				LITERAL1
+FALSE				LITERAL1
+TYPE_NO_SPACE		LITERAL1
+TYPE_ADD_SPACE		LITERAL1
+TYPE_HAS_SPACE		LITERAL1
+TYPE_NO_CHAR		LITERAL1
+TYPE_ADD_CHAR		LITERAL1
+TYPE_HAS_CHAR		LITERAL1
+TYPE_LITTLE_ENDIAN	LITERAL1
+TYPE_BIG_ENDIAN		LITERAL1
