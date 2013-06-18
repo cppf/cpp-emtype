@@ -1,9 +1,34 @@
 /*
- * Embedded_Type Library
- *
- * This library converts data from one type
- * to another
- */
+----------------------------------------------------------------------------------------
+	Embedded_Type: Library header file for C/C++
+	File: Embedded_Type.h
+
+    This file is part of Embedded_Type. For more details, go through
+	Readme.txt. For copyright information, go through copyright.txt.
+
+    Embedded_Type is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Embedded_Type is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+----------------------------------------------------------------------------------------
+*/
+
+
+
+/*
+	Embedded_Type is a generic type conversion library for Arduino/Processing/Java/C/C++.
+	It has been developed mainly for simplifying the process of writing wireless communication
+	programs on Arduino and Processing. To use it (in C/C++), simply include this header file
+	in the main code.
+*/
 
 
 
@@ -15,42 +40,6 @@
 // Requisite headers
 #include <stdio.h>
 #include <string.h>
-
-
-// When arrays are used with this library, their length
-// is indicated with a length field before any array
-// data. The size of this length field in bytes can be
-// controlled by defining the TYPE_LENGTH_BYTES constant
-// before including this library (or by changing it in
-// the header file itself).
-// 
-// The default value of TYPE_LENGTH_BYTES is 1 (1 byte)
-// which should be an appropriate value when the application
-// is related to working with low-cost embedded devices,
-// with limited SRAM capacity
-// 
-#ifndef TYPE_LENGTH_BYTES
-#define	TYPE_LENGTH_BYTES		1
-#endif
-
-
-// When "getting" or "putting" values without specifying
-// a source or destination, causes this library to make
-// use of its internal buffer for fetching or storing data.
-//
-// "putting" more data than this internal buffer size may
-// cause the operation to fail, or even may cause running
-// application to crash. When "getting", in addition to the
-// above problems, it could also be possible to get garbage
-// data.
-//
-// To avoid all these circumstances, define the value of
-// TYPE_BUFFER_SIZE to the maximum utilized size in the
-// application (before including this library)
-// 
-#ifndef	TYPE_BUFFER_SIZE
-#define	TYPE_BUFFER_SIZE		32
-#endif
 
 
 
@@ -103,7 +92,6 @@ typedef unsigned long long	ulong64;
 // internal buffer format
 typedef union _TypeInternalBuffer
 {
-	byte	Data[TYPE_BUFFER_SIZE];
 	byte	Byte[16];
 	sbyte	Sbyte[16];
 	char	Char[16];
