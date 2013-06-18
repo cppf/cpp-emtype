@@ -650,14 +650,107 @@ ushort GetUshortSumExt(void* src, int off, int len)
 // dst:		the base address of destination
 // dst_off:	the destination offset where the hex string will be stored (dst + dst_off)
 // src:		the base address of source binary data
-// off:		offset to the binary data to be converted (src + src_off)
+// src_off:	offset to the binary data to be converted (src + src_off)
 // len:		length of data to be converted
-// opt:		conversion options ()
+// opt:		conversion options (TYPE_ADD_SPACE, TYPE_ADD_CHAR, TYPE_BIG_ENDIAN)
 // 
+//
+
 // Returns:
 // nothing
 // 
+#define TYPE_HEX_TO_BIN(ch)		(((ch) <= '9')? (ch)-'0' : (ch)-'7')
 
+#define TYPE_BIN_TO_HEX(bn)		(((bn) <= 9)? (bn)+'0' : (bn)+'7' )
+
+#define	TYPE_NO_SPACE			0
+
+#define TYPE_ADD_SPACE			1
+
+#define	TYPE_HAS_SPACE			1
+
+#define	TYPE_NO_CHAR			0
+
+#define TYPE_ADD_CHAR			2
+
+#define	TYPE_HAS_CHAR			2
+
+#define	TYPE_LITTLE_ENDIAN		0
+
+#define TYPE_BIG_ENDIAN			4
+
+void PutHexFromBinExt(string dst, int dst_off, void* src, int src_off, int len, byte opt)
+{
+	byte* cbin = (opt & TYPE_BIG_ENDIAN)? (byte*)src : ((byte*)src)+len-1;
+	dst += dst_off; cbin += src_off;
+	int stp = (opt & TYPE_BIG_ENDIAN)? 1 : -1;
+	for(int i=0; i<len; i++, cbin+=stp)
+	{
+		*dst = TYPE_BIN_TO_HEX(*cbin >> 4); dst++;
+		*dst = TYPE_BIN_TO_HEX(*cbin & 0xF); dst++;
+		if(opt & TYPE_ADD_CHAR) { *dst = (*cbin < 32 || *cbin > 127)? '.' : *cbin; dst++; }
+		if(opt & TYPE_ADD_SPACE) { *dst = ' '; dst++; }
+	}
+	*dst = '\0';
+}
+
+#define	PutHexFromBinInt(dst, dst_off, src_off, len, opt)	\
+	PutHexFromBin(dst, dst_off, &TypeBuffer, src_off, len, opt)
+
+#define	PutHexFromBin(...)	\
+	Macro(Macro6(__VA_ARGS__, PutHexFromBinExt, PutHexFromBinInt)(__VA_ARGS__))
+
+
+
+// Function:
+// PutBinFromHex(dst, dst_off, len, src, src_off, opt)
+// 
+// Stores hexadecimal string of the soure binary data (src + src_off)
+// of specified length (len) at the destination address (dst + dst_off).
+// The options (opt) specify how the conversion is to be performed,
+// and it takes as input a set of flags. If source base address is
+// not specified, this library's internal buffer is assumed as the
+// source base address. Destination address (dst + dst_off) is to be
+// specified always, which is where the converted hex string will be
+// stored.
+// 
+// Parameters:
+// dst:		the base address of destination
+// dst_off:	the destination offset where the hex string will be stored (dst + dst_off)
+// src:		the base address of source binary data
+// src_off:	offset to the binary data to be converted (src + src_off)
+// len:		length of data to be converted
+// opt:		conversion options (TYPE_ADD_SPACE, TYPE_ADD_CHAR, TYPE_BIG_ENDIAN)
+// 
+//
+
+// Returns:
+// nothing
+// 
+#define TYPE_HEX_TO_BIN(ch)		(((ch) <= '9')? (ch)-'0' : (ch)-'7')
+
+#define TYPE_BIN_TO_HEX(bn)		(((bn) <= 9)? (bn)+'0' : (bn)+'7' )
+
+#define TYPE_ADD_SPACE			1
+
+#define TYPE_ADD_CHAR			2
+
+#define TYPE_BIG_ENDIAN			4
+
+void PutHexFromBin(string dst, int dst_off, void* src, int src_off, int len, byte opt)
+{
+	byte* cbin = (opt & TYPE_BIG_ENDIAN)? (byte*)src : ((byte*)src)+len-1;
+	dst += dst_off; cbin += src_off;
+	int stp = (opt & TYPE_BIG_ENDIAN)? 1 : -1;
+	for(int i=0; i<len; i++, cbin+=stp)
+	{
+		*dst = TYPE_BIN_TO_HEX(*cbin >> 4); dst++;
+		*dst = TYPE_BIN_TO_HEX(*cbin & 0xF); dst++;
+		if(opt & TYPE_ADD_CHAR) { *dst = (*cbin < 32 || *cbin > 127)? '.' : *cbin; dst++; }
+		if(opt & TYPE_ADD_SPACE) { *dst = ' '; dst++; }
+	}
+	*dst = '\0';
+}
 
 
 #endif
