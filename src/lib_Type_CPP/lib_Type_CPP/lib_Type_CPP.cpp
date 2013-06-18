@@ -10,8 +10,10 @@ byte buff[] = {1, 0, 2, 0, 4, 5, 6, 7, 8, 9};
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	TypeBuffer.Byte[2] = 2;
-	printf("The short is: %d\n", GetUint16Sum(0, 4));
+	char str[128];
+	TypeBuffer.Byte[1] = 1;
+	PutHexFromBin(str, 0, 0, 10, TYPE_LITTLE_ENDIAN | TYPE_ADD_SPACE | TYPE_ADD_CHAR);
+	printf("The short is: %s\n", str);
 
 	// wait for keypress before exit
 	system("PAUSE");

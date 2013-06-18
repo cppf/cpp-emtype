@@ -695,7 +695,7 @@ void PutHexFromBinExt(string dst, int dst_off, void* src, int src_off, int len, 
 }
 
 #define	PutHexFromBinInt(dst, dst_off, src_off, len, opt)	\
-	PutHexFromBin(dst, dst_off, &TypeBuffer, src_off, len, opt)
+	PutHexFromBinExt(dst, dst_off, &TypeBuffer, src_off, len, opt)
 
 #define	PutHexFromBin(...)	\
 	Macro(Macro6(__VA_ARGS__, PutHexFromBinExt, PutHexFromBinInt)(__VA_ARGS__))
@@ -727,17 +727,7 @@ void PutHexFromBinExt(string dst, int dst_off, void* src, int src_off, int len, 
 // Returns:
 // nothing
 // 
-#define TYPE_HEX_TO_BIN(ch)		(((ch) <= '9')? (ch)-'0' : (ch)-'7')
-
-#define TYPE_BIN_TO_HEX(bn)		(((bn) <= 9)? (bn)+'0' : (bn)+'7' )
-
-#define TYPE_ADD_SPACE			1
-
-#define TYPE_ADD_CHAR			2
-
-#define TYPE_BIG_ENDIAN			4
-
-void PutHexFromBin(string dst, int dst_off, void* src, int src_off, int len, byte opt)
+void PutBinFromHex(string dst, int dst_off, void* src, int src_off, int len, byte opt)
 {
 	byte* cbin = (opt & TYPE_BIG_ENDIAN)? (byte*)src : ((byte*)src)+len-1;
 	dst += dst_off; cbin += src_off;
