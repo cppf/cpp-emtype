@@ -160,7 +160,7 @@ public boolean GetBoolean(int off)
 
 public short GetShort(byte[] src, int off)
 {
-  return ByteBuffer.wrap(src, off, 2).getShort();
+  return ByteBuffer.wrap(src, off, 2).order(ByteOrder.LITTLE_ENDIAN).getShort();
 }
 
 public short GetShort(int off)
@@ -201,7 +201,7 @@ public int GetUint16(int off)
 
 public int GetInt(byte[] src, int off)
 {
-  return ByteBuffer.wrap(dat, off, 4).getInt();
+  return ByteBuffer.wrap(dat, off, 4).order(ByteOrder.LITTLE_ENDIAN).getInt();
 }
 
 public int GetInt(int off)
@@ -242,7 +242,7 @@ public long GetUlong32(int off)
 
 public long GetLong(byte[] src, int off)
 {
-  return ByteBuffer.wrap(src, off, 8).getLong();
+  return ByteBuffer.wrap(src, off, 8).order(ByteOrder.LITTLE_ENDIAN).getLong();
 }
 
 public long GetLong(int off)
@@ -285,7 +285,7 @@ public ulong GetUlong64(int off)
 
 public float GetFloat(byte[] src, int off)
 {
-  return ByteBuffer.wrap(src, off, 4).getFloat();
+  return ByteBuffer.wrap(src, off, 4).order(ByteOrder.LITTLE_ENDIAN).getFloat();
 }
 
 public float GetFloat(int off)
@@ -295,7 +295,7 @@ public float GetFloat(int off)
 
 public double GetDouble(byte[] src, int off)
 {
-  return ByteBuffer.wrap(src, off, 8).getDouble();
+  return ByteBuffer.wrap(src, off, 8).order(ByteOrder.LITTLE_ENDIAN).getDouble();
 }
 
 public double GetDouble(int off)
@@ -303,9 +303,47 @@ public double GetDouble(int off)
   return GetDouble(TypeBuffer, off);
 }
 
-public double GetString()
-#define	GetString(...)	\
-	Macro(GetType(string, __VA_ARGS__))
+
+
+// Function:
+// GetString(dst, sz, src, off, opt)
+// GetString(dst, sz, off, opt)
+// 
+// Returns the string at the specified source address with 
+// offset (src + off). If source address (src) is not specified,
+// then this library's internal buffer is used as the source.
+// 
+// Parameters:
+// dst:      destination address where the string is stored
+// sz:       size of destination in bytes (max. length of string-1)
+// src:      the base address of stored data
+// off:      offset of the stored string
+// opt:      options for string fetching (TYPE_ZEROED_STRING, TYPE_LENGTH_STRING)
+// 
+// Returns:
+// <type>_value:  the value of the specified <type>
+// 
+final static int TYPE_ZEROED_STRING = 0;
+
+final static int TYPE_LENGTH_STRING = 1;
+
+public String GetString(String dst, int sz, byte[] src, int off, int opt)
+{
+  int i, len;
+  if(opt == TYPE_LENGTH_STRING)
+  {
+    len = src[off];
+    off++;
+  }
+  else
+  {
+    for(i=off; i<src.length && src[i] != 0; i++);
+    len = i - off;
+  }
+  len = (len <= sz) len : sz;
+  dst = new String(src, off, len);
+  return dst;
+}
 
 
 
@@ -327,14 +365,16 @@ public double GetString()
 // Returns:
 // nothing
 // 
-#define	PutBitExt(dst, off, bit_no, bit_value)	\
-	((bit_value == 0)?(*(((byte*)dst) + off + (bit_no >> 3)) &= ~(1 << ((byte)bit_no & (byte)7))) : (*(((byte*)dst) + off + (bit_no >> 3)) |= (1 << ((byte)bit_no & (byte)7))))
+void PutBit(byte[] dst, int off, int bit_no, int bit_value)
+{
+  int indx = off + (bit_no >> 3);
+  dst[indx] = (dst[indx] & ~(1 << (bit_no & 7))) | (bit_value << (bit_no & 7));
+}
 
-#define	PutBitInt(off, bit_no, bit_value)	\
-	PutBitExt(&TypeBuffer, off, bit_no, bit_value)
-
-#define PutBit(...)	\
-	Macro(Macro4(__VA_ARGS__, PutBitExt, PutBitInt)(__VA_ARGS__))
+void PutBit(int off, int bit_no, int bit_value)
+{
+  PutBit(TypeBuffer, off, bit_no, bit_value);
+}
 
 
 
@@ -357,14 +397,16 @@ public double GetString()
 // Returns:
 // nothing
 // 
-#define	PutNibbleExt(dst, off, nibble_no, nibble_value)	\
-	(*(((byte*)dst) + off + (nibble_no >> 1)) = (*(((byte*)dst) + off + (nibble_no >> 1)) & (~(0xF << ((nibble_no & 1) << 2)))) | (nibble_value << ((nibble_no & 1) << 2)))
+void PutNibble(byte[] dst, int off, int nibble_no, int nibble_value)
+{
+  int indx = off + (nibble_no >> 1);
+  dst[indx] = (dst[indx] & ~(0xF << ((nibble_no & 1) << 2))) | (nibble_value << ((nibble_no & 1) << 2));
+}
 
-#define	PutNibbleInt(off, nibble_no, nibble_value)	\
-	PutNibbleExt(&TypeBuffer, off, nibble_no, nibble_value)
-
-#define PutNibble(...)	\
-	Macro(Macro4(__VA_ARGS__, PutNibbleExt, PutNibbleInt)(__VA_ARGS__))
+void PutNibble(int off, int nibble_no, int nibble_value)
+{
+  PutNibble(TypeBuffer, off, nibble_no, nibble_value);
+}
 
 
 
@@ -385,38 +427,68 @@ public double GetString()
 // Returns:
 // nothing
 // 
-#define	PutStypeExt(type, dst, off, value)	\
-	(*(((type*)dst) + off) = value)
+void PutChar(byte[] dst, int off, char value)
+{
+  dst[off] = (byte)value;
+}
 
-#define	PutStypeInt(type, off, value)	\
-	PutStypeExt(type, &TypeBuffer, off, value)
+void PutChar(int off, char value)
+{
+  TypeBuffer[off] = (byte)value;
+}
 
-#define PutStype(...)	\
-	Macro(Macro4(__VA_ARGS__, PutStypeExt, PutStypeInt)(__VA_ARGS__))
+void PutByte(byte[] dst, int off, byte value)
+{
+  dst[off] = value;
+}
 
-#define	PutTypeExt(type, dst, off, value)	\
-	(*((type*)(((byte*)dst) + off)) = value)
+void PutByte(int off, byte value)
+{
+  TypeBuffer[off] = value;
+}
 
-#define	PutTypeInt(type, off, value)	\
-	PutTypeExt(type, &TypeBuffer, off, value)
+void PutBoolean(byte[] dst, int off, boolean value)
+{
+  dst[off] = (value)? 1 : 0;
+}
 
-#define	PutType(...) \
-	Macro(Macro4(__VA_ARGS__, PutTypeExt, PutTypeInt)(__VA_ARGS__))
+void PutBoolean(int off, boolean value)
+{
+  TypeBuffer[off] = (value)? 1 : 0;
+}
 
-#define PutChar(...)	\
-	Macro(PutStype(char, __VA_ARGS__))
+void PutShort(byte[] dst, int off, short value)
+{
+  ByteBuffer b = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN).putShort(val);
+  b.position(0); b.get(dat, off, 2);
+}
 
-#define PutByte(...)	\
-	Macro(PutStype(byte, __VA_ARGS__))
+void PutShort(int off, short value)
+{
+  PutShort(TypeBuffer, off, value);
+}
 
-#define PutBoolean(...)	\
-	Macro(((PutByte(__VA_ARGS__) == 0)? FALSE : TRUE))
+void PutUshort(byte[] dst, int off, int value)
+{
+  ByteBuffer b = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(val);
+  b.position(0); b.get(dat, off, 2);
+}
 
-#define	PutShort(...)	\
-	Macro(PutType(short, __VA_ARGS__))
+void PutUshort(int off, int value)
+{
+  PutUshort(TypeBuffer, off, value);
+}
 
-#define	PutUshort(...)	\
-	Macro(PutType(ushort, __VA_ARGS__))
+void PutInt16(byte[] dst, int off, short value)
+{
+  PutShort(dst, off, value);
+}
+
+void PutInt16(int off, short value)
+{
+  PutShort(TypeBuffer, off, value);
+}
+
 
 #define	PutInt16(...)	\
 	Macro(PutType(int16, __VA_ARGS__))
