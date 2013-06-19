@@ -74,12 +74,12 @@ public byte[]	TypeBuffer = new byte[16];
 // 
 public byte GetBit(byte[] src, int off, int bit_no)
 {
-  return (src[off + (bit_no >> 3)] >> (bit_no & 7)) & 1;
+  return (byte)((src[off + (bit_no >> 3)] >> (bit_no & 7)) & 1);
 }
 
 public byte GetBit(int off, int bit_no)
 {
-  GetBit(TypeBuffer, off, bit_no);
+  return GetBit(TypeBuffer, off, bit_no);
 }
 
 
@@ -103,7 +103,7 @@ public byte GetBit(int off, int bit_no)
 // 
 public byte GetNibble(byte[] src, int off, int nibble_no)
 {
-  return (src[off + (nibble_no >> 1)] >> ((nibble_no & 1) << 2)) & 0xF;
+  return (byte)((src[off + (nibble_no >> 1)] >> ((nibble_no & 1) << 2)) & 0xF);
 }
 
 public byte GetNibble(int off, int nibble_no)
@@ -201,7 +201,7 @@ public int GetUint16(int off)
 
 public int GetInt(byte[] src, int off)
 {
-  return ByteBuffer.wrap(dat, off, 4).order(ByteOrder.LITTLE_ENDIAN).getInt();
+  return ByteBuffer.wrap(src, off, 4).order(ByteOrder.LITTLE_ENDIAN).getInt();
 }
 
 public int GetInt(int off)
@@ -212,7 +212,7 @@ public int GetInt(int off)
 public long GetUint(byte[] src, int off)
 {
   long uint = GetInt(src, off);
-  return (uint > 0)? uint : (0x100000000 + uint); 
+  return (uint > 0)? uint : (0x100000000L + uint); 
 }
 
 public long GetUint(int off)
@@ -253,12 +253,12 @@ public long GetLong(int off)
 public ulong GetUlong(byte[] src, int off)
 {
   ulong Ulong = new ulong();
-  ulong.Long[0] = GetUint(src, off);
-  ulong.Long[1] = GetUint(src, off+4);
-  return ulong;
+  Ulong.Long[0] = GetUint(src, off);
+  Ulong.Long[1] = GetUint(src, off+4);
+  return Ulong;
 }
 
-public ulong GetLong(int off)
+public ulong GetUlong(int off)
 {
   return GetUlong(TypeBuffer, off);
 }
@@ -345,6 +345,11 @@ public String GetString(String dst, int sz, byte[] src, int off, int opt)
   return dst;
 }
 
+public String GetString(byte[] src, int off, int opt)
+{
+  return GetString(new String(), 1024, src, off, opt);
+}
+
 
 
 // Function:
@@ -368,7 +373,7 @@ public String GetString(String dst, int sz, byte[] src, int off, int opt)
 public void PutBit(byte[] dst, int off, int bit_no, int bit_value)
 {
   int indx = off + (bit_no >> 3);
-  dst[indx] = (dst[indx] & ~(1 << (bit_no & 7))) | (bit_value << (bit_no & 7));
+  dst[indx] = (byte)((dst[indx] & ~(1 << (bit_no & 7))) | (bit_value << (bit_no & 7)));
 }
 
 public void PutBit(int off, int bit_no, int bit_value)
@@ -400,7 +405,7 @@ public void PutBit(int off, int bit_no, int bit_value)
 public void PutNibble(byte[] dst, int off, int nibble_no, int nibble_value)
 {
   int indx = off + (nibble_no >> 1);
-  dst[indx] = (dst[indx] & ~(0xF << ((nibble_no & 1) << 2))) | (nibble_value << ((nibble_no & 1) << 2));
+  dst[indx] = (byte)((dst[indx] & ~(0xF << ((nibble_no & 1) << 2))) | (nibble_value << ((nibble_no & 1) << 2)));
 }
 
 public void PutNibble(int off, int nibble_no, int nibble_value)
@@ -449,12 +454,12 @@ public void PutByte(int off, byte value)
 
 public void PutBoolean(byte[] dst, int off, boolean value)
 {
-  dst[off] = (value)? 1 : 0;
+  dst[off] = (byte)((value)? 1 : 0);
 }
 
 public void PutBoolean(int off, boolean value)
 {
-  TypeBuffer[off] = (value)? 1 : 0;
+  TypeBuffer[off] = (byte)((value)? 1 : 0);
 }
 
 public void PutShort(byte[] dst, int off, short value)
@@ -607,10 +612,15 @@ public void PutDouble(int off, double value)
 
 public void PutString(byte[] dst, int off, String value, int opt)
 {
+  if((opt & TYPE_LENGTH_STRING) > 0)
+  {
+    dst[off] = (byte)value.length();
+    off++;
+  }
+  byte[] strbytes = value.getBytes();
+  arrayCopy(strbytes, 0, dst, off, strbytes.length);
+  if((opt & TYPE_LENGTH_STRING) == 0) dst[off + strbytes.length] = 0;
 }
-
-#define	PutString(...)	\
-	Macro(PutType(string, __VA_ARGS__))
 
 
 
@@ -629,111 +639,209 @@ public void PutString(byte[] dst, int off, String value, int opt)
 // Returns:
 // <type>_value:	the value of the (bigger) assembled data type
 // 
-#define	ToNibble(bit3, bit2, bit1, bit0)	\
-	((bit3 << 3) | (bit2 << 2) | (bit1 << 1) | bit0)
 
-#define ToByteNib(nibble1, nibble0)	\
-	((nibble1 << 4) | nibble0)
+public byte ToNibble(byte bit3, byte bit2, byte bit1, byte bit0)
+{
+  return (byte)((bit3 << 3) | (bit2 << 2) | (bit1 << 1) | bit0);
+}
 
-#define	ToByteBit(bit7, bit6, bit5, bit4, bit3, bit2, bit1, bit0)	\
-	ToByteNib(ToNibble(bit7, bit6, bit5, bit4), ToNibble(bit3, bit2, bit1, bit0))
+public byte ToByte(byte nibble1, byte nibble0)
+{
+  return (byte)((nibble1 << 4) | nibble0);
+}
 
-#define ToByte(...)	\
-	Macro(Macro8(__VA_ARGS__, ToByteBit, _7, _6, _5, _4, _3, ToByteNib)(__VA_ARGS__))
+public byte ToByte(byte bit7, byte bit6, byte bit5, byte bit4, byte bit3, byte bit2, byte bit1, byte bit0)
+{
+  return ToByte(ToNibble(bit7, bit6, bit5, bit4), ToNibble(bit3, bit2, bit1, bit0));
+}
 
-#define	ToChar			ToByte	
+public char ToChar(byte nibble1, byte nibble0)
+{
+  return (char)ToByte(nibble1, nibble0);
+}
 
-#define	ToType2(var, ret, rtype, dat1, dat0)	\
-	(((TypeBuffer.var[0] = dat0) & (TypeBuffer.var[1] = dat1) & 0)? (rtype)0 : TypeBuffer.ret[0])
+public char ToChar(byte bit7, byte bit6, byte bit5, byte bit4, byte bit3, byte bit2, byte bit1, byte bit0)
+{
+  return (char)ToByte(bit7, bit6, bit5, bit4, bit3, bit2, bit1, bit0);
+}
 
-#define	ToType4(var, ret, rtype, dat3, dat2, dat1, dat0)	\
-	(((TypeBuffer.var[0] = dat0) & (TypeBuffer.var[1] = dat1) & (TypeBuffer.var[2] = dat2) & (TypeBuffer.var[3] = dat3) & 0)? (rtype)0 : TypeBuffer.ret[0])
+public short ToShort(byte byte1, byte byte0)
+{
+  TypeBuffer[0] = byte0; TypeBuffer[1] = byte1;
+  return GetShort(TypeBuffer, 0);
+}
 
-#define ToType8(var, ret, rtype, dat7, dat6, dat5, dat4, dat3, dat2, dat1, dat0)	\
-	(((TypeBuffer.var[0] = dat0) & (TypeBuffer.var[1] = dat1) & (TypeBuffer.var[2] = dat2) & (TypeBuffer.var[3] = dat3) & (TypeBuffer.var[4] = dat4) & (TypeBuffer.var[5] = dat5) & (TypeBuffer.var[6] = dat6) & (TypeBuffer.var[7] = dat7) & 0)? (rtype)0 : TypeBuffer.ret[0])
+public int ToUshort(byte byte1, byte byte0)
+{
+  TypeBuffer[0] = byte0; TypeBuffer[1] = byte1;
+  return GetUshort(TypeBuffer, 0);
+}
 
-#define	ToShort(byte1, byte0)	\
-	ToType2(Byte, Short, short, byte1, byte0)
+public short ToInt16(byte byte1, byte byte0)
+{
+  return ToShort(byte1, byte0);
+}
 
-#define	ToUshort(byte0, byte1)	\
-	ToType2(Byte, Short, short, byte1, byte0)
+public int ToUint16(byte byte1, byte byte0)
+{
+  return ToUshort(byte1, byte0);
+}
 
-#define	ToInt16			ToShort
+public int ToInt(int ushort1, int ushort0)
+{
+  PutUshort(TypeBuffer, 0, ushort0); PutUshort(TypeBuffer, 2, ushort1);
+  return GetInt(TypeBuffer, 0);
+}
 
-#define	ToUint16		ToUshort
+public int ToInt(byte byte3, byte byte2, byte byte1, byte byte0)
+{
+  TypeBuffer[0] = byte0; TypeBuffer[1] = byte1;
+  TypeBuffer[2] = byte2; TypeBuffer[3] = byte3;
+  return GetInt(TypeBuffer, 0);
+}
 
-#define	ToIntSrt(ushort1, ushort0)	\
-	ToType2(Ushort, Int, int, ushort1, ushort0)
+public long ToUint(int ushort1, int ushort0)
+{
+  PutUshort(TypeBuffer, 0, ushort0); PutUshort(TypeBuffer, 2, ushort1);
+  return GetUint(TypeBuffer, 0);
+}
 
-#define	ToIntByt(byte3, byte2, byte1, byte0)	\
-	ToType4(Byte, Int, int, byte3, byte2, byte1, byte0)
+public long ToUint(byte byte3, byte byte2, byte byte1, byte byte0)
+{
+  TypeBuffer[0] = byte0; TypeBuffer[1] = byte1;
+  TypeBuffer[2] = byte2; TypeBuffer[3] = byte3;
+  return GetUint(TypeBuffer, 0);
+}
 
-#define	ToInt(...)	\
-	Macro(Macro4(__VA_ARGS__, ToIntByt, _3, ToIntSrt)(__VA_ARGS__))
+public int ToLong32(int ushort1, int ushort0)
+{
+  return ToInt(ushort1, ushort0);
+}
 
-#define	ToUintSrt(ushort1, ushort0)	\
-	ToType2(Ushort, Uint, uint, ushort1, ushort0)
+public int ToLong32(byte byte3, byte byte2, byte byte1, byte byte0)
+{
+  return ToInt(byte3, byte2, byte1, byte0);
+}
 
-#define	ToUintByt(byte3, byte2, byte1, byte0)	\
-	ToType4(Byte, Uint, uint, byte3, byte2, byte1, byte0)
+public long ToUlong32(int ushort1, int ushort0)
+{
+  return ToUint(ushort1, ushort0);
+}
 
-#define	ToUint(...)	\
-	Macro(Macro4(__VA_ARGS__, ToUintByt, _3, ToUintSrt)(__VA_ARGS__))
+public long ToUlong32(byte byte3, byte byte2, byte byte1, byte byte0)
+{
+  return ToUint(byte3, byte2, byte1, byte0);
+}
 
-#define	ToLong32		ToInt
+public long ToLong(long uint1, long uint0)
+{
+  PutUint(TypeBuffer, 0, uint0); PutUint(TypeBuffer, 4, uint1);
+  return GetLong(TypeBuffer, 0);
+}
 
-#define	ToUlong32		ToUint
+public long ToLong(int ushort3, int ushort2, int ushort1, int ushort0)
+{
+  PutUshort(TypeBuffer, 0, ushort0); PutUshort(TypeBuffer, 2, ushort1);
+  PutUshort(TypeBuffer, 4, ushort2); PutUshort(TypeBuffer, 6, ushort3);
+  return GetLong(TypeBuffer, 0);
+}
 
-#define	ToLong			ToInt
+public long ToLong(byte byte7, byte byte6, byte byte5, byte byte4, byte byte3, byte byte2, byte byte1, byte byte0)
+{
+  TypeBuffer[0] = byte0; TypeBuffer[1] = byte1;
+  TypeBuffer[2] = byte2; TypeBuffer[3] = byte3;
+  TypeBuffer[4] = byte4; TypeBuffer[5] = byte5;
+  TypeBuffer[6] = byte6; TypeBuffer[7] = byte7;
+  return GetLong(TypeBuffer, 0);
+}
 
-#define	ToUlong			ToUint
+public ulong ToUlong(long uint1, long uint0)
+{
+  PutUint(TypeBuffer, 0, uint0); PutUint(TypeBuffer, 4, uint1);
+  return GetUlong(TypeBuffer, 0);
+}
 
-#define	ToLong64Int(uint1, uint0)	\
-	ToType2(Uint, Long64, long64, uint1, uint0)
+public ulong ToUlong(int ushort3, int ushort2, int ushort1, int ushort0)
+{
+  PutUshort(TypeBuffer, 0, ushort0); PutUshort(TypeBuffer, 2, ushort1);
+  PutUshort(TypeBuffer, 4, ushort2); PutUshort(TypeBuffer, 6, ushort3);
+  return GetUlong(TypeBuffer, 0);
+}
 
-#define	ToLong64Srt(ushort3, ushort2, ushort1, ushort0)	\
-	ToType4(Ushort, Long64, long64, ushort3, ushort2, ushort1, ushort0)
+public ulong ToUlong(byte byte7, byte byte6, byte byte5, byte byte4, byte byte3, byte byte2, byte byte1, byte byte0)
+{
+  TypeBuffer[0] = byte0; TypeBuffer[1] = byte1;
+  TypeBuffer[2] = byte2; TypeBuffer[3] = byte3;
+  TypeBuffer[4] = byte4; TypeBuffer[5] = byte5;
+  TypeBuffer[6] = byte6; TypeBuffer[7] = byte7;
+  return GetUlong(TypeBuffer, 0);
+}
 
-#define	ToLong64Byt(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)	\
-	ToType8(Byte, Long64, long64, byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)
+public long ToLong64(long uint1, long uint0)
+{
+  return ToLong(uint1, uint0);
+}
 
-#define	ToLong64(...)	\
-	Macro(Macro8(__VA_ARGS__, ToLong64Byt, _7, _6, _5, ToLong64Srt, _3, ToLong64Int)(__VA_ARGS__))
+public long ToLong64(int ushort3, int ushort2, int ushort1, int ushort0)
+{
+  return ToLong(ushort3, ushort2, ushort1, ushort0);
+}
 
-#define	ToUlong64Int(uint1, uint0)	\
-	ToType2(Uint, Ulong64, ulong64, uint1, uint0)
+public long ToLong64(byte byte7, byte byte6, byte byte5, byte byte4, byte byte3, byte byte2, byte byte1, byte byte0)
+{
+  return ToLong(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0);
+}
 
-#define	ToUlong64Srt(ushort3, ushort2, ushort1, ushort0)	\
-	ToType4(Ushort, Ulong64, ulong64, ushort3, ushort2, ushort1, ushort0)
+public ulong ToUlong64(long uint1, long uint0)
+{
+  return ToUlong(uint1, uint0);
+}
 
-#define	ToUlong64Byt(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)	\
-	ToType8(Byte, Ulong64, ulong64, byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)
+public ulong ToUlong64(int ushort3, int ushort2, int ushort1, int ushort0)
+{
+  return ToUlong(ushort3, ushort2, ushort1, ushort0);
+}
 
-#define	ToUlong64(...)	\
-	Macro(Macro8(__VA_ARGS__, ToUlong64Byt, _7, _6, _5, ToUlong64Srt, _3, ToUlong64Int)(__VA_ARGS__))
+public ulong ToUlong64(byte byte7, byte byte6, byte byte5, byte byte4, byte byte3, byte byte2, byte byte1, byte byte0)
+{
+  return ToUlong(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0);
+}
 
-#define	ToFloatSrt(ushort1, ushort0)	\
-	ToType2(Ushort, Float, float, ushort1, ushort0)
+public float ToFloat(int ushort1, int ushort0)
+{
+  PutUshort(TypeBuffer, 0, ushort0); PutUshort(TypeBuffer, 2, ushort1);
+  return GetFloat(TypeBuffer, 0);
+}
 
-#define	ToFloatByt(byte3, byte2, byte1, byte0)	\
-	ToType4(Byte, Float, float, byte3, byte2, byte1, byte0)
+public float ToFloat(byte byte3, byte byte2, byte byte1, byte byte0)
+{
+  TypeBuffer[0] = byte0; TypeBuffer[1] = byte1;
+  TypeBuffer[2] = byte2; TypeBuffer[3] = byte3;
+  return GetFloat(TypeBuffer, 0);
+}
 
-#define	ToFloat(...)	\
-	Macro(Macro4(__VA_ARGS__, ToFloatByt, _3, ToFloatSrt)(__VA_ARGS__))
+public double ToDouble(long uint1, long uint0)
+{
+  PutUint(TypeBuffer, 0, uint0); PutUint(TypeBuffer, 4, uint1);
+  return GetDouble(TypeBuffer, 0);
+}
 
-#define	ToDoubleInt(uint1, uint0)	\
-	ToType2(Uint, Double, double, uint1, uint0)
+public double ToDouble(int ushort3, int ushort2, int ushort1, int ushort0)
+{
+  PutUshort(TypeBuffer, 0, ushort0); PutUshort(TypeBuffer, 2, ushort1);
+  PutUshort(TypeBuffer, 4, ushort2); PutUshort(TypeBuffer, 6, ushort3);
+  return GetDouble(TypeBuffer, 0);
+}
 
-#define	ToDoubleSrt(ushort3, ushort2, ushort1, ushort0)	\
-	ToType4(Ushort, Double, double, ushort3, ushort2, ushort1, ushort0)
+public double ToDouble(byte byte7, byte byte6, byte byte5, byte byte4, byte byte3, byte byte2, byte byte1, byte byte0)
+{
+  TypeBuffer[0] = byte0; TypeBuffer[1] = byte1;
+  TypeBuffer[2] = byte2; TypeBuffer[3] = byte3;
+  TypeBuffer[4] = byte4; TypeBuffer[5] = byte5;
+  TypeBuffer[6] = byte6; TypeBuffer[7] = byte7;
+  return GetDouble(TypeBuffer, 0);
+}
 
-#define	ToDoubleByt(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)	\
-	ToType8(Byte, Double, double, byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)
-
-#define	ToDouble(...)	\
-	Macro(Macro8(__VA_ARGS__, ToDoubleByt, _7, _6, _5, ToDoubleSrt, _3, ToDoubleInt)(__VA_ARGS__))
-
-// ToString?
 
 
 // Function:
@@ -752,25 +860,24 @@ public void PutString(byte[] dst, int off, String value, int opt)
 // len:		length of data to be reversed
 // 
 // Returns:
-// <type>_value:	the value of the (bigger) assembled data type
+// nothing
 // 
-void DoReverseExt(void* src, int off, int len)
+void DoReverse(byte[] src, int off, int len)
 {
-	char byt;
-	char *bg, *ed;
-	for(bg=(char*)src, ed=bg+len-1; bg<ed; bg++, ed--)
-	{
-		byt = *bg;
-		*bg = *ed;
-		*ed = byt;
-	}
+  byte byt;
+  int bg, ed;
+  for(bg=off, ed=off+len-1; bg<ed; bg++, ed--)
+  {
+    byt = src[bg];
+    src[bg] = src[ed];
+    src[ed] = byt;
+  }
 }
 
-#define	DoReverseInt(off, len)	\
-	DoReverseExt(&TypeBuffer, off, len)
-
-#define	DoReverse(...)	\
-	Macro(Macro3(__VA_ARGS__, DoReverseExt, DoReverseInt)(__VA_ARGS__))
+void DoReverse(int off, int len)
+{
+  DoReverse(TypeBuffer, off, len);
+}
 
 
 
@@ -789,154 +896,166 @@ void DoReverseExt(void* src, int off, int len)
 // len:		length of data to be summed
 // 
 // Returns:
-// <type>_value:	the summed value
+// <type>_value:  the summed value
 // 
-byte GetByteSumExt(void* src, int off, int len)
+byte GetByteSum(byte[] src, int off, int len)
 {
     byte sum = 0;
-    byte* bsrc = ((byte*)src) + off;
-    for(; len>0; len--, bsrc++)
-    { sum += *bsrc; }
+    for(; len>0; len--, off++)
+    { sum += src[off]; }
     return sum;
 }
 
-#define	GetByteSumInt(off, len)	\
-	GetByteSumExt(&TypeBuffer, off, len)
-
-#define	GetByteSum(...)	\
-	Macro(Macro3(__VA_ARGS__, GetByteSumExt, GetByteSumInt)(__VA_ARGS__))
-
-ushort GetUshortSumExt(void* src, int off, int len)
+byte GetByteSum(int off, int len)
 {
-    ushort sum = 0;
-    ushort* bsrc = ((ushort*)src) + off;
-	len >>= 1;
-    for(; len>0; len--, bsrc++)
-    { sum += *bsrc; }
-    return sum;
+  return GetByteSum(TypeBuffer, off, len);
 }
 
-#define	GetUshortSumInt(off, len)	\
-	GetUshortSumExt(&TypeBuffer, off, len)
+int GetUshortSum(byte[] src, int off, int len)
+{
+    int sum = 0;
+    len >>= 1;
+    for(; len>0; len--, off+=2)
+    { sum += GetUshort(src, off); }
+    return sum & 0xFFFF;
+}
 
-#define	GetUshortSum(...)	\
-	Macro(Macro3(__VA_ARGS__, GetUshortSumExt, GetUshortSumInt)(__VA_ARGS__))
+int GetUshortSum(int off, int len)
+{
+  return GetUshortSum(TypeBuffer, off, len);
+}
 
-#define	GetUint16Sum		GetUshortSum
+int GetUint16Sum(byte[] src, int off, int len)
+{
+  return GetUshortSum(src, off, len);
+}
 
-#define	GetUintSum			GetUshortSum
+int GetUint16Sum(int off, int len)
+{
+  return GetUshortSum(TypeBuffer, off, len);
+}
 
 
 
 // Function:
-// PutHexFromBin(dst, dst_off, src, src_off, len, opt)
+// GetHexFromBin(dst, sz, src, off, len, opt)
 // 
-// Stores hexadecimal string of the soure binary data (src + src_off)
-// of specified length (len) at the destination address (dst + dst_off).
-// The options (opt) specify how the conversion is to be performed,
-// and it takes as input a set of flags. If source base address is
-// not specified, this library's internal buffer is assumed as the
-// source base address. Destination address (dst + dst_off) is to be
-// specified always, which is where the converted hex string will be
-// stored.
+// Get hexadecimal string (dst) of maximum specified size (sz) of
+// the soure binary data (src + off) of specified length (len). The
+// options (opt) specify how the conversion is to be performed, and
+// it takes as input a set of flags. If source base address is not
+// specified, this library's internal buffer is assumed as the source
+// base address.
 // 
 // Parameters:
-// dst:		the base address of destination
-// dst_off:	the destination offset where the hex string will be stored (dst + dst_off)
-// src:		the base address of source binary data
-// src_off:	offset to the binary data to be converted (src + src_off)
-// len:		length of data to be converted
-// opt:		conversion options (TYPE_ADD_SPACE, TYPE_ADD_CHAR, TYPE_BIG_ENDIAN)
+// dst:	      the destination string where hex string will be stored
+// sz:        the maximum possible size of the hex string (buffer size)
+// src:	      the base address of source binary data
+// off:	      offset to the binary data to be converted (src + off)
+// len:	      length of data to be converted
+// opt:	      conversion options (TYPE_ADD_SPACE, TYPE_ADD_CHAR, TYPE_BIG_ENDIAN)
 // 
 // Returns:
 // nothing
 // 
-#define TYPE_HEX_TO_BIN(ch)		(((ch) <= '9')? (ch)-'0' : (ch)-'7')
+final int TYPE_NO_SPACE = 0;
 
-#define TYPE_BIN_TO_HEX(bn)		(((bn) <= 9)? (bn)+'0' : (bn)+'7' )
+final int TYPE_ADD_SPACE = 1;
 
-#define	TYPE_NO_SPACE			0
+final int TYPE_HAS_SPACE = 1;
 
-#define TYPE_ADD_SPACE			1
+final int TYPE_NO_CHAR = 0;
 
-#define	TYPE_HAS_SPACE			1
+final int TYPE_ADD_CHAR = 2;
 
-#define	TYPE_NO_CHAR			0
+final int TYPE_HAS_CHAR = 2;
 
-#define TYPE_ADD_CHAR			2
+final int TYPE_LITTLE_ENDIAN = 0;
 
-#define	TYPE_HAS_CHAR			2
+final int TYPE_BIG_ENDIAN = 4;
 
-#define	TYPE_LITTLE_ENDIAN		0
-
-#define TYPE_BIG_ENDIAN			4
-
-void PutHexFromBinExt(string dst, int dst_off, void* src, int src_off, int len, byte opt)
+public byte TYPE_HEX_TO_BIN(int ch)
 {
-	byte* cbin = (opt & TYPE_BIG_ENDIAN)? (byte*)src : ((byte*)src)+len-1;
-	dst += dst_off; cbin += src_off;
-	int stp = (opt & TYPE_BIG_ENDIAN)? 1 : -1;
-	for(int i=0; i<len; i++, cbin+=stp)
-	{
-		*dst = TYPE_BIN_TO_HEX(*cbin >> 4); dst++;
-		*dst = TYPE_BIN_TO_HEX(*cbin & 0xF); dst++;
-		if(opt & TYPE_ADD_CHAR) { *dst = (*cbin < 32 || *cbin > 127)? '.' : *cbin; dst++; }
-		if(opt & TYPE_ADD_SPACE) { *dst = ' '; dst++; }
-	}
-	*dst = '\0';
+  return (byte)((ch <= 0x39)? (ch - 0x30) : (ch - 0x37));
 }
 
-#define	PutHexFromBinInt(dst, dst_off, src_off, len, opt)	\
-	PutHexFromBinExt(dst, dst_off, &TypeBuffer, src_off, len, opt)
+public byte TYPE_BIN_TO_HEX(int bn)
+{
+  return (byte)((bn <= 9)? (bn + 0x30) : (bn + 0x37));
+}
 
-#define	PutHexFromBin(...)	\
-	Macro(Macro6(__VA_ARGS__, PutHexFromBinExt, PutHexFromBinInt)(__VA_ARGS__))
+String GetHexFromBin(String dst, int sz, byte[] src, int off, int len, byte opt)
+{
+  byte[] xdst = new byte[sz]; int doff = 0;
+  int cbin = ((opt & TYPE_BIG_ENDIAN) > 0)? off : (off + len - 1);
+  int stp = ((opt & TYPE_BIG_ENDIAN) > 0)? 1 : -1;
+  for(int i=0; i<len; i++, cbin+=stp)
+  {
+    xdst[doff] = TYPE_BIN_TO_HEX(src[cbin] >> 4); doff++;
+    xdst[doff] = TYPE_BIN_TO_HEX(src[cbin] & 0xF); doff++;
+    if((opt & TYPE_ADD_CHAR) > 0) { xdst[doff] = (byte)((src[cbin] < 32 || src[cbin] > 127)? '.' : src[cbin]); doff++; }
+    if((opt & TYPE_ADD_SPACE) > 0) { xdst[doff] = ' '; doff++; }
+  }
+  dst = new String(xdst, 0, doff);
+  return dst;
+}
+
+String GetHexFromBin(byte[] src, int off, int len, byte opt)
+{
+  return GetHexFromBin(new String(), 1024, src, off, len, opt);
+}
+
+String GetHexFromBin(String dst, int sz, int off, int len, byte opt)
+{
+  return GetHexFromBin(dst, sz, TypeBuffer, off, len, opt);
+}
+
+String GetHexFromBin(int off, int len, byte opt)
+{
+  return GetHexFromBin(new String(), 1024, TypeBuffer, off, len, opt);
+}
 
 
 
 // Function:
-// PutBinFromHex(dst, dst_off, len, src, src_off, opt)
+// GetBinFromHex(dst, dst_off, len, src, src_off, opt)
 // 
-// Stores hexadecimal string of the soure binary data (src + src_off)
-// of specified length (len) at the destination address (dst + dst_off).
-// The options (opt) specify how the conversion is to be performed, and
-// it takes as input a set of flags. If destination base address is not 
-// specified, this library's internal buffer is assumed as the destination 
-// base address. Source address (src + src_off) is to be specified always, 
-// which is where the original hex string is stored.
+// Gets binary data from the source hex string (src) to the destination
+// address (dst + off) of specified length len. The options (opt) specify
+// how the conversion is to be performed, and it takes as input a set of
+// flags. If destination base address is not specified, this library's
+// internal buffer is assumed as the destination base address. Source
+// string (src) must always be specified. 
 // 
 // Parameters:
-// dst:		the base address of destination
-// dst_off:	the destination offset where the hex string will be stored (dst + dst_off)
-// src:		the base address of source binary data
-// src_off:	offset to the binary data to be converted (src + src_off)
-// len:		length of data to be converted
-// opt:		conversion options (TYPE_HAS_SPACE, TYPE_HAS_CHAR, TYPE_BIG_ENDIAN)
+// dst:	      the base address of destination
+// off:	      the destination offset where the binary data will be stored (dst + off)
+// len:       length of data at destination
+// src:	      the hex string to be converted
+// opt:	      conversion options (TYPE_HAS_SPACE, TYPE_HAS_CHAR, TYPE_BIG_ENDIAN)
 //
 // Returns:
-// nothing
+// the converted data (dst)
 // 
-void PutBinFromHexExt(void* dst, int dst_off, int len, string src, int src_off, byte opt)
+byte[] GetBinFromHex(byte[] dst, int off, int len, String src, byte opt)
 {
-	char* hsrt = src + src_off;
-	char* hsrc = hsrt + strlen(src) - 1;
-	byte* cbin = dst_off + ((opt & TYPE_BIG_ENDIAN)?  ((byte*)dst)+len-1: (byte*)dst);
-	int stp = (opt & TYPE_BIG_ENDIAN)? -1 : 1;
-	for(int i=0; i<len; i++, cbin+=stp)
-	{
-		if(opt & TYPE_HAS_SPACE) hsrc--;
-		if(opt & TYPE_HAS_CHAR) hsrc--;
-		*cbin = (hsrc < hsrt)? 0 : TYPE_HEX_TO_BIN(*hsrc); hsrc--;
-		*cbin |= (hsrc < hsrt)? 0 : TYPE_HEX_TO_BIN(*hsrc) << 4; hsrc--;
-	}
+  byte[] xsrc = src.getBytes();
+  int hsrc = xsrc.length - 1;
+  int cbin = ((opt & TYPE_BIG_ENDIAN) > 0)?  (off + len - 1) : off;
+  int stp = ((opt & TYPE_BIG_ENDIAN) > 0)? -1 : 1;
+  for(int i=0; i<len; i++, cbin+=stp)
+  {
+    if((opt & TYPE_HAS_SPACE) > 0) hsrc--;
+    if((opt & TYPE_HAS_CHAR) > 0) hsrc--;
+    dst[cbin] = (hsrc < 0)? 0 : TYPE_HEX_TO_BIN(xsrc[hsrc]); hsrc--;
+    dst[cbin] |= (hsrc < 0)? 0 : TYPE_HEX_TO_BIN(xsrc[hsrc]) << 4; hsrc--;
+  }
+  return dst;
 }
 
-#define	PutBinFromHexInt(dst_off, len, src, src_off, opt)	\
-	PutBinFromHexExt(&TypeBuffer, dst_off, len, src, src_off, opt)
-
-#define	PutBinFromHex(...)	\
-	Macro(Macro6(__VA_ARGS__, PutBinFromHexExt, PutBinFromHexInt)(__VA_ARGS__))
-
+byte[] GetBinFromHex(int off, int len, String src, byte opt)
+{
+  return GetBinFromHex(TypeBuffer, off, len, src, opt);
+}
 
 
-#endif
