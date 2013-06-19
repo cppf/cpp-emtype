@@ -340,7 +340,7 @@ public String GetString(String dst, int sz, byte[] src, int off, int opt)
     for(i=off; i<src.length && src[i] != 0; i++);
     len = i - off;
   }
-  len = (len <= sz) len : sz;
+  len = (len <= sz)? len : sz;
   dst = new String(src, off, len);
   return dst;
 }
@@ -365,13 +365,13 @@ public String GetString(String dst, int sz, byte[] src, int off, int opt)
 // Returns:
 // nothing
 // 
-void PutBit(byte[] dst, int off, int bit_no, int bit_value)
+public void PutBit(byte[] dst, int off, int bit_no, int bit_value)
 {
   int indx = off + (bit_no >> 3);
   dst[indx] = (dst[indx] & ~(1 << (bit_no & 7))) | (bit_value << (bit_no & 7));
 }
 
-void PutBit(int off, int bit_no, int bit_value)
+public void PutBit(int off, int bit_no, int bit_value)
 {
   PutBit(TypeBuffer, off, bit_no, bit_value);
 }
@@ -397,13 +397,13 @@ void PutBit(int off, int bit_no, int bit_value)
 // Returns:
 // nothing
 // 
-void PutNibble(byte[] dst, int off, int nibble_no, int nibble_value)
+public void PutNibble(byte[] dst, int off, int nibble_no, int nibble_value)
 {
   int indx = off + (nibble_no >> 1);
   dst[indx] = (dst[indx] & ~(0xF << ((nibble_no & 1) << 2))) | (nibble_value << ((nibble_no & 1) << 2));
 }
 
-void PutNibble(int off, int nibble_no, int nibble_value)
+public void PutNibble(int off, int nibble_no, int nibble_value)
 {
   PutNibble(TypeBuffer, off, nibble_no, nibble_value);
 }
@@ -427,104 +427,187 @@ void PutNibble(int off, int nibble_no, int nibble_value)
 // Returns:
 // nothing
 // 
-void PutChar(byte[] dst, int off, char value)
+public void PutChar(byte[] dst, int off, char value)
 {
   dst[off] = (byte)value;
 }
 
-void PutChar(int off, char value)
+public void PutChar(int off, char value)
 {
   TypeBuffer[off] = (byte)value;
 }
 
-void PutByte(byte[] dst, int off, byte value)
+public void PutByte(byte[] dst, int off, byte value)
 {
   dst[off] = value;
 }
 
-void PutByte(int off, byte value)
+public void PutByte(int off, byte value)
 {
   TypeBuffer[off] = value;
 }
 
-void PutBoolean(byte[] dst, int off, boolean value)
+public void PutBoolean(byte[] dst, int off, boolean value)
 {
   dst[off] = (value)? 1 : 0;
 }
 
-void PutBoolean(int off, boolean value)
+public void PutBoolean(int off, boolean value)
 {
   TypeBuffer[off] = (value)? 1 : 0;
 }
 
-void PutShort(byte[] dst, int off, short value)
+public void PutShort(byte[] dst, int off, short value)
 {
-  ByteBuffer b = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN).putShort(val);
-  b.position(0); b.get(dat, off, 2);
+  ByteBuffer b = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN).putShort(value);
+  b.position(0); b.get(dst, off, 2);
 }
 
-void PutShort(int off, short value)
+public void PutShort(int off, short value)
 {
   PutShort(TypeBuffer, off, value);
 }
 
-void PutUshort(byte[] dst, int off, int value)
+public void PutUshort(byte[] dst, int off, int value)
 {
-  ByteBuffer b = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(val);
-  b.position(0); b.get(dat, off, 2);
+  ByteBuffer b = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(value);
+  b.position(0); b.get(dst, off, 2);
 }
 
-void PutUshort(int off, int value)
+public void PutUshort(int off, int value)
 {
   PutUshort(TypeBuffer, off, value);
 }
 
-void PutInt16(byte[] dst, int off, short value)
+public void PutInt16(byte[] dst, int off, short value)
 {
   PutShort(dst, off, value);
 }
 
-void PutInt16(int off, short value)
+public void PutInt16(int off, short value)
 {
   PutShort(TypeBuffer, off, value);
 }
 
+public void PutUint16(byte[] dst, int off, int value)
+{
+  PutUshort(dst, off, value);
+}
 
-#define	PutInt16(...)	\
-	Macro(PutType(int16, __VA_ARGS__))
+public void PutUint16(int off, int value)
+{
+  PutUshort(TypeBuffer, off, value);
+}
 
-#define	PutUint16(...)	\
-	Macro(PutType(uint16, __VA_ARGS__))
+public void PutInt(byte[] dst, int off, int value)
+{
+  ByteBuffer b = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(value);
+  b.position(0); b.get(dst, off, 4);
+}
 
-#define	PutInt(...)	\
-	Macro(PutType(int, __VA_ARGS__))
+public void PutInt(int off, int value)
+{
+  PutInt(TypeBuffer, off, value);
+}
 
-#define	PutUint(...)	\
-	Macro(PutType(uint, __VA_ARGS__))
+public void PutUint(byte[] dst, int off, long value)
+{
+  ByteBuffer b = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(value);
+  b.position(0); b.get(dst, off, 4);
+}
 
-#define	PutLong32(...)	\
-	Macro(PutType(long32, __VA_ARGS__))
+public void PutUint(int off, int value)
+{
+  PutUint(TypeBuffer, off, value);
+}
 
-#define	PutUlong32(...)	\
-	Macro(PutType(ulong32, __VA_ARGS__))
+public void PutLong32(byte[] dst, int off, int value)
+{
+  PutInt(dst, off, value);
+}
 
-#define	PutLong(...)	\
-	Macro(PutType(long, __VA_ARGS__))
+public void PutLong32(int off, int value)
+{
+  PutInt(TypeBuffer, off, value);
+}
 
-#define	PutUlong(...)	\
-	Macro(PutType(ulong, __VA_ARGS__))
+public void PutUlong32(byte[] dst, int off, long value)
+{
+  PutUint(dst, off, value);
+}
 
-#define	PutLong64(...)	\
-	Macro(PutType(long64, __VA_ARGS__))
+public void PutUlong32(int off, long value)
+{
+  PutUlong32(TypeBuffer, off, value);
+}
 
-#define	PutUlong64(...)	\
-	Macro(PutType(ulong64, __VA_ARGS__))
+public void PutLong(byte[] dst, int off, long value)
+{
+  ByteBuffer b = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(value);
+  b.position(0); b.get(dst, off, 8);
+}
 
-#define	PutFloat(...)	\
-	Macro(PutType(float, __VA_ARGS__))
+public void PutLong(int off, long value)
+{
+  PutLong(TypeBuffer, off, value);
+}
 
-#define	PutDouble(...)	\
-	Macro(PutType(double, __VA_ARGS__))
+public void PutUlong(byte[] dst, int off, ulong value)
+{
+  PutUint(dst, off, value.Long[0]);
+  PutUint(dst, off+4, value.Long[1]);
+}
+
+public void PutUlong(int off, ulong value)
+{
+  PutUlong(TypeBuffer, off, value);
+}
+
+public void PutLong64(byte[] dst, int off, long value)
+{
+  PutLong(dst, off, value);
+}
+
+public void PutLong64(int off, long value)
+{
+  PutLong(TypeBuffer, off, value);
+}
+
+public void PutUlong64(byte[] dst, int off, ulong value)
+{
+  PutUlong(dst, off, value);
+}
+
+public void PutUlong64(int off, ulong value)
+{
+  PutUlong(TypeBuffer, off, value);
+}
+
+public void PutFloat(byte[] dst, int off, float value)
+{
+  ByteBuffer b = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putFloat(value);
+  b.position(0); b.get(dst, off, 4);
+}
+
+public void PutFloat(int off, float value)
+{
+  PutFloat(TypeBuffer, off, value);
+}
+
+public void PutDouble(byte[] dst, int off, double value)
+{
+  ByteBuffer b = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putDouble(value);
+  b.position(0); b.get(dst, off, 8);
+}
+
+public void PutDouble(int off, double value)
+{
+  PutDouble(TypeBuffer, off, value);
+}
+
+public void PutString(byte[] dst, int off, String value, int opt)
+{
+}
 
 #define	PutString(...)	\
 	Macro(PutType(string, __VA_ARGS__))
