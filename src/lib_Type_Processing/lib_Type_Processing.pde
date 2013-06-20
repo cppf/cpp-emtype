@@ -3,9 +3,9 @@ byte[] buff = new byte[128];
 
 void setup()
 {
-  buff[1] = 0x04;
-  PutUshort(buff, 0, 65535);
-  println(GetUshort(buff, 0));
+  PutString(buff, 0, "Hello World", TYPE_ZEROED_STRING);
+  println(GetString(buff, 0, TYPE_ZEROED_STRING));
+  println(buff[10]);
 }
 
 void draw()

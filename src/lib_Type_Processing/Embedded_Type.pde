@@ -309,19 +309,19 @@ public double GetDouble(int off)
 // GetString(dst, sz, src, off, opt)
 // GetString(dst, sz, off, opt)
 // 
-// Returns the string at the specified source address with 
+// Returns the string from the specified source address with 
 // offset (src + off). If source address (src) is not specified,
 // then this library's internal buffer is used as the source.
 // 
 // Parameters:
-// dst:      destination address where the string is stored
+// dst:      destination buffer for string (it will be fetched here)
 // sz:       size of destination in bytes (max. length of string-1)
-// src:      the base address of stored data
+// src:      the base address of stored string (which will be fetched)
 // off:      offset of the stored string
 // opt:      options for string fetching (TYPE_ZEROED_STRING, TYPE_LENGTH_STRING)
 // 
 // Returns:
-// <type>_value:  the value of the specified <type>
+// string_value:  the fetched string
 // 
 final static int TYPE_ZEROED_STRING = 0;
 
@@ -394,10 +394,10 @@ public void PutBit(int off, int bit_no, int bit_value)
 // as the destination.
 // 
 // Parameters:
-// dst:		the base address of destination
-// off:		offset from which nibble index starts
-// nibble_no:	the index of the nibble (starts from 0)
-// nibble_value:	the value of the specified nibble (0 to 15 or 0x0 to 0xF)
+// dst:		  the base address of destination
+// off:		  offset from which nibble index starts
+// nibble_no:	  the index of the nibble (starts from 0)
+// nibble_value:  the value of the specified nibble (0 to 15 or 0x0 to 0xF)
 // 
 // Returns:
 // nothing
@@ -610,6 +610,24 @@ public void PutDouble(int off, double value)
   PutDouble(TypeBuffer, off, value);
 }
 
+
+
+// Function:
+// PutString(dst, off, value, opt)
+// 
+// Stores the string at the specified destination address with 
+// offset (dst + off). If destination address (dst) is not specified,
+// then this library's internal buffer is used as the destination.
+// 
+// Parameters:
+// dst:      destination base address where the string is to be stored
+// off:      offset to destination from where the stored string will start
+// value:    the string that is to be stored
+// opt:      options for string writing (TYPE_ZEROED_STRING, TYPE_LENGTH_STRING)
+// 
+// Returns:
+// nothing
+// 
 public void PutString(byte[] dst, int off, String value, int opt)
 {
   if((opt & TYPE_LENGTH_STRING) > 0)
@@ -620,6 +638,11 @@ public void PutString(byte[] dst, int off, String value, int opt)
   byte[] strbytes = value.getBytes();
   arrayCopy(strbytes, 0, dst, off, strbytes.length);
   if((opt & TYPE_LENGTH_STRING) == 0) dst[off + strbytes.length] = 0;
+}
+
+public void PutString(int off, String value, int opt)
+{
+  PutString(TypeBuffer, off, value, opt);
 }
 
 
