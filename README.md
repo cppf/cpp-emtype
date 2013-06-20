@@ -57,8 +57,8 @@ Embedded_Type has 3 types of functions:
 
 ### `Get<Bit/Nibble>`
 
-`Get<Bit/Nibble>(src, off, <bit/nibble>_no)`
-`Get<Bit/Nibble>(off, <bit/nibble>_no)`
+* `Get<Bit/Nibble>(src, off, <bit/nibble>_no)`
+* `Get<Bit/Nibble>(off, <bit/nibble>_no)`
 
 Returns the value of type at the specified type number
 `<bit/nibble>_no` from the specified source address with
@@ -76,8 +76,8 @@ Returns:
 
 ### `Get<Type>`
 
-`Get<Type>(src, off)`
-`Get<Type>(off)`
+* `Get<Type>(src, off)`
+* `Get<Type>(off)`
 
 Returns the `<Type>` value at the specified source address with 
 offset `(src + off)`. If source address `(src)` is not specified,
@@ -93,215 +93,184 @@ Returns:
 
 ### `GetString`
 
-GetString(dst, sz, src, off, opt)
-GetString(dst, sz, off, opt)
+* `GetString(dst, sz, src, off, opt)`
+* `GetString(dst, sz, off, opt)`
  
 Returns the string from the specified source address with 
 offset (src + off). If source address (src) is not specified,
 then this library's internal buffer is used as the source.
 
 Parameters:
-dst:      destination buffer for string (it will be fetched here)
-sz:       size of destination in bytes (max. length of string-1)
-src:      the base address of stored string (which will be fetched)
-off:      offset of the stored string
-opt:      options for string fetching (TYPE_ZEROED_STRING, TYPE_LENGTH_STRING)
+* `dst`:      destination buffer for string (it will be fetched here)
+* `sz`:       size of destination in bytes (max. length of string-1)
+* `src`:      the base address of stored string (which will be fetched)
+* `off`:      offset of the stored string
+* `opt`:      options for string fetching (TYPE_ZEROED_STRING, TYPE_LENGTH_STRING)
 
 Returns:
-string_value:  the fetched string
+`string_value`:  the fetched string
 
 
-### Put<Bit/Nibble>
+### `Put<Bit/Nibble>`
 
-PutBit(dst, off, bit_no, bit_value)
-PutBit(off, bit_no, bit_value)
-// 
-// Stores the value of bit at the specified bit number (bit_no)
-// to the specified destination address with offset (dst + off).
-// If destination address (dst) is not specified, then this
-// library's internal buffer is used as the destination.
-// 
-// Parameters:
-// dst:		the base address of destination
-// off:		offset from which bit index starts
-// bit_no:	the index of the bit (starts from 0)
-// bit_value:	the value of the specified bit (0 or 1)
-// 
-// Returns:
-// nothing
-// 
+* `Put<Bit/Nibble>(dst, off, <bit/nibble>_no, <bit/nibble>_value)`
+* `Put<Bit/Nibble>(off, <bit/nibble>_no, <bit/nibble>_value)`
 
+Stores the value of bit at the specified bit number (bit_no)
+to the specified destination address with offset (dst + off).
+If destination address (dst) is not specified, then this
+library's internal buffer is used as the destination.
+
+Parameters:
+* dst:		the base address of destination
+* off:		offset from which bit index starts
+* bit_no:	the index of the bit (starts from 0)
+* bit_value:	the value of the specified bit (0 or 1)
+
+Returns:
+nothing
 
 
-// Function:
-// PutNibble(dst, off, nibble_no, nibble_value)
-// PutNibble(off, nibble_no, nibble_value)
-// 
-// Stores the value of nibble at the specified nibble number
-// (nibble_no) to the specified destination address with
-// offset (dst + off). If destination address (dst) is not
-// specified, then this library's internal buffer is used
-// as the destination.
-// 
-// Parameters:
-// dst:		the base address of destination
-// off:		offset from which nibble index starts
-// nibble_no:	the index of the nibble (starts from 0)
-// nibble_value:	the value of the specified nibble (0 to 15 or 0x0 to 0xF)
-// 
-// Returns:
-// nothing
-// 
+### Put<Type>
+
+Put<type>(dst, off, value)
+Put<type>(off, value)
+
+Stores the value of <type> at the specified destination
+address with offset (dst + off). If destination address
+(dst) is not specified, then this library's internal
+buffer is used as the destination.
+
+Parameters:
+* dst:		the base address of destination
+* off:		offset where <type> value is stored
+* value:	the value of <type> to be stored
+
+Returns:
+nothing
 
 
+### PutString
 
-// Function:
-// Put<type>(dst, off, value)
-// Put<type>(off, value)
-// 
-// Stores the value of <type> at the specified destination
-// address with offset (dst + off). If destination address
-// (dst) is not specified, then this library's internal
-// buffer is used as the destination.
-// 
-// Parameters:
-// dst:		the base address of destination
-// off:		offset where <type> value is stored
-// value:	the value of <type> to be stored
-// 
-// Returns:
-// nothing
-// 
+* PutString(dst, off, value, opt)
+* PutString(off, value, opt)
 
+Stores the string at the specified destination address with 
+offset (dst + off). If destination address (dst) is not specified,
+then this library's internal buffer is used as the destination.
+
+Parameters:
+* dst:      destination base address where the string is to be stored
+* off:      offset to destination from where the stored string will start
+* value:    the string that is to be stored
+* opt:      options for string writing (TYPE_ZEROED_STRING, TYPE_LENGTH_STRING)
+
+Returns:
+nothing
 
 
-// Function:
-// PutString(dst, off, value, opt)
-// PutString(off, value, opt)
-// 
-// Stores the string at the specified destination address with 
-// offset (dst + off). If destination address (dst) is not specified,
-// then this library's internal buffer is used as the destination.
-// 
-// Parameters:
-// dst:      destination base address where the string is to be stored
-// off:      offset to destination from where the stored string will start
-// value:    the string that is to be stored
-// opt:      options for string writing (TYPE_ZEROED_STRING, TYPE_LENGTH_STRING)
-// 
-// Returns:
-// nothing
-// 
+### To<Type>
+
+* To<type>(smaller_data_types)
+
+Assembles smaller data types to a bigger data type. The
+assembling is done in little endian format, which means
+that the smaller data representing the least significant
+part should come first, and the smaller data representing
+the most significant part should come last.
+
+Parameters:
+* smaller_data_types:	list of bytes, shorts, ints, etc.
+
+Returns:
+<type>_value:	the value of the (bigger) assembled data type
 
 
+### DoReverse
 
-// Function:
-// To<type>(smaller_data_types)
-// 
-// Assembles smaller data types to a bigger data type. The
-// assembling is done in little endian format, which means
-// that the smaller data representing the least significant
-// part should come first, and the smaller data representing
-// the most significant part should come last.
-// 
-// Parameters:
-// smaller_data_types:	list of bytes, shorts, ints, etc.
-// 
-// Returns:
-// <type>_value:	the value of the (bigger) assembled data type
-// 
+* DoReverse(src, off, len)
+* DoReverse(off, len)
 
+Reverses the data stored at the source address (src + off)
+of specified length (len). The data at the source is directly
+reversed, and hence if the original data is required, then
+it is suggested to make a copy of it. If source base address
+is not specified, this library's internal buffer is assumed
+as the source base address.
 
+Parameters:
+* src:		the base address of source data
+* off:		offset to the actual data to be reversed (src + off)
+* len:		length of data to be reversed
 
-// Function:
-// DoReverse(src, off, len)
-// DoReverse(off, len)
-// 
-// Reverses the data stored at the source address (src + off)
-// of specified length (len). The data at the source is directly
-// reversed, and hence if the original data is required, then
-// it is suggested to make a copy of it. If source base address
-// is not specified, this library's internal buffer is assumed
-// as the source base address.
-// 
-// Parameters:
-// src:		the base address of source data
-// off:		offset to the actual data to be reversed (src + off)
-// len:		length of data to be reversed
-// 
-// Returns:
-// nothing
-// 
+Returns:
+nothing
 
 
+## Get<Byte/Ushort/Uint16>Sum
 
-// Function:
-// Get<Byte/Ushort/Uint16>Sum(src, off, len)
-// Get<Byte/Ushort/Uint16>Sum(off, len)
-// 
-// Finds the sum of all bytes/ushorts at the specified source
-// address (src + off) of the specified length (len). If source
-// base address is not specified, this library's internal buffer
-// is assumed as the source base address. This can be used to
-// calculate checksums.
-// 
-// Parameters:
-// src:		the base address of source data
-// off:		offset to the data to be summed (src + off)
-// len:		length of data to be summed
-// 
-// Returns:
-// <type>_value:  the summed value
-// 
+* Get<Byte/Ushort/Uint16>Sum(src, off, len)
+* Get<Byte/Ushort/Uint16>Sum(off, len)
 
+Finds the sum of all bytes/ushorts at the specified source
+address (src + off) of the specified length (len). If source
+base address is not specified, this library's internal buffer
+is assumed as the source base address. This can be used to
+calculate checksums.
+
+Parameters:
+* src:		the base address of source data
+* off:		offset to the data to be summed (src + off)
+* len:		length of data to be summed
+
+Returns:
+<type>_value:  the summed value
 
 
-// Function:
-// GetHexFromBin(dst, sz, src, off, len, opt)
-// GetHexFromBin(dst, sz, off, len, opt)
-// 
-// Get hexadecimal string (dst) of maximum specified size (sz) of
-// the soure binary data (src + off) of specified length (len). The
-// options (opt) specify how the conversion is to be performed, and
-// it takes as input a set of flags. If source base address is not
-// specified, this library's internal buffer is assumed as the source
-// base address.
-// 
-// Parameters:
-// dst:	      the destination string where hex string will be stored
-// sz:        the maximum possible size of the hex string (buffer size)
-// src:	      the base address of source binary data
-// off:	      offset to the binary data to be converted (src + off)
-// len:	      length of data to be converted
-// opt:	      conversion options (TYPE_ADD_SPACE, TYPE_ADD_CHAR, TYPE_BIG_ENDIAN)
-// 
-// Returns:
-// nothing
-// 
+### GetHexFromBin
+
+* GetHexFromBin(dst, sz, src, off, len, opt)
+* GetHexFromBin(dst, sz, off, len, opt)
+
+Get hexadecimal string (dst) of maximum specified size (sz) of
+the soure binary data (src + off) of specified length (len). The
+options (opt) specify how the conversion is to be performed, and
+it takes as input a set of flags. If source base address is not
+specified, this library's internal buffer is assumed as the source
+base address.
+
+Parameters:
+* dst:	      the destination string where hex string will be stored
+* sz:        the maximum possible size of the hex string (buffer size)
+* src:	      the base address of source binary data
+* off:	      offset to the binary data to be converted (src + off)
+* len:	      length of data to be converted
+* opt:	      conversion options (TYPE_ADD_SPACE, TYPE_ADD_CHAR, TYPE_BIG_ENDIAN)
+
+Returns:
+nothing
 
 
+### PutBinFromHex
 
-// Function:
-// PutBinFromHex(dst, off, len, src, opt)
-// PutBinFromHex(off, len, src, opt)
-// 
-// Putts binary data from the source hex string (src) to the destination
-// address (dst + off) of specified length len. The options (opt) specify
-// how the conversion is to be performed, and it takes as input a set of
-// flags. If destination base address is not specified, this library's
-// internal buffer is assumed as the destination base address.
-// 
-// Parameters:
-// dst:	      the base address of destination
-// off:	      the destination offset where the binary data will be stored (dst + off)
-// len:       length of data at destination
-// src:	      the hex string to be converted
-// opt:	      conversion options (TYPE_HAS_SPACE, TYPE_HAS_CHAR, TYPE_BIG_ENDIAN)
-//
-// Returns:
-// the converted data (dst)
-// 
+* PutBinFromHex(dst, off, len, src, opt)
+* PutBinFromHex(off, len, src, opt)
 
+Puts binary data from the source hex string (src) to the destination
+address (dst + off) of specified length len. The options (opt) specify
+how the conversion is to be performed, and it takes as input a set of
+flags. If destination base address is not specified, this library's
+internal buffer is assumed as the destination base address.
+
+Parameters:
+* dst:	      the base address of destination
+* off:	      the destination offset where the binary data will be stored (dst + off)
+* len:       length of data at destination
+* src:	      the hex string to be converted
+* opt:	      conversion options (TYPE_HAS_SPACE, TYPE_HAS_CHAR, TYPE_BIG_ENDIAN)
+
+Returns:
+the converted data (dst)
 
 
 ## Copyright and License
