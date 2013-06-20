@@ -53,7 +53,7 @@ In Processing, only default Java datatypes are available. The following replacem
 ## Internal Buffer
 
 Embedded_Type has an internal buffer used by it for type conversions.
-It can also be used as:
+It can also be used as (in C/C++/Arduino only):
 
 `TypeBuffer.<Type>[<index>]`
 
