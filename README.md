@@ -1,5 +1,5 @@
-----------------------------------------------------------------------------------------
-  Embedded_Type: Library header file for C/C++
+# [Embedded_Type v0.1](https://github.com/wolfram77/Embedded_Type) [![Build Status](https://secure.travis-ci.org/twitter/bootstrap.png)](http://travis-ci.org/twitter/bootstrap)
+: Library header file for C/C++
   File: Embedded_Type.h
 
   This file is part of Embedded_Type. For more details, go through
@@ -17,7 +17,6 @@
 
   You should have received a copy of the GNU General Public License
   along with Embedded_Type.  If not, see <http://www.gnu.org/licenses/>.
-----------------------------------------------------------------------------------------
 
 
 
