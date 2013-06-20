@@ -36,6 +36,18 @@ programs on Arduino and Processing. Created and maintained by [Subhajit Sahu](ht
 * `long64` | `ulong64`		64bits long
 * `string`			string (use String in Processing)
 
+In Processing, only default Java datatypes are available. The following replacements are required:
+* `bool` -> `boolean`
+* `sbyte` -> `byte`
+* `ushort` -> `int`
+* `int16` -> `short`
+* `uint16` -> `int`
+* `uint` -> `long`
+* `long32` -> `int`
+* `ulong32` -> `long`
+* `long64` -> `long`
+* `ulong64` -> `ulong`
+* `ulong` is a class whose object can be used as `<object>.Uint[<index>]`.
 
 
 ## Internal Buffer
@@ -224,7 +236,7 @@ Returns:
 
 <br\>
 <br\>
-## `DoAction` Functions
+## `Do<Action>` Functions
 
 
 ### `DoReverse`
