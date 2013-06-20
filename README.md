@@ -64,7 +64,7 @@ Embedded_Type has 7 types of functions:
 
 
 <br\>
-<hr\>
+<br\>
 ## `Get<Type>` Functions
 
 
@@ -88,6 +88,8 @@ Returns:
 
 
 
+<br\>
+<br\>
 ### `Get<Type>`
 
 * `Get<Type>(src, off)`
@@ -106,6 +108,8 @@ Returns:
 
 
 
+<br\>
+<br\>
 ### `GetString`
 
 * `GetString(dst, sz, src, off, opt)`
@@ -127,7 +131,7 @@ Returns:
 
 
 <br\>
-<hr\>
+<br\>
 ## `Put<Type>` Functions
 
 
@@ -152,6 +156,8 @@ nothing
 
 
 
+<br\>
+<br\>
 ### `Put<Type>`
 
 * `Put<type>(dst, off, value)`
@@ -172,6 +178,8 @@ nothing
 
 
 
+<br\>
+<br\>
 ### `PutString`
 
 * `PutString(dst, off, value, opt)`
@@ -192,6 +200,8 @@ nothing
 
 
 
+<br\>
+<br\>
 ## `To<Type>` Functions
 
 
@@ -213,7 +223,7 @@ Returns:
 
 
 <br\>
-<hr\>
+<br\>
 ## `DoAction` Functions
 
 
@@ -240,7 +250,7 @@ nothing
 
 
 <br\>
-<hr\>
+<br\>
 ## `Get<Type><Action>` Functions
 
 
@@ -265,6 +275,8 @@ Returns:
 
 
 
+<br\>
+<br\>
 ## `Get<Type1>From<Type2>` Functions
 
 
@@ -293,6 +305,8 @@ nothing
 
 
 
+<br\>
+<br\>
 ## `Put<Type1>From<Type2>` Functions
 
 
@@ -318,6 +332,8 @@ Returns:
 the converted data `(dst)`
 
 
+<br\>
+<br\>
 ## Copyright and License
 
 Embedded_Type : Library header file for C/C+/Arduino/Processing
