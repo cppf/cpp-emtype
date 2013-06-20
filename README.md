@@ -1,4 +1,4 @@
-# [Embedded_Type v0.1](https://github.com/wolfram77/Embedded_Type) [![Build Status](https://secure.travis-ci.org/twitter/bootstrap.png)](http://travis-ci.org/twitter/bootstrap)
+# [Embedded_Type v0.1](https://github.com/wolfram77/Embedded_Type) [![Build Status](https://raw.github.com/wolfram77/Embedded_Type/master/build.png)](https://raw.github.com/wolfram77/Embedded_Type/master/build.png)
 : Library header file for C/C++
   File: Embedded_Type.h
 
