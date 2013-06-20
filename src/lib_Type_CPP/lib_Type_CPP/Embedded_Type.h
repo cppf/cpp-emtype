@@ -24,7 +24,7 @@
 
 
 /*
-	Embedded_Type is a generic type conversion library for Arduino/Processing/Java/C/C++.
+	Embedded_Type is a generic type conversion library for Arduino/Processing/C/C++.
 	It has been developed mainly for simplifying the process of writing wireless communication
 	programs on Arduino and Processing. To use it (in C/C++), simply include this header file
 	in the main code.
@@ -258,8 +258,47 @@ TypeInternalBuffer	TypeBuffer;
 #define	GetDouble(...)	\
 	Macro(GetType(double, __VA_ARGS__))
 
-#define	GetString(...)	\
-	Macro(GetType(string, __VA_ARGS__))
+
+
+// Function:
+// GetString(dst, sz, src, off, opt)
+// GetString(dst, sz, off, opt)
+// 
+// Returns the string from the specified source address with 
+// offset (src + off). If source address (src) is not specified,
+// then this library's internal buffer is used as the source.
+// 
+// Parameters:
+// dst:      destination buffer for string (it will be fetched here)
+// sz:       size of destination in bytes (max. length of string-1)
+// src:      the base address of stored string (which will be fetched)
+// off:      offset of the stored string
+// opt:      options for string fetching (TYPE_ZEROED_STRING, TYPE_LENGTH_STRING)
+// 
+// Returns:
+// string_value:  the fetched string
+// 
+#define	TYPE_ZEROED_STRING			0
+
+#define	TYPE_LENGTH_STRING			1
+
+string GetStringExt(string dst, int sz, void* src, int off, byte opt)
+{
+	int len;
+	char* xsrc = ((char*)src) + off;
+	if(opt & TYPE_LENGTH_STRING) len = *xsrc;
+	else len = strlen(xsrc);
+	len = ((sz - 1) < len)? (sz - 1) : len;
+	memcpy(dst, xsrc+1, len);
+	dst[len] = '\0';
+	return dst;
+}
+
+#define	GetStringInt(dst, sz, off, opt)	\
+	GetStringExt(dst, sz, &TypeBuffer, off, opt)
+
+#define GetString(...)	\
+	Macro(Macro5(__VA_ARGS__, GetStringExt, GetStringInt)(__VA_ARGS__))
 
 
 
@@ -408,8 +447,39 @@ TypeInternalBuffer	TypeBuffer;
 #define	PutDouble(...)	\
 	Macro(PutType(double, __VA_ARGS__))
 
+
+
+// Function:
+// PutString(dst, off, value, opt)
+// PutString(off, value, opt)
+// 
+// Stores the string at the specified destination address with 
+// offset (dst + off). If destination address (dst) is not specified,
+// then this library's internal buffer is used as the destination.
+// 
+// Parameters:
+// dst:      destination base address where the string is to be stored
+// off:      offset to destination from where the stored string will start
+// value:    the string that is to be stored
+// opt:      options for string writing (TYPE_ZEROED_STRING, TYPE_LENGTH_STRING)
+// 
+// Returns:
+// nothing
+// 
+void PutStringExt(void* dst, int off, string value, byte opt)
+{
+	char* xdst = ((char*)dst) + off;
+	int len = strlen(value);
+	if(opt & TYPE_LENGTH_STRING) {*xdst = (char)len; xdst++;}
+	else len++;
+	memcpy(xdst, value, len);
+}
+
+#define	PutStringInt(off, value, opt)	\
+	PutStringExt(&TypeBuffer, off, value, opt)
+
 #define	PutString(...)	\
-	Macro(PutType(string, __VA_ARGS__))
+	Macro(Macro4(__VA_ARGS__, PutStringExt, PutStringInt)(__VA_ARGS__))
 
 
 
@@ -532,12 +602,11 @@ TypeInternalBuffer	TypeBuffer;
 #define	ToDouble(...)	\
 	Macro(Macro8(__VA_ARGS__, ToDoubleByt, _7, _6, _5, ToDoubleSrt, _3, ToDoubleInt)(__VA_ARGS__))
 
-// ToString?
-
 
 
 // Function:
 // DoReverse(src, off, len)
+// DoReverse(off, len)
 // 
 // Reverses the data stored at the source address (src + off)
 // of specified length (len). The data at the source is directly
@@ -552,7 +621,7 @@ TypeInternalBuffer	TypeBuffer;
 // len:		length of data to be reversed
 // 
 // Returns:
-// <type>_value:	the value of the (bigger) assembled data type
+// nothing
 // 
 void DoReverseExt(void* src, int off, int len)
 {
@@ -576,6 +645,7 @@ void DoReverseExt(void* src, int off, int len)
 
 // Function:
 // Get<Byte/Ushort/Uint16>Sum(src, off, len)
+// Get<Byte/Ushort/Uint16>Sum(off, len)
 // 
 // Finds the sum of all bytes/ushorts at the specified source
 // address (src + off) of the specified length (len). If source
@@ -589,7 +659,7 @@ void DoReverseExt(void* src, int off, int len)
 // len:		length of data to be summed
 // 
 // Returns:
-// <type>_value:	the summed value
+// <type>_value:  the summed value
 // 
 byte GetByteSumExt(void* src, int off, int len)
 {
@@ -627,24 +697,23 @@ ushort GetUshortSumExt(void* src, int off, int len)
 
 
 // Function:
-// PutHexFromBin(dst, dst_off, src, src_off, len, opt)
+// GetHexFromBin(dst, sz, src, off, len, opt)
+// GetHexFromBin(dst, sz, off, len, opt)
 // 
-// Stores hexadecimal string of the soure binary data (src + src_off)
-// of specified length (len) at the destination address (dst + dst_off).
-// The options (opt) specify how the conversion is to be performed,
-// and it takes as input a set of flags. If source base address is
-// not specified, this library's internal buffer is assumed as the
-// source base address. Destination address (dst + dst_off) is to be
-// specified always, which is where the converted hex string will be
-// stored.
+// Get hexadecimal string (dst) of maximum specified size (sz) of
+// the soure binary data (src + off) of specified length (len). The
+// options (opt) specify how the conversion is to be performed, and
+// it takes as input a set of flags. If source base address is not
+// specified, this library's internal buffer is assumed as the source
+// base address.
 // 
 // Parameters:
-// dst:		the base address of destination
-// dst_off:	the destination offset where the hex string will be stored (dst + dst_off)
-// src:		the base address of source binary data
-// src_off:	offset to the binary data to be converted (src + src_off)
-// len:		length of data to be converted
-// opt:		conversion options (TYPE_ADD_SPACE, TYPE_ADD_CHAR, TYPE_BIG_ENDIAN)
+// dst:	      the destination string where hex string will be stored
+// sz:        the maximum possible size of the hex string (buffer size)
+// src:	      the base address of source binary data
+// off:	      offset to the binary data to be converted (src + off)
+// len:	      length of data to be converted
+// opt:	      conversion options (TYPE_ADD_SPACE, TYPE_ADD_CHAR, TYPE_BIG_ENDIAN)
 // 
 // Returns:
 // nothing
@@ -693,26 +762,24 @@ void PutHexFromBinExt(string dst, int dst_off, void* src, int src_off, int len, 
 
 
 // Function:
-// PutBinFromHex(dst, dst_off, len, src, src_off, opt)
+// PutBinFromHex(dst, off, len, src, opt)
+// PutBinFromHex(off, len, src, opt)
 // 
-// Stores hexadecimal string of the soure binary data (src + src_off)
-// of specified length (len) at the destination address (dst + dst_off).
-// The options (opt) specify how the conversion is to be performed, and
-// it takes as input a set of flags. If destination base address is not 
-// specified, this library's internal buffer is assumed as the destination 
-// base address. Source address (src + src_off) is to be specified always, 
-// which is where the original hex string is stored.
+// Putts binary data from the source hex string (src) to the destination
+// address (dst + off) of specified length len. The options (opt) specify
+// how the conversion is to be performed, and it takes as input a set of
+// flags. If destination base address is not specified, this library's
+// internal buffer is assumed as the destination base address.
 // 
 // Parameters:
-// dst:		the base address of destination
-// dst_off:	the destination offset where the hex string will be stored (dst + dst_off)
-// src:		the base address of source binary data
-// src_off:	offset to the binary data to be converted (src + src_off)
-// len:		length of data to be converted
-// opt:		conversion options (TYPE_HAS_SPACE, TYPE_HAS_CHAR, TYPE_BIG_ENDIAN)
+// dst:	      the base address of destination
+// off:	      the destination offset where the binary data will be stored (dst + off)
+// len:       length of data at destination
+// src:	      the hex string to be converted
+// opt:	      conversion options (TYPE_HAS_SPACE, TYPE_HAS_CHAR, TYPE_BIG_ENDIAN)
 //
 // Returns:
-// nothing
+// the converted data (dst)
 // 
 void PutBinFromHexExt(void* dst, int dst_off, int len, string src, int src_off, byte opt)
 {

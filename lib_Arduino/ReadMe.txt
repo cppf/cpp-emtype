@@ -20,7 +20,7 @@
 ----------------------------------------------------------------------------------------
 	
 	
-Embedded_Type is a generic type conversion library for Arduino/Processing/Java/C/C++.
+Embedded_Type is a generic type conversion library for Arduino/Processing/C/C++.
 It has been developed mainly for simplifying the process of writing wireless communication
 programs on Arduino and Processing. To use it (in Arduino), copy the directory Embedded_Type
 to arduino_root_folder/libraries/. Then restart Arduino, goto Sketch->Add Library->

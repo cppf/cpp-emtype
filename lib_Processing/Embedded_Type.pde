@@ -24,7 +24,7 @@
 
 
 /*
-    Embedded_Type is a generic type conversion library for Arduino/Processing/C/C++.
+    Embedded_Type is a generic type conversion library for Arduino/Processing/Java/C/C++.
     It has been developed mainly for simplifying the process of writing wireless communication
     programs on Arduino and Processing. To use it (in Arduino), copy the directory, this file
     is in to arduino_root_folder/libraries/. Then restart Arduino, goto Sketch->Add Library->
@@ -94,8 +94,8 @@ public byte GetBit(int off, int bit_no)
 // is used as the source.
 // 
 // Parameters:
-// src:		the base address of stored data
-// off:		offset from which nibble index starts
+// src:			the base address of stored data
+// off:			offset from which nibble index starts
 // nibble_no:	the index of the nibble (starts from 0)
 // 
 // Returns:
@@ -122,8 +122,8 @@ public byte GetNibble(int off, int nibble_no)
 // then this library's internal buffer is used as the source.
 // 
 // Parameters:
-// src:		the base address of stored data
-// off:		offset of the <type> value
+// src:			the base address of stored data
+// off:			offset of the <type> value
 // 
 // Returns:
 // <type>_value:	the value of the specified <type>
