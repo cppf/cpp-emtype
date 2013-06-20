@@ -17,22 +17,22 @@ programs on Arduino and Processing. Created and maintained by [Subhajit Sahu](ht
 
 ### Constants
 
-`null`			Null Pointer
-`TRUE`			boolean true
-`FALSE`			boolean false
+* `null`			Null Pointer
+* `TRUE`			boolean true
+* `FALSE`			boolean false
 
 
 ### Datatypes
 
-`bool` | `boolean`		8bits boolean
-`sbyte` | `byte`		8bits byte
-`short` | `ushort`		16bits short
-`int16` | `uint16`		16bits int
-`int` | `uint`		platform dependent int
-`long32` | `ulong32`		32bits long
-`long` | `ulong`		platform dependent long
-`long64` | ulong64		64bits long
-`string`			string (use String in Processing)
+* `bool` | `boolean`		8bits boolean
+* `sbyte` | `byte`		8bits byte
+* `short` | `ushort`		16bits short
+* `int16` | `uint16`		16bits int
+* `int` | `uint`		platform dependent int
+* `long32` | `ulong32`		32bits long
+* `long` | `ulong`		platform dependent long
+* `long64` | ulong64		64bits long
+* `string`			string (use String in Processing)
 
 
 ## Internal Buffer
