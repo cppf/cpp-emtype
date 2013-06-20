@@ -5,12 +5,14 @@ It has been developed mainly for simplifying the process of writing wireless com
 programs on Arduino and Processing. Created and maintained by [Subhajit Sahu](https://github.com/wolfram77)
 
 
+
 ## Getting started
 
 * [Download the latest release](https://github.com/wolfram77/Embedded_Type/archive/master.zip)
 * For C/C++, directly include the header file lib_CPP/Embedded_Type.h in your C/C++ program.
 * For Arduino, copy the directory lib_Arduino/Embedded_Type to arduino_root_directory/libraries/
 * For Processing, copy the file lib_Processing/Embedded_Type.pde to your sketch.
+
 
 
 ## Using it
@@ -35,6 +37,7 @@ programs on Arduino and Processing. Created and maintained by [Subhajit Sahu](ht
 * `string`			string (use String in Processing)
 
 
+
 ## Internal Buffer
 
 Embedded_Type has an internal buffer used by it for type conversions.
@@ -42,20 +45,29 @@ It can also be used as:
 
 `TypeBuffer.<Type>[<index>]`
 
-where, `<Type>` is the name of a datatype, but starts with a captal character
+where, `Type` is the name of a datatype, but starts with a capital character
 as `Int` for `int` datatype.
+
 
 
 ## Functions
 
-Embedded_Type has 3 types of functions:
+Embedded_Type has 7 types of functions:
 
 * `Get<Type>`:	obtain a datatype from buffer
 * `Put<Type>`:	store a datatype onto buffer
 * `To<Type>`:	assemble smaller datatypes to a bigger one
+* `Do<Action>`: performs an action directly on the buffer (buffer is modified)
+* `Get<Type><Action>`: obtain the result of action performed on the buffer (buffer remains unchaged)
+* `Get<Type1>From<Type2>`: obtain a type1 data from another type2 data
+* `Put<Type1>From<Type2>`: store data of type1 from data of type2
 
 
-### `Get<Bit/Nibble>`
+
+### `Get<Type>` Functions
+
+
+#### `Get<Bit/Nibble>`
 
 * `Get<Bit/Nibble>(src, off, <bit/nibble>_no)`
 * `Get<Bit/Nibble>(off, <bit/nibble>_no)`
@@ -71,10 +83,11 @@ Parameters:
 * `<bit/nibble>_no`:		the index of the type (starts from 0)
  
 Returns:
-`<bit/nibble>_value`:	the value of the specified type
+* `<bit/nibble>_value`:	the value of the specified type
 
 
-### `Get<Type>`
+
+#### `Get<Type>`
 
 * `Get<Type>(src, off)`
 * `Get<Type>(off)`
@@ -88,16 +101,17 @@ Parameters:
 * `off`:		offset of the `<Type>` value
 
 Returns:
-`<type>_value`:	the value of the specified <type>
+* `<type>_value`:	the value of the specified `<Type>`
 
 
-### `GetString`
+
+#### `GetString`
 
 * `GetString(dst, sz, src, off, opt)`
 * `GetString(dst, sz, off, opt)`
  
 Returns the string from the specified source address with 
-offset (src + off). If source address (src) is not specified,
+offset `(src + off)`. If source address `(src)` is not specified,
 then this library's internal buffer is used as the source.
 
 Parameters:
@@ -105,73 +119,83 @@ Parameters:
 * `sz`:       size of destination in bytes (max. length of string-1)
 * `src`:      the base address of stored string (which will be fetched)
 * `off`:      offset of the stored string
-* `opt`:      options for string fetching (TYPE_ZEROED_STRING, TYPE_LENGTH_STRING)
+* `opt`:      options for string fetching (`TYPE_ZEROED_STRING`, `TYPE_LENGTH_STRING`)
 
 Returns:
-`string_value`:  the fetched string
+* `string_value`:  the fetched string
 
 
-### `Put<Bit/Nibble>`
+
+### `Put<Type>` Functions
+
+
+#### `Put<Bit/Nibble>`
 
 * `Put<Bit/Nibble>(dst, off, <bit/nibble>_no, <bit/nibble>_value)`
 * `Put<Bit/Nibble>(off, <bit/nibble>_no, <bit/nibble>_value)`
 
-Stores the value of bit at the specified bit number (bit_no)
-to the specified destination address with offset (dst + off).
-If destination address (dst) is not specified, then this
+Stores the value of type at the specified type number `(<bit/nibble>_no)`
+to the specified destination address with offset `(dst + off)`.
+If destination address `(dst)` is not specified, then this
 library's internal buffer is used as the destination.
 
 Parameters:
-* dst:		the base address of destination
-* off:		offset from which bit index starts
-* bit_no:	the index of the bit (starts from 0)
-* bit_value:	the value of the specified bit (0 or 1)
+* `dst`:		the base address of destination
+* `off`:		offset from which bit index starts
+* `bit_no`:	the index of the bit (starts from 0)
+* `bit_value`:	the value of the specified bit (0 or 1)
 
 Returns:
-nothing
+* nothing
 
 
-### Put<Type>
 
-Put<type>(dst, off, value)
-Put<type>(off, value)
+#### `Put<Type>`
 
-Stores the value of <type> at the specified destination
-address with offset (dst + off). If destination address
-(dst) is not specified, then this library's internal
+* `Put<type>(dst, off, value)`
+* `Put<type>(off, value)`
+
+Stores the value of `<Type>` at the specified destination
+address with offset `(dst + off)`. If destination address
+`(dst)` is not specified, then this library's internal
 buffer is used as the destination.
 
 Parameters:
-* dst:		the base address of destination
-* off:		offset where <type> value is stored
-* value:	the value of <type> to be stored
+* `dst`:		the base address of destination
+* `off`:		offset where `<Type>` value is stored
+* `value`:	the value of `<Type>` to be stored
 
 Returns:
-nothing
+* nothing
 
 
-### PutString
 
-* PutString(dst, off, value, opt)
-* PutString(off, value, opt)
+#### `PutString`
+
+* `PutString(dst, off, value, opt)`
+* `PutString(off, value, opt)`
 
 Stores the string at the specified destination address with 
-offset (dst + off). If destination address (dst) is not specified,
+offset `(dst + off)`. If destination address `(dst)` is not specified,
 then this library's internal buffer is used as the destination.
 
 Parameters:
-* dst:      destination base address where the string is to be stored
-* off:      offset to destination from where the stored string will start
-* value:    the string that is to be stored
-* opt:      options for string writing (TYPE_ZEROED_STRING, TYPE_LENGTH_STRING)
+* `dst`:      destination base address where the string is to be stored
+* `off`:      offset to destination from where the stored string will start
+* `value`:    the string that is to be stored
+* `opt`:      options for string writing (`TYPE_ZEROED_STRING`, `TYPE_LENGTH_STRING`)
 
 Returns:
-nothing
+* nothing
 
 
-### To<Type>
 
-* To<type>(smaller_data_types)
+### `To<Type>` Functions
+
+
+#### `To<Type>`
+
+* `To<type>(smaller_data_types)`
 
 Assembles smaller data types to a bigger data type. The
 assembling is done in little endian format, which means
