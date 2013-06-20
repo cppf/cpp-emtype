@@ -1,9 +1,9 @@
 ----------------------------------------------------------------------------------------
   Embedded_Type: Library header file for C/C++
-	File: Embedded_Type.h
+  File: Embedded_Type.h
 
   This file is part of Embedded_Type. For more details, go through
-	Readme.txt. For copyright information, go through copyright.txt.
+  Readme.txt. For copyright information, go through copyright.txt.
 
   Embedded_Type is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
