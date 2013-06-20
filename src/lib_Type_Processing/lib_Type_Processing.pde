@@ -3,9 +3,9 @@ byte[] buff = new byte[128];
 
 void setup()
 {
-  PutString(buff, 0, "Hello World", TYPE_ZEROED_STRING);
-  println(GetString(buff, 0, TYPE_ZEROED_STRING));
-  println(buff[10]);
+  println(ToLong64((byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)0, (byte)20));
+  PutBinFromHex(buff, 0, 8, GetHexFromBin(0, 8, TYPE_ADD_SPACE), TYPE_HAS_SPACE);
+  println(GetHexFromBin(buff, 0, 8, TYPE_ADD_SPACE));
 }
 
 void draw()

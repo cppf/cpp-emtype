@@ -308,6 +308,8 @@ public double GetDouble(int off)
 // Function:
 // GetString(dst, sz, src, off, opt)
 // GetString(dst, sz, off, opt)
+// GetString(src, off, opt)
+// GetString(off, opt)
 // 
 // Returns the string from the specified source address with 
 // offset (src + off). If source address (src) is not specified,
@@ -345,9 +347,19 @@ public String GetString(String dst, int sz, byte[] src, int off, int opt)
   return dst;
 }
 
+public String GetString(String dst, int sz, int off, int opt)
+{
+  return GetString(dst, sz, TypeBuffer, off, opt);
+}
+
 public String GetString(byte[] src, int off, int opt)
 {
   return GetString(new String(), 1024, src, off, opt);
+}
+
+public String GetString(int off, int opt)
+{
+  return GetString(new String(), 1024, TypeBuffer, off, opt);
 }
 
 
@@ -442,14 +454,14 @@ public void PutChar(int off, char value)
   TypeBuffer[off] = (byte)value;
 }
 
-public void PutByte(byte[] dst, int off, byte value)
+public void PutByte(byte[] dst, int off, int value)
 {
-  dst[off] = value;
+  dst[off] = (byte)value;
 }
 
-public void PutByte(int off, byte value)
+public void PutByte(int off, int value)
 {
-  TypeBuffer[off] = value;
+  TypeBuffer[off] = (byte)value;
 }
 
 public void PutBoolean(byte[] dst, int off, boolean value)
@@ -462,13 +474,13 @@ public void PutBoolean(int off, boolean value)
   TypeBuffer[off] = (byte)((value)? 1 : 0);
 }
 
-public void PutShort(byte[] dst, int off, short value)
+public void PutShort(byte[] dst, int off, int value)
 {
-  ByteBuffer b = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN).putShort(value);
+  ByteBuffer b = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN).putShort((short)value);
   b.position(0); b.get(dst, off, 2);
 }
 
-public void PutShort(int off, short value)
+public void PutShort(int off, int value)
 {
   PutShort(TypeBuffer, off, value);
 }
@@ -484,12 +496,12 @@ public void PutUshort(int off, int value)
   PutUshort(TypeBuffer, off, value);
 }
 
-public void PutInt16(byte[] dst, int off, short value)
+public void PutInt16(byte[] dst, int off, int value)
 {
   PutShort(dst, off, value);
 }
 
-public void PutInt16(int off, short value)
+public void PutInt16(int off, int value)
 {
   PutShort(TypeBuffer, off, value);
 }
@@ -614,6 +626,7 @@ public void PutDouble(int off, double value)
 
 // Function:
 // PutString(dst, off, value, opt)
+// PutString(off, value, opt)
 // 
 // Stores the string at the specified destination address with 
 // offset (dst + off). If destination address (dst) is not specified,
@@ -663,49 +676,49 @@ public void PutString(int off, String value, int opt)
 // <type>_value:	the value of the (bigger) assembled data type
 // 
 
-public byte ToNibble(byte bit3, byte bit2, byte bit1, byte bit0)
+public byte ToNibble(int bit3, int bit2, int bit1, int bit0)
 {
   return (byte)((bit3 << 3) | (bit2 << 2) | (bit1 << 1) | bit0);
 }
 
-public byte ToByte(byte nibble1, byte nibble0)
+public byte ToByte(int nibble1, int nibble0)
 {
   return (byte)((nibble1 << 4) | nibble0);
 }
 
-public byte ToByte(byte bit7, byte bit6, byte bit5, byte bit4, byte bit3, byte bit2, byte bit1, byte bit0)
+public byte ToByte(int bit7, int bit6, int bit5, int bit4, int bit3, int bit2, int bit1, int bit0)
 {
   return ToByte(ToNibble(bit7, bit6, bit5, bit4), ToNibble(bit3, bit2, bit1, bit0));
 }
 
-public char ToChar(byte nibble1, byte nibble0)
+public char ToChar(int nibble1, int nibble0)
 {
   return (char)ToByte(nibble1, nibble0);
 }
 
-public char ToChar(byte bit7, byte bit6, byte bit5, byte bit4, byte bit3, byte bit2, byte bit1, byte bit0)
+public char ToChar(int bit7, int bit6, int bit5, int bit4, int bit3, int bit2, int bit1, int bit0)
 {
   return (char)ToByte(bit7, bit6, bit5, bit4, bit3, bit2, bit1, bit0);
 }
 
-public short ToShort(byte byte1, byte byte0)
+public short ToShort(int byte1, int byte0)
 {
-  TypeBuffer[0] = byte0; TypeBuffer[1] = byte1;
+  TypeBuffer[0] = (byte)byte0; TypeBuffer[1] = (byte)byte1;
   return GetShort(TypeBuffer, 0);
 }
 
-public int ToUshort(byte byte1, byte byte0)
+public int ToUshort(int byte1, int byte0)
 {
-  TypeBuffer[0] = byte0; TypeBuffer[1] = byte1;
+  TypeBuffer[0] = (byte)byte0; TypeBuffer[1] = (byte)byte1;
   return GetUshort(TypeBuffer, 0);
 }
 
-public short ToInt16(byte byte1, byte byte0)
+public short ToInt16(int byte1, int byte0)
 {
   return ToShort(byte1, byte0);
 }
 
-public int ToUint16(byte byte1, byte byte0)
+public int ToUint16(int byte1, int byte0)
 {
   return ToUshort(byte1, byte0);
 }
@@ -716,10 +729,10 @@ public int ToInt(int ushort1, int ushort0)
   return GetInt(TypeBuffer, 0);
 }
 
-public int ToInt(byte byte3, byte byte2, byte byte1, byte byte0)
+public int ToInt(int byte3, int byte2, int byte1, int byte0)
 {
-  TypeBuffer[0] = byte0; TypeBuffer[1] = byte1;
-  TypeBuffer[2] = byte2; TypeBuffer[3] = byte3;
+  TypeBuffer[0] = (byte)byte0; TypeBuffer[1] = (byte)byte1;
+  TypeBuffer[2] = (byte)byte2; TypeBuffer[3] = (byte)byte3;
   return GetInt(TypeBuffer, 0);
 }
 
@@ -729,10 +742,10 @@ public long ToUint(int ushort1, int ushort0)
   return GetUint(TypeBuffer, 0);
 }
 
-public long ToUint(byte byte3, byte byte2, byte byte1, byte byte0)
+public long ToUint(int byte3, int byte2, int byte1, int byte0)
 {
-  TypeBuffer[0] = byte0; TypeBuffer[1] = byte1;
-  TypeBuffer[2] = byte2; TypeBuffer[3] = byte3;
+  TypeBuffer[0] = (byte)byte0; TypeBuffer[1] = (byte)byte1;
+  TypeBuffer[2] = (byte)byte2; TypeBuffer[3] = (byte)byte3;
   return GetUint(TypeBuffer, 0);
 }
 
@@ -741,7 +754,7 @@ public int ToLong32(int ushort1, int ushort0)
   return ToInt(ushort1, ushort0);
 }
 
-public int ToLong32(byte byte3, byte byte2, byte byte1, byte byte0)
+public int ToLong32(int byte3, int byte2, int byte1, int byte0)
 {
   return ToInt(byte3, byte2, byte1, byte0);
 }
@@ -751,7 +764,7 @@ public long ToUlong32(int ushort1, int ushort0)
   return ToUint(ushort1, ushort0);
 }
 
-public long ToUlong32(byte byte3, byte byte2, byte byte1, byte byte0)
+public long ToUlong32(int byte3, int byte2, int byte1, int byte0)
 {
   return ToUint(byte3, byte2, byte1, byte0);
 }
@@ -769,12 +782,12 @@ public long ToLong(int ushort3, int ushort2, int ushort1, int ushort0)
   return GetLong(TypeBuffer, 0);
 }
 
-public long ToLong(byte byte7, byte byte6, byte byte5, byte byte4, byte byte3, byte byte2, byte byte1, byte byte0)
+public long ToLong(int byte7, int byte6, int byte5, int byte4, int byte3, int byte2, int byte1, int byte0)
 {
-  TypeBuffer[0] = byte0; TypeBuffer[1] = byte1;
-  TypeBuffer[2] = byte2; TypeBuffer[3] = byte3;
-  TypeBuffer[4] = byte4; TypeBuffer[5] = byte5;
-  TypeBuffer[6] = byte6; TypeBuffer[7] = byte7;
+  TypeBuffer[0] = (byte)byte0; TypeBuffer[1] = (byte)byte1;
+  TypeBuffer[2] = (byte)byte2; TypeBuffer[3] = (byte)byte3;
+  TypeBuffer[4] = (byte)byte4; TypeBuffer[5] = (byte)byte5;
+  TypeBuffer[6] = (byte)byte6; TypeBuffer[7] = (byte)byte7;
   return GetLong(TypeBuffer, 0);
 }
 
@@ -791,12 +804,12 @@ public ulong ToUlong(int ushort3, int ushort2, int ushort1, int ushort0)
   return GetUlong(TypeBuffer, 0);
 }
 
-public ulong ToUlong(byte byte7, byte byte6, byte byte5, byte byte4, byte byte3, byte byte2, byte byte1, byte byte0)
+public ulong ToUlong(int byte7, int byte6, int byte5, int byte4, int byte3, int byte2, int byte1, int byte0)
 {
-  TypeBuffer[0] = byte0; TypeBuffer[1] = byte1;
-  TypeBuffer[2] = byte2; TypeBuffer[3] = byte3;
-  TypeBuffer[4] = byte4; TypeBuffer[5] = byte5;
-  TypeBuffer[6] = byte6; TypeBuffer[7] = byte7;
+  TypeBuffer[0] = (byte)byte0; TypeBuffer[1] = (byte)byte1;
+  TypeBuffer[2] = (byte)byte2; TypeBuffer[3] = (byte)byte3;
+  TypeBuffer[4] = (byte)byte4; TypeBuffer[5] = (byte)byte5;
+  TypeBuffer[6] = (byte)byte6; TypeBuffer[7] = (byte)byte7;
   return GetUlong(TypeBuffer, 0);
 }
 
@@ -810,7 +823,7 @@ public long ToLong64(int ushort3, int ushort2, int ushort1, int ushort0)
   return ToLong(ushort3, ushort2, ushort1, ushort0);
 }
 
-public long ToLong64(byte byte7, byte byte6, byte byte5, byte byte4, byte byte3, byte byte2, byte byte1, byte byte0)
+public long ToLong64(int byte7, int byte6, int byte5, int byte4, int byte3, int byte2, int byte1, int byte0)
 {
   return ToLong(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0);
 }
@@ -825,7 +838,7 @@ public ulong ToUlong64(int ushort3, int ushort2, int ushort1, int ushort0)
   return ToUlong(ushort3, ushort2, ushort1, ushort0);
 }
 
-public ulong ToUlong64(byte byte7, byte byte6, byte byte5, byte byte4, byte byte3, byte byte2, byte byte1, byte byte0)
+public ulong ToUlong64(int byte7, int byte6, int byte5, int byte4, int byte3, int byte2, int byte1, int byte0)
 {
   return ToUlong(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0);
 }
@@ -836,10 +849,10 @@ public float ToFloat(int ushort1, int ushort0)
   return GetFloat(TypeBuffer, 0);
 }
 
-public float ToFloat(byte byte3, byte byte2, byte byte1, byte byte0)
+public float ToFloat(int byte3, int byte2, int byte1, int byte0)
 {
-  TypeBuffer[0] = byte0; TypeBuffer[1] = byte1;
-  TypeBuffer[2] = byte2; TypeBuffer[3] = byte3;
+  TypeBuffer[0] = (byte)byte0; TypeBuffer[1] = (byte)byte1;
+  TypeBuffer[2] = (byte)byte2; TypeBuffer[3] = (byte)byte3;
   return GetFloat(TypeBuffer, 0);
 }
 
@@ -856,12 +869,12 @@ public double ToDouble(int ushort3, int ushort2, int ushort1, int ushort0)
   return GetDouble(TypeBuffer, 0);
 }
 
-public double ToDouble(byte byte7, byte byte6, byte byte5, byte byte4, byte byte3, byte byte2, byte byte1, byte byte0)
+public double ToDouble(int byte7, int byte6, int byte5, int byte4, int byte3, int byte2, int byte1, int byte0)
 {
-  TypeBuffer[0] = byte0; TypeBuffer[1] = byte1;
-  TypeBuffer[2] = byte2; TypeBuffer[3] = byte3;
-  TypeBuffer[4] = byte4; TypeBuffer[5] = byte5;
-  TypeBuffer[6] = byte6; TypeBuffer[7] = byte7;
+  TypeBuffer[0] = (byte)byte0; TypeBuffer[1] = (byte)byte1;
+  TypeBuffer[2] = (byte)byte2; TypeBuffer[3] = (byte)byte3;
+  TypeBuffer[4] = (byte)byte4; TypeBuffer[5] = (byte)byte5;
+  TypeBuffer[6] = (byte)byte6; TypeBuffer[7] = (byte)byte7;
   return GetDouble(TypeBuffer, 0);
 }
 
@@ -869,6 +882,7 @@ public double ToDouble(byte byte7, byte byte6, byte byte5, byte byte4, byte byte
 
 // Function:
 // DoReverse(src, off, len)
+// DoReverse(off, len)
 // 
 // Reverses the data stored at the source address (src + off)
 // of specified length (len). The data at the source is directly
@@ -906,6 +920,7 @@ void DoReverse(int off, int len)
 
 // Function:
 // Get<Byte/Ushort/Uint16>Sum(src, off, len)
+// Get<Byte/Ushort/Uint16>Sum(off, len)
 // 
 // Finds the sum of all bytes/ushorts at the specified source
 // address (src + off) of the specified length (len). If source
@@ -962,6 +977,9 @@ int GetUint16Sum(int off, int len)
 
 // Function:
 // GetHexFromBin(dst, sz, src, off, len, opt)
+// GetHexFromBin(src, off, len, opt)
+// GetHexFromBin(dst, sz, off, len, opt)
+// GetHexFromBin(off, len, opt)
 // 
 // Get hexadecimal string (dst) of maximum specified size (sz) of
 // the soure binary data (src + off) of specified length (len). The
@@ -1007,7 +1025,7 @@ public byte TYPE_BIN_TO_HEX(int bn)
   return (byte)((bn <= 9)? (bn + 0x30) : (bn + 0x37));
 }
 
-String GetHexFromBin(String dst, int sz, byte[] src, int off, int len, byte opt)
+String GetHexFromBin(String dst, int sz, byte[] src, int off, int len, int opt)
 {
   byte[] xdst = new byte[sz]; int doff = 0;
   int cbin = ((opt & TYPE_BIG_ENDIAN) > 0)? off : (off + len - 1);
@@ -1023,17 +1041,17 @@ String GetHexFromBin(String dst, int sz, byte[] src, int off, int len, byte opt)
   return dst;
 }
 
-String GetHexFromBin(byte[] src, int off, int len, byte opt)
+String GetHexFromBin(byte[] src, int off, int len, int opt)
 {
   return GetHexFromBin(new String(), 1024, src, off, len, opt);
 }
 
-String GetHexFromBin(String dst, int sz, int off, int len, byte opt)
+String GetHexFromBin(String dst, int sz, int off, int len, int opt)
 {
   return GetHexFromBin(dst, sz, TypeBuffer, off, len, opt);
 }
 
-String GetHexFromBin(int off, int len, byte opt)
+String GetHexFromBin(int off, int len, int opt)
 {
   return GetHexFromBin(new String(), 1024, TypeBuffer, off, len, opt);
 }
@@ -1041,14 +1059,14 @@ String GetHexFromBin(int off, int len, byte opt)
 
 
 // Function:
-// GetBinFromHex(dst, dst_off, len, src, src_off, opt)
+// PutBinFromHex(dst, off, len, src, opt)
+// PutBinFromHex(off, len, src, opt)
 // 
-// Gets binary data from the source hex string (src) to the destination
+// Putts binary data from the source hex string (src) to the destination
 // address (dst + off) of specified length len. The options (opt) specify
 // how the conversion is to be performed, and it takes as input a set of
 // flags. If destination base address is not specified, this library's
-// internal buffer is assumed as the destination base address. Source
-// string (src) must always be specified. 
+// internal buffer is assumed as the destination base address.
 // 
 // Parameters:
 // dst:	      the base address of destination
@@ -1060,7 +1078,7 @@ String GetHexFromBin(int off, int len, byte opt)
 // Returns:
 // the converted data (dst)
 // 
-byte[] GetBinFromHex(byte[] dst, int off, int len, String src, byte opt)
+byte[] PutBinFromHex(byte[] dst, int off, int len, String src, int opt)
 {
   byte[] xsrc = src.getBytes();
   int hsrc = xsrc.length - 1;
@@ -1076,9 +1094,9 @@ byte[] GetBinFromHex(byte[] dst, int off, int len, String src, byte opt)
   return dst;
 }
 
-byte[] GetBinFromHex(int off, int len, String src, byte opt)
+byte[] PutBinFromHex(int off, int len, String src, int opt)
 {
-  return GetBinFromHex(TypeBuffer, off, len, src, opt);
+  return PutBinFromHex(TypeBuffer, off, len, src, opt);
 }
 
 
