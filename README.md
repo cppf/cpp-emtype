@@ -65,10 +65,10 @@ Embedded_Type has 7 types of functions:
 
 <br\>
 <hr\>
-### `Get<Type>` Functions
+## `Get<Type>` Functions
 
 
-#### `Get<Bit/Nibble>`
+### `Get<Bit/Nibble>`
 
 * `Get<Bit/Nibble>(src, off, <bit/nibble>_no)`
 * `Get<Bit/Nibble>(off, <bit/nibble>_no)`
@@ -88,7 +88,7 @@ Returns:
 
 
 
-#### `Get<Type>`
+### `Get<Type>`
 
 * `Get<Type>(src, off)`
 * `Get<Type>(off)`
@@ -106,7 +106,7 @@ Returns:
 
 
 
-#### `GetString`
+### `GetString`
 
 * `GetString(dst, sz, src, off, opt)`
 * `GetString(dst, sz, off, opt)`
@@ -128,10 +128,10 @@ Returns:
 
 <br\>
 <hr\>
-### `Put<Type>` Functions
+## `Put<Type>` Functions
 
 
-#### `Put<Bit/Nibble>`
+### `Put<Bit/Nibble>`
 
 * `Put<Bit/Nibble>(dst, off, <bit/nibble>_no, <bit/nibble>_value)`
 * `Put<Bit/Nibble>(off, <bit/nibble>_no, <bit/nibble>_value)`
@@ -152,7 +152,7 @@ nothing
 
 
 
-#### `Put<Type>`
+### `Put<Type>`
 
 * `Put<type>(dst, off, value)`
 * `Put<type>(off, value)`
@@ -172,7 +172,7 @@ nothing
 
 
 
-#### `PutString`
+### `PutString`
 
 * `PutString(dst, off, value, opt)`
 * `PutString(off, value, opt)`
@@ -192,10 +192,10 @@ nothing
 
 
 
-### `To<Type>` Functions
+## `To<Type>` Functions
 
 
-#### `To<Type>`
+### `To<Type>`
 
 * `To<type>(smaller_data_types)`
 
@@ -214,10 +214,10 @@ Returns:
 
 <br\>
 <hr\>
-### `DoAction` Functions
+## `DoAction` Functions
 
 
-#### `DoReverse`
+### `DoReverse`
 
 * `DoReverse(src, off, len)`
 * `DoReverse(off, len)`
@@ -241,10 +241,10 @@ nothing
 
 <br\>
 <hr\>
-### `Get<Type><Action>` Functions
+## `Get<Type><Action>` Functions
 
 
-#### `Get<Byte/Ushort/Uint16>Sum`
+### `Get<Byte/Ushort/Uint16>Sum`
 
 * `Get<Byte/Ushort/Uint16>Sum(src, off, len)`
 * `Get<Byte/Ushort/Uint16>Sum(off, len)`
@@ -265,10 +265,10 @@ Returns:
 
 
 
-### `Get<Type1>From<Type2>` Functions
+## `Get<Type1>From<Type2>` Functions
 
 
-#### `GetHexFromBin`
+### `GetHexFromBin`
 
 * `GetHexFromBin(dst, sz, src, off, len, opt)`
 * `GetHexFromBin(dst, sz, off, len, opt)`
@@ -293,10 +293,10 @@ nothing
 
 
 
-### `Put<Type1>From<Type2>` Functions
+## `Put<Type1>From<Type2>` Functions
 
 
-### `PutBinFromHex`
+## `PutBinFromHex`
 
 * `PutBinFromHex(dst, off, len, src, opt)`
 * `PutBinFromHex(off, len, src, opt)`
