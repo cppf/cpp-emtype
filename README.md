@@ -31,7 +31,7 @@ programs on Arduino and Processing. Created and maintained by [Subhajit Sahu](ht
 * `int` | `uint`		platform dependent int
 * `long32` | `ulong32`		32bits long
 * `long` | `ulong`		platform dependent long
-* `long64` | ulong64		64bits long
+* `long64` | `ulong64`		64bits long
 * `string`			string (use String in Processing)
 
 
@@ -40,58 +40,58 @@ programs on Arduino and Processing. Created and maintained by [Subhajit Sahu](ht
 Embedded_Type has an internal buffer used by it for type conversions.
 It can also be used as:
 
-TypeBuffer.<Type>[<index>]
+`TypeBuffer.<Type>[<index>]`
 
-where, Type is the name of a datatype, but starts with a captal character
-as Int for int datatype.
+where, `<Type>` is the name of a datatype, but starts with a captal character
+as `Int` for `int` datatype.
 
 
 ## Functions
 
 Embedded_Type has 3 types of functions:
 
-* Get<Type>:	obtain a datatype from buffer
-* Put<Type>:	store a datatype onto buffer
-* To<Type>:	assemble smaller datatypes to a bigger one
+* `Get<Type>`:	obtain a datatype from buffer
+* `Put<Type>`:	store a datatype onto buffer
+* `To<Type>`:	assemble smaller datatypes to a bigger one
 
 
-### Get<Bit/Nibble>
+### `Get<Bit/Nibble>`
 
-Get<Bit/Nibble>(src, off, <bit/nibble>_no)
-Get<Bit/Nibble>(off, <bit/nibble>_no)
+`Get<Bit/Nibble>(src, off, <bit/nibble>_no)`
+`Get<Bit/Nibble>(off, <bit/nibble>_no)`
 
 Returns the value of type at the specified type number
-<bit/nibble>_no from the specified source address with
-offset (src + off). If source address (src) is not specified,
+`<bit/nibble>_no` from the specified source address with
+offset `(src + off)`. If source address `(src)` is not specified,
 then this library's internal buffer is used as the source.
 
 Parameters:
-src:		the base address of stored data
-off:		offset from which type index starts
-bit_no:		the index of the type (starts from 0)
+* `src`:		the base address of stored data
+* `off`:		offset from which type index starts
+* `<bit/nibble>_no`:		the index of the type (starts from 0)
  
 Returns:
-<bit/nibble>_value:	the value of the specified type
+`<bit/nibble>_value`:	the value of the specified type
 
 
-### Get<Type>
+### `Get<Type>`
 
-Get<type>(src, off)
-Get<type>(off)
+`Get<Type>(src, off)`
+`Get<Type>(off)`
 
-Returns the <type> value at the specified source address with 
-offset (src + off). If source address (src) is not specified,
+Returns the `<Type>` value at the specified source address with 
+offset `(src + off)`. If source address `(src)` is not specified,
 then this library's internal buffer is used as the source.
 
 Parameters:
-src:		the base address of stored data
-off:		offset of the <type> value
+* `src`:		the base address of stored data
+* `off`:		offset of the `<Type>` value
 
 Returns:
-<type>_value:	the value of the specified <type>
+`<type>_value`:	the value of the specified <type>
 
 
-### GetString
+### `GetString`
 
 GetString(dst, sz, src, off, opt)
 GetString(dst, sz, off, opt)
