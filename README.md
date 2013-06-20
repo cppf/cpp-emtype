@@ -63,7 +63,8 @@ Embedded_Type has 7 types of functions:
 * `Put<Type1>From<Type2>`: store data of type1 from data of type2
 
 
-
+<br\>
+<hr\>
 ### `Get<Type>` Functions
 
 
@@ -83,7 +84,7 @@ Parameters:
 * `<bit/nibble>_no`:		the index of the type (starts from 0)
  
 Returns:
-* `<bit/nibble>_value`:	the value of the specified type
+`<bit/nibble>_value`:	the value of the specified type
 
 
 
@@ -101,7 +102,7 @@ Parameters:
 * `off`:		offset of the `<Type>` value
 
 Returns:
-* `<type>_value`:	the value of the specified `<Type>`
+`<type>_value`:	the value of the specified `<Type>`
 
 
 
@@ -122,10 +123,11 @@ Parameters:
 * `opt`:      options for string fetching (`TYPE_ZEROED_STRING`, `TYPE_LENGTH_STRING`)
 
 Returns:
-* `string_value`:  the fetched string
+`string_value`:  the fetched string
 
 
-
+<br\>
+<hr\>
 ### `Put<Type>` Functions
 
 
@@ -146,7 +148,7 @@ Parameters:
 * `bit_value`:	the value of the specified bit (0 or 1)
 
 Returns:
-* nothing
+nothing
 
 
 
@@ -166,7 +168,7 @@ Parameters:
 * `value`:	the value of `<Type>` to be stored
 
 Returns:
-* nothing
+nothing
 
 
 
@@ -186,7 +188,7 @@ Parameters:
 * `opt`:      options for string writing (`TYPE_ZEROED_STRING`, `TYPE_LENGTH_STRING`)
 
 Returns:
-* nothing
+nothing
 
 
 
@@ -204,97 +206,116 @@ part should come first, and the smaller data representing
 the most significant part should come last.
 
 Parameters:
-* smaller_data_types:	list of bytes, shorts, ints, etc.
+* `smaller_data_types`:	list of bytes, shorts, ints, etc.
 
 Returns:
-<type>_value:	the value of the (bigger) assembled data type
+`<type>_value`:	the value of the (bigger) assembled data type
 
 
-### DoReverse
+<br\>
+<hr\>
+### `DoAction` Functions
 
-* DoReverse(src, off, len)
-* DoReverse(off, len)
 
-Reverses the data stored at the source address (src + off)
-of specified length (len). The data at the source is directly
+#### `DoReverse`
+
+* `DoReverse(src, off, len)`
+* `DoReverse(off, len)`
+
+Reverses the data stored at the source address `(src + off)`
+of specified length `(len)`. The data at the source is directly
 reversed, and hence if the original data is required, then
 it is suggested to make a copy of it. If source base address
 is not specified, this library's internal buffer is assumed
 as the source base address.
 
 Parameters:
-* src:		the base address of source data
-* off:		offset to the actual data to be reversed (src + off)
-* len:		length of data to be reversed
+* `src`:		the base address of source data
+* `off`:		offset to the actual data to be reversed `(src + off)`
+* `len`:		length of data to be reversed
 
 Returns:
 nothing
 
 
-## Get<Byte/Ushort/Uint16>Sum
 
-* Get<Byte/Ushort/Uint16>Sum(src, off, len)
-* Get<Byte/Ushort/Uint16>Sum(off, len)
+<br\>
+<hr\>
+### `Get<Type><Action>` Functions
+
+
+#### `Get<Byte/Ushort/Uint16>Sum`
+
+* `Get<Byte/Ushort/Uint16>Sum(src, off, len)`
+* `Get<Byte/Ushort/Uint16>Sum(off, len)`
 
 Finds the sum of all bytes/ushorts at the specified source
-address (src + off) of the specified length (len). If source
+address `(src + off)` of the specified length `(len)`. If source
 base address is not specified, this library's internal buffer
 is assumed as the source base address. This can be used to
 calculate checksums.
 
 Parameters:
-* src:		the base address of source data
-* off:		offset to the data to be summed (src + off)
-* len:		length of data to be summed
+* `src`:		the base address of source data
+* `off`:		offset to the data to be summed `(src + off)`
+* `len`:		length of data to be summed
 
 Returns:
-<type>_value:  the summed value
+`<type>_value`:  the summed value
 
 
-### GetHexFromBin
 
-* GetHexFromBin(dst, sz, src, off, len, opt)
-* GetHexFromBin(dst, sz, off, len, opt)
+### `Get<Type1>From<Type2>` Functions
 
-Get hexadecimal string (dst) of maximum specified size (sz) of
-the soure binary data (src + off) of specified length (len). The
-options (opt) specify how the conversion is to be performed, and
+
+#### `GetHexFromBin`
+
+* `GetHexFromBin(dst, sz, src, off, len, opt)`
+* `GetHexFromBin(dst, sz, off, len, opt)`
+
+Get hexadecimal string `(dst)` of maximum specified size `(sz)` of
+the soure binary data `(src + off)` of specified length `(len)`. The
+options `(opt)` specify how the conversion is to be performed, and
 it takes as input a set of flags. If source base address is not
 specified, this library's internal buffer is assumed as the source
 base address.
 
 Parameters:
-* dst:	      the destination string where hex string will be stored
-* sz:        the maximum possible size of the hex string (buffer size)
-* src:	      the base address of source binary data
-* off:	      offset to the binary data to be converted (src + off)
-* len:	      length of data to be converted
-* opt:	      conversion options (TYPE_ADD_SPACE, TYPE_ADD_CHAR, TYPE_BIG_ENDIAN)
+* `dst`:	      the destination string where hex string will be stored
+* `sz`:        the maximum possible size of the hex string (buffer size)
+* `src`:	      the base address of source binary data
+* `off`:	      offset to the binary data to be converted `(src + off)`
+* `len`:	      length of data to be converted
+* `opt`:	      conversion options (`TYPE_ADD_SPACE`, `TYPE_ADD_CHAR`, `TYPE_BIG_ENDIAN`)
 
 Returns:
 nothing
 
 
-### PutBinFromHex
 
-* PutBinFromHex(dst, off, len, src, opt)
-* PutBinFromHex(off, len, src, opt)
+### `Put<Type1>From<Type2>` Functions
 
-Puts binary data from the source hex string (src) to the destination
-address (dst + off) of specified length len. The options (opt) specify
+
+### `PutBinFromHex`
+
+* `PutBinFromHex(dst, off, len, src, opt)`
+* `PutBinFromHex(off, len, src, opt)`
+
+Puts binary data from the source hex string `(src)` to the destination
+address `(dst + off)` of specified length len. The options `(opt)` specify
 how the conversion is to be performed, and it takes as input a set of
 flags. If destination base address is not specified, this library's
 internal buffer is assumed as the destination base address.
 
 Parameters:
-* dst:	      the base address of destination
-* off:	      the destination offset where the binary data will be stored (dst + off)
-* len:       length of data at destination
-* src:	      the hex string to be converted
-* opt:	      conversion options (TYPE_HAS_SPACE, TYPE_HAS_CHAR, TYPE_BIG_ENDIAN)
+* `dst`:	      the base address of destination
+* `off`:	      the destination offset where the binary data will be stored `(dst + off)`
+* `len`:       length of data at destination
+* `src`:	      the hex string to be converted
+* `opt`:	      conversion options (`TYPE_HAS_SPACE`, `TYPE_HAS_CHAR`, `TYPE_BIG_ENDIAN`)
 
 Returns:
-the converted data (dst)
+the converted data `(dst)`
 
 
 ## Copyright and License
