@@ -349,7 +349,7 @@ the converted data `(dst)`
 <br\>
 ## Copyright and License
 
-emType : Library header file for Arduino/Waspmote/Processing/C/C++
+emType : Library for Arduino/Waspmote/Processing/C/C++
 
 emType is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
