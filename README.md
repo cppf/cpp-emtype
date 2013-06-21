@@ -1,4 +1,4 @@
-# [emType v0.1.2](https://github.com/wolfram77/emType) [![Build Status](https://raw.github.com/wolfram77/emType/master/build.png)](https://raw.github.com/wolfram77/emType/master/build.png)
+# [emType v0.2](https://github.com/wolfram77/emType) [![Build Status](https://raw.github.com/wolfram77/emType/master/build.png)](https://raw.github.com/wolfram77/emType/master/build.png)
 
 emType is a generic type conversion library for [Arduino](http://arduino.cc/), [Waspmote](http://www.libelium.com/products/waspmote/), [Processing](http://www.processing.org/), C/C++.
 It has been developed mainly for simplifying the process of writing wireless communication
@@ -8,7 +8,7 @@ programs on Arduino, Waspmote and Processing. Created and maintained by [Subhaji
 
 ## Getting started
 
-* [Download the latest release](https://github.com/wolfram77/emType/archive/master.zip)
+* [Download the latest release](https://github.com/wolfram77/emType/version/emType.zip)
 * For Arduino, copy the file `libArduino/emType.h` to your sketch folder and include it in main code.
 * For Waspmote, copy the file `libWaspmote/emType.h` to your sketch folder and include it in main code.
 * For Processing, copy the file `libProcessing/emType.pde` to your sketch folder and include it in main code.
