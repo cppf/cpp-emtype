@@ -88,7 +88,7 @@ GetByteSum		KEYWORD2
 GetUshortSum	KEYWORD2
 GetUint16Sum	KEYWORD2
 GetUintSum		KEYWORD2
-PutHexFromBin	KEYWORD2
+GetHexFromBin	KEYWORD2
 PutBinFromHex	KEYWORD2
 
 #######################################

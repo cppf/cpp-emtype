@@ -24,9 +24,9 @@
 
 
 /*
-	Embedded_Type is a generic type conversion library for Arduino/Processing/C/C++.
+	Embedded_Type is a generic type conversion library for Arduino/Libelium Waspmote/Processing/C/C++.
 	It has been developed mainly for simplifying the process of writing wireless communication
-	programs on Arduino and Processing. To use it (in C/C++), simply include this header file
+	programs on Arduino, Waspmote and Processing. To use it (in C/C++), simply include this header file
 	in the main code.
 */
 

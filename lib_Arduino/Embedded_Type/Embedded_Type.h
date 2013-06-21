@@ -1,6 +1,6 @@
 /*
 ----------------------------------------------------------------------------------------
-	Embedded_Type: Library header file for Ardino
+	Embedded_Type: Library header file for Arudino
 	File: Embedded_Type.h
 
     This file is part of Embedded_Type. For more details, go through
@@ -24,9 +24,9 @@
 
 
 /*
-	Embedded_Type is a generic type conversion library for Arduino/Processing/Java/C/C++.
+	Embedded_Type is a generic type conversion library for Arduino/Libelium Waspmote/Processing/C/C++.
 	It has been developed mainly for simplifying the process of writing wireless communication
-	programs on Arduino and Processing. To use it (in Arduino), copy the directory, this file
+	programs on Arduino, Waspmote and Processing. To use it (in Arduino), copy the directory, this file
 	is in to arduino_root_folder/libraries/. Then restart Arduino, goto Sketch->Add Library->
 	Embedded_Type.
 */
