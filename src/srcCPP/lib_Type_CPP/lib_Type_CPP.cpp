@@ -36,11 +36,12 @@ byte buff[] = {1, 0, 2, 0, 4, 5, 6, 7, 8, 9};
 int _tmain(int argc, _TCHAR* argv[])
 {
 	char str[128];
-	TypeBuffer.Byte[1] = 65;
-	PutHexFromBin(str, 0, 0, 2, TYPE_LITTLE_ENDIAN | TYPE_ADD_SPACE | TYPE_ADD_CHAR);
+	emType.Byte[1] = 65;
+	GetHexFromBin(str, 10, &emType, 0, 2, TYPE_LITTLE_ENDIAN | TYPE_ADD_SPACE | TYPE_ADD_CHAR);
+	printf("str = %s\n", str);
 	strcpy(str, "103");
-	PutBinFromHex(buff, 0, 4, str, 0, TYPE_LITTLE_ENDIAN);
-	printf("The short is: %s\n", str);
+	PutBinFromHex(0, 4, str, TYPE_LITTLE_ENDIAN);
+	printf("The short is: %d\n", GetShort(buff, 0));
 
 	// wait for keypress before exit
 	system("PAUSE");
