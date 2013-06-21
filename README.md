@@ -1,6 +1,6 @@
 # [emType v0.1.2](https://github.com/wolfram77/emType) [![Build Status](https://raw.github.com/wolfram77/emType/master/build.png)](https://raw.github.com/wolfram77/emType/master/build.png)
 
-emType is a generic type conversion library for [Arduino](http://arduino.cc/), [Waspmote](http://www.libelium.com/products/waspmote/), [Processing](http://www.processing.org/) ,C/C++.
+emType is a generic type conversion library for [Arduino](http://arduino.cc/), [Waspmote](http://www.libelium.com/products/waspmote/), [Processing](http://www.processing.org/), C/C++.
 It has been developed mainly for simplifying the process of writing wireless communication
 programs on Arduino, Waspmote and Processing. Created and maintained by [Subhajit Sahu](https://github.com/wolfram77)
 
@@ -8,10 +8,10 @@ programs on Arduino, Waspmote and Processing. Created and maintained by [Subhaji
 
 ## Getting started
 
-* [Download the latest release](https://github.com/wolfram77/Embedded_Type/archive/master.zip)
-* For C/C++, directly include the header file lib_CPP/Embedded_Type.h in your C/C++ program.
-* For Arduino, copy the directory lib_Arduino/Embedded_Type to arduino_root_directory/libraries/
-* For Processing, copy the file lib_Processing/Embedded_Type.pde to your sketch.
+* [Download the latest release](https://github.com/wolfram77/emType/archive/master.zip)
+* For C/C++, directly include the header file `lib_CPP/emType.h` in your C/C++ program.
+* For Arduino, copy the directory `lib_Arduino/emType` to `arduino_root_directory/libraries/`
+* For Processing, copy the file `lib_Processing/emType.pde` to your sketch.
 
 
 
