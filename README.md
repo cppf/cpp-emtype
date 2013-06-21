@@ -1,8 +1,8 @@
-# [Embedded_Type v0.1](https://github.com/wolfram77/Embedded_Type) [![Build Status](https://raw.github.com/wolfram77/Embedded_Type/master/build.png)](https://raw.github.com/wolfram77/Embedded_Type/master/build.png)
+# [emType v0.1.2](https://github.com/wolfram77/emType) [![Build Status](https://raw.github.com/wolfram77/emType/master/build.png)](https://raw.github.com/wolfram77/emType/master/build.png)
 
-Embedded_Type is a generic type conversion library for Arduino/Processing/C/C++.
+emType is a generic type conversion library for Arduino/Waspmote/Processing/C/C++.
 It has been developed mainly for simplifying the process of writing wireless communication
-programs on Arduino and Processing. Created and maintained by [Subhajit Sahu](https://github.com/wolfram77)
+programs on Arduino, Waspmote and Processing. Created and maintained by [Subhajit Sahu](https://github.com/wolfram77)
 
 
 
