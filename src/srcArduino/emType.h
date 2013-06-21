@@ -1,17 +1,17 @@
 /*
 ----------------------------------------------------------------------------------------
-	Embedded_Type: Library header file for Arduino
-	File: Embedded_Type.h
+	emType: Library header file for Arduino
+	File: emType.h
 
-    This file is part of Embedded_Type. For more details, go through
+    This file is part of emType. For more details, go through
 	Readme.txt. For copyright information, go through copyright.txt.
 
-    Embedded_Type is free software: you can redistribute it and/or modify
+    emType is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    Embedded_Type is distributed in the hope that it will be useful,
+    emType is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
@@ -24,17 +24,17 @@
 
 
 /*
-	Embedded_Type is a generic type conversion library for Arduino/Libelium Waspmote/Processing/C/C++.
+	emType is a generic type conversion library for Arduino/Libelium Waspmote/Processing/C/C++.
 	It has been developed mainly for simplifying the process of writing wireless communication
 	programs on Arduino and Processing. To use it (in Arduino), copy the directory, this file
 	is in to arduino_root_folder/libraries/. Then restart Arduino, goto Sketch->Add Library->
-	Embedded_Type.
+	emType.
 */
 
 
 
-#ifndef	_Embedded_Type_h_
-#define	_Embedded_Type_h_
+#ifndef	_emType_h_
+#define	_emType_h_
 
 
 

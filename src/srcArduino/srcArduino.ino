@@ -1,6 +1,3 @@
-#include <Embedded_Type.h>
-
-
 /*
 ----------------------------------------------------------------------------------------
     Embedded_Type: Testing and debugging source code (Visual Studio)
@@ -24,15 +21,16 @@
 ----------------------------------------------------------------------------------------
 */
 
+#include "Embedded_Type.h"
 
 
 void setup()
 {
-  as();
+  Serial.begin(57600);
 }
 
 void loop()
 {
-  ad();
+  Serial.println(ToByte(1, 1));
 }
 
