@@ -9,9 +9,10 @@ programs on Arduino, Waspmote and Processing. Created and maintained by [Subhaji
 ## Getting started
 
 * [Download the latest release](https://github.com/wolfram77/emType/archive/master.zip)
-* For C/C++, directly include the header file `lib_CPP/emType.h` in your C/C++ program.
-* For Arduino, copy the directory `lib_Arduino/emType` to `arduino_root_directory/libraries/`
-* For Processing, copy the file `lib_Processing/emType.pde` to your sketch.
+* For Arduino, copy the file `libArduino/emType.h` to your sketch folder and include it in main code.
+* For Waspmote, copy the file `libWaspmote/emType.h` to your sketch folder and include it in main code.
+* For Processing, copy the file `libProcessing/emType.pde` to your sketch folder and include it in main code.
+* For C/C++, copy the file `libCPP/emType.h` to your source folder and include it in main code.
 
 
 
