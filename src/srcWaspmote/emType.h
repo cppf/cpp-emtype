@@ -1,6 +1,6 @@
 /*
 ----------------------------------------------------------------------------------------
-	emType: Library header file for Ardino
+	emType: Library header file for Waspmote
 	File: emType.h
 
     This file is part of emType. For more details, go through
@@ -17,29 +17,23 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+    along with emType.  If not, see <http://www.gnu.org/licenses/>.
 ----------------------------------------------------------------------------------------
 */
 
 
 
 /*
-	emType is a generic type conversion library for Arduino/Processing/Java/C/C++.
-	It has been developed mainly for simplifying the process of writing wireless communication
-	programs on Arduino and Processing. To use it (in Arduino), copy the directory, this file
-	is in to arduino_root_folder/libraries/. Then restart Arduino, goto Sketch->Add Library->
-	emType.
+	emType is a generic type conversion library for Arduino/Waspmote/Processing/C/C++. It has been
+	developed mainly for simplifying the process of writing wireless communication programs on Arduino,
+	Waspmote and Processing. To use it (in Waspmote), copy the file emType.h to your sketch directory and
+	include it (emType.h) in the main code.
 */
 
 
 
 #ifndef	_emType_h_
 #define	_emType_h_
-
-
-
-// Requisite headers
-// #include <Arduino.h>
 
 
 
@@ -73,13 +67,14 @@
 
 
 // shorthand datatypes
+typedef unsigned char		byte;
 typedef signed char			sbyte;
 typedef unsigned short		ushort;
 typedef short				int16;
 typedef unsigned short		uint16;
 typedef unsigned int		uint;
-typedef long				long32;
-typedef unsigned long		ulong32;
+typedef int					long32;
+typedef unsigned int		ulong32;
 typedef unsigned long		ulong;
 typedef char*				string;
 typedef long long			long64;
@@ -88,7 +83,7 @@ typedef unsigned long long	ulong64;
 
 
 // internal buffer format
-typedef union _TypeInternalBuffer
+typedef union _emTypeBuffer
 {
 	byte	Byte[16];
 	sbyte	Sbyte[16];
@@ -107,12 +102,12 @@ typedef union _TypeInternalBuffer
 	ulong64	Ulong64[2];
 	float	Float[4];
 	double	Double[2];
-}TypeInternalBuffer;
+}emTypeBuffer;
 
 
 
 // internal buffer
-TypeInternalBuffer	TypeBuffer;
+emTypeBuffer	emType;
 
 
 
@@ -137,7 +132,7 @@ TypeInternalBuffer	TypeBuffer;
 	((*(((byte*)src) + off + (bit_no >> 3)) >> (bit_no & 7)) & 1)
 
 #define	GetBitInt(off, bit_no)	\
-	GetBitExt(&TypeBuffer, off, bit_no)
+	GetBitExt(&emType, off, bit_no)
 
 #define GetBit(...)	\
 	Macro(Macro3(__VA_ARGS__, GetBitExt, GetBitInt)(__VA_ARGS__))
@@ -165,7 +160,7 @@ TypeInternalBuffer	TypeBuffer;
 	((*(((byte*)src) + off + (nibble_no >> 1)) >> ((nibble_no & 1) << 2)) & 0xF)
 
 #define	GetNibbleInt(off, nibble_no)	\
-	GetNibbleExt(&TypeBuffer, off, nibble_no)
+	GetNibbleExt(&emType, off, nibble_no)
 
 #define GetNibble(...)	\
 	Macro(Macro3(__VA_ARGS__, GetNibbleExt, GetNibbleInt)(__VA_ARGS__))
@@ -191,7 +186,7 @@ TypeInternalBuffer	TypeBuffer;
 	(*(((type*)src) + off))
 
 #define	GetStypeInt(type, off)	\
-	GetStypeExt(type, &TypeBuffer, off)
+	GetStypeExt(type, &emType, off)
 
 #define GetStype(...)	\
 	Macro(Macro3(__VA_ARGS__, GetStypeExt, GetStypeInt)(__VA_ARGS__))
@@ -200,7 +195,7 @@ TypeInternalBuffer	TypeBuffer;
 	(*((type*)(((byte*)src) + off)))
 
 #define	GetTypeInt(type, off)	\
-	GetTypeExt(type, &TypeBuffer, off)
+	GetTypeExt(type, &emType, off)
 
 #define	GetType(...) \
 	Macro(Macro3(__VA_ARGS__, GetTypeExt, GetTypeInt)(__VA_ARGS__))
@@ -256,8 +251,47 @@ TypeInternalBuffer	TypeBuffer;
 #define	GetDouble(...)	\
 	Macro(GetType(double, __VA_ARGS__))
 
-#define	GetString(...)	\
-	Macro(GetType(string, __VA_ARGS__))
+
+
+// Function:
+// GetString(dst, sz, src, off, opt)
+// GetString(dst, sz, off, opt)
+// 
+// Returns the string from the specified source address with 
+// offset (src + off). If source address (src) is not specified,
+// then this library's internal buffer is used as the source.
+// 
+// Parameters:
+// dst:      destination buffer for string (it will be fetched here)
+// sz:       size of destination in bytes (max. length of string-1)
+// src:      the base address of stored string (which will be fetched)
+// off:      offset of the stored string
+// opt:      options for string fetching (TYPE_ZEROED_STRING, TYPE_LENGTH_STRING)
+// 
+// Returns:
+// string_value:  the fetched string
+// 
+#define	TYPE_ZEROED_STRING			0
+
+#define	TYPE_LENGTH_STRING			1
+
+string GetStringExt(string dst, int sz, void* src, int off, byte opt)
+{
+	int len;
+	char* xsrc = ((char*)src) + off;
+	if(opt & TYPE_LENGTH_STRING) len = *xsrc;
+	else len = strlen(xsrc);
+	len = ((sz - 1) < len)? (sz - 1) : len;
+	memcpy(dst, xsrc+1, len);
+	dst[len] = '\0';
+	return dst;
+}
+
+#define	GetStringInt(dst, sz, off, opt)	\
+	GetStringExt(dst, sz, &emType, off, opt)
+
+#define GetString(...)	\
+	Macro(Macro5(__VA_ARGS__, GetStringExt, GetStringInt)(__VA_ARGS__))
 
 
 
@@ -283,7 +317,7 @@ TypeInternalBuffer	TypeBuffer;
 	((bit_value == 0)?(*(((byte*)dst) + off + (bit_no >> 3)) &= ~(1 << ((byte)bit_no & (byte)7))) : (*(((byte*)dst) + off + (bit_no >> 3)) |= (1 << ((byte)bit_no & (byte)7))))
 
 #define	PutBitInt(off, bit_no, bit_value)	\
-	PutBitExt(&TypeBuffer, off, bit_no, bit_value)
+	PutBitExt(&emType, off, bit_no, bit_value)
 
 #define PutBit(...)	\
 	Macro(Macro4(__VA_ARGS__, PutBitExt, PutBitInt)(__VA_ARGS__))
@@ -313,7 +347,7 @@ TypeInternalBuffer	TypeBuffer;
 	(*(((byte*)dst) + off + (nibble_no >> 1)) = (*(((byte*)dst) + off + (nibble_no >> 1)) & (~(0xF << ((nibble_no & 1) << 2)))) | (nibble_value << ((nibble_no & 1) << 2)))
 
 #define	PutNibbleInt(off, nibble_no, nibble_value)	\
-	PutNibbleExt(&TypeBuffer, off, nibble_no, nibble_value)
+	PutNibbleExt(&emType, off, nibble_no, nibble_value)
 
 #define PutNibble(...)	\
 	Macro(Macro4(__VA_ARGS__, PutNibbleExt, PutNibbleInt)(__VA_ARGS__))
@@ -341,7 +375,7 @@ TypeInternalBuffer	TypeBuffer;
 	(*(((type*)dst) + off) = value)
 
 #define	PutStypeInt(type, off, value)	\
-	PutStypeExt(type, &TypeBuffer, off, value)
+	PutStypeExt(type, &emType, off, value)
 
 #define PutStype(...)	\
 	Macro(Macro4(__VA_ARGS__, PutStypeExt, PutStypeInt)(__VA_ARGS__))
@@ -350,7 +384,7 @@ TypeInternalBuffer	TypeBuffer;
 	(*((type*)(((byte*)dst) + off)) = value)
 
 #define	PutTypeInt(type, off, value)	\
-	PutTypeExt(type, &TypeBuffer, off, value)
+	PutTypeExt(type, &emType, off, value)
 
 #define	PutType(...) \
 	Macro(Macro4(__VA_ARGS__, PutTypeExt, PutTypeInt)(__VA_ARGS__))
@@ -406,8 +440,39 @@ TypeInternalBuffer	TypeBuffer;
 #define	PutDouble(...)	\
 	Macro(PutType(double, __VA_ARGS__))
 
+
+
+// Function:
+// PutString(dst, off, value, opt)
+// PutString(off, value, opt)
+// 
+// Stores the string at the specified destination address with 
+// offset (dst + off). If destination address (dst) is not specified,
+// then this library's internal buffer is used as the destination.
+// 
+// Parameters:
+// dst:      destination base address where the string is to be stored
+// off:      offset to destination from where the stored string will start
+// value:    the string that is to be stored
+// opt:      options for string writing (TYPE_ZEROED_STRING, TYPE_LENGTH_STRING)
+// 
+// Returns:
+// nothing
+// 
+void PutStringExt(void* dst, int off, string value, byte opt)
+{
+	char* xdst = ((char*)dst) + off;
+	int len = strlen(value);
+	if(opt & TYPE_LENGTH_STRING) {*xdst = (char)len; xdst++;}
+	else len++;
+	memcpy(xdst, value, len);
+}
+
+#define	PutStringInt(off, value, opt)	\
+	PutStringExt(&emType, off, value, opt)
+
 #define	PutString(...)	\
-	Macro(PutType(string, __VA_ARGS__))
+	Macro(Macro4(__VA_ARGS__, PutStringExt, PutStringInt)(__VA_ARGS__))
 
 
 
@@ -441,13 +506,13 @@ TypeInternalBuffer	TypeBuffer;
 #define	ToChar			ToByte	
 
 #define	ToType2(var, ret, rtype, dat1, dat0)	\
-	(((TypeBuffer.var[0] = dat0) & (TypeBuffer.var[1] = dat1) & 0)? (rtype)0 : TypeBuffer.ret[0])
+	(((emType.var[0] = dat0) & (emType.var[1] = dat1) & 0)? (rtype)0 : emType.ret[0])
 
 #define	ToType4(var, ret, rtype, dat3, dat2, dat1, dat0)	\
-	(((TypeBuffer.var[0] = dat0) & (TypeBuffer.var[1] = dat1) & (TypeBuffer.var[2] = dat2) & (TypeBuffer.var[3] = dat3) & 0)? (rtype)0 : TypeBuffer.ret[0])
+	(((emType.var[0] = dat0) & (emType.var[1] = dat1) & (emType.var[2] = dat2) & (emType.var[3] = dat3) & 0)? (rtype)0 : emType.ret[0])
 
 #define ToType8(var, ret, rtype, dat7, dat6, dat5, dat4, dat3, dat2, dat1, dat0)	\
-	(((TypeBuffer.var[0] = dat0) & (TypeBuffer.var[1] = dat1) & (TypeBuffer.var[2] = dat2) & (TypeBuffer.var[3] = dat3) & (TypeBuffer.var[4] = dat4) & (TypeBuffer.var[5] = dat5) & (TypeBuffer.var[6] = dat6) & (TypeBuffer.var[7] = dat7) & 0)? (rtype)0 : TypeBuffer.ret[0])
+	(((emType.var[0] = dat0) & (emType.var[1] = dat1) & (emType.var[2] = dat2) & (emType.var[3] = dat3) & (emType.var[4] = dat4) & (emType.var[5] = dat5) & (emType.var[6] = dat6) & (emType.var[7] = dat7) & 0)? (rtype)0 : emType.ret[0])
 
 #define	ToShort(byte1, byte0)	\
 	ToType2(Byte, Short, short, byte1, byte0)
@@ -530,11 +595,11 @@ TypeInternalBuffer	TypeBuffer;
 #define	ToDouble(...)	\
 	Macro(Macro8(__VA_ARGS__, ToDoubleByt, _7, _6, _5, ToDoubleSrt, _3, ToDoubleInt)(__VA_ARGS__))
 
-// ToString?
 
 
 // Function:
 // DoReverse(src, off, len)
+// DoReverse(off, len)
 // 
 // Reverses the data stored at the source address (src + off)
 // of specified length (len). The data at the source is directly
@@ -549,7 +614,7 @@ TypeInternalBuffer	TypeBuffer;
 // len:		length of data to be reversed
 // 
 // Returns:
-// <type>_value:	the value of the (bigger) assembled data type
+// nothing
 // 
 void DoReverseExt(void* src, int off, int len)
 {
@@ -564,7 +629,7 @@ void DoReverseExt(void* src, int off, int len)
 }
 
 #define	DoReverseInt(off, len)	\
-	DoReverseExt(&TypeBuffer, off, len)
+	DoReverseExt(&emType, off, len)
 
 #define	DoReverse(...)	\
 	Macro(Macro3(__VA_ARGS__, DoReverseExt, DoReverseInt)(__VA_ARGS__))
@@ -573,6 +638,7 @@ void DoReverseExt(void* src, int off, int len)
 
 // Function:
 // Get<Byte/Ushort/Uint16>Sum(src, off, len)
+// Get<Byte/Ushort/Uint16>Sum(off, len)
 // 
 // Finds the sum of all bytes/ushorts at the specified source
 // address (src + off) of the specified length (len). If source
@@ -586,7 +652,7 @@ void DoReverseExt(void* src, int off, int len)
 // len:		length of data to be summed
 // 
 // Returns:
-// <type>_value:	the summed value
+// <type>_value:  the summed value
 // 
 byte GetByteSumExt(void* src, int off, int len)
 {
@@ -598,7 +664,7 @@ byte GetByteSumExt(void* src, int off, int len)
 }
 
 #define	GetByteSumInt(off, len)	\
-	GetByteSumExt(&TypeBuffer, off, len)
+	GetByteSumExt(&emType, off, len)
 
 #define	GetByteSum(...)	\
 	Macro(Macro3(__VA_ARGS__, GetByteSumExt, GetByteSumInt)(__VA_ARGS__))
@@ -614,36 +680,33 @@ ushort GetUshortSumExt(void* src, int off, int len)
 }
 
 #define	GetUshortSumInt(off, len)	\
-	GetUshortSumExt(&TypeBuffer, off, len)
+	GetUshortSumExt(&emType, off, len)
 
 #define	GetUshortSum(...)	\
 	Macro(Macro3(__VA_ARGS__, GetUshortSumExt, GetUshortSumInt)(__VA_ARGS__))
 
 #define	GetUint16Sum		GetUshortSum
 
-#define	GetUintSum			GetUshortSum
-
 
 
 // Function:
-// PutHexFromBin(dst, dst_off, src, src_off, len, opt)
+// GetHexFromBin(dst, sz, src, off, len, opt)
+// GetHexFromBin(dst, sz, off, len, opt)
 // 
-// Stores hexadecimal string of the soure binary data (src + src_off)
-// of specified length (len) at the destination address (dst + dst_off).
-// The options (opt) specify how the conversion is to be performed,
-// and it takes as input a set of flags. If source base address is
-// not specified, this library's internal buffer is assumed as the
-// source base address. Destination address (dst + dst_off) is to be
-// specified always, which is where the converted hex string will be
-// stored.
+// Get hexadecimal string (dst) of maximum specified size (sz) of
+// the soure binary data (src + off) of specified length (len). The
+// options (opt) specify how the conversion is to be performed, and
+// it takes as input a set of flags. If source base address is not
+// specified, this library's internal buffer is assumed as the source
+// base address.
 // 
 // Parameters:
-// dst:		the base address of destination
-// dst_off:	the destination offset where the hex string will be stored (dst + dst_off)
-// src:		the base address of source binary data
-// src_off:	offset to the binary data to be converted (src + src_off)
-// len:		length of data to be converted
-// opt:		conversion options (TYPE_ADD_SPACE, TYPE_ADD_CHAR, TYPE_BIG_ENDIAN)
+// dst:	      the destination string where hex string will be stored
+// sz:        the maximum possible size of the hex string (buffer size)
+// src:	      the base address of source binary data
+// off:	      offset to the binary data to be converted (src + off)
+// len:	      length of data to be converted
+// opt:	      conversion options (TYPE_ADD_SPACE, TYPE_ADD_CHAR, TYPE_BIG_ENDIAN)
 // 
 // Returns:
 // nothing
@@ -668,71 +731,69 @@ ushort GetUshortSumExt(void* src, int off, int len)
 
 #define TYPE_BIG_ENDIAN			4
 
-void PutHexFromBinExt(string dst, int dst_off, void* src, int src_off, int len, byte opt)
+string GetHexFromBinExt(string dst, int sz, void* src, int off, int len, byte opt)
 {
-	byte* cbin = (opt & TYPE_BIG_ENDIAN)? (byte*)src : ((byte*)src)+len-1;
-	dst += dst_off; cbin += src_off;
+	char* dend = dst + sz - 1;
+	byte* cbin = ((byte*)src) + ((opt & TYPE_BIG_ENDIAN)? off : (off+len-1));
 	int stp = (opt & TYPE_BIG_ENDIAN)? 1 : -1;
 	for(int i=0; i<len; i++, cbin+=stp)
 	{
-		*dst = TYPE_BIN_TO_HEX(*cbin >> 4); dst++;
-		*dst = TYPE_BIN_TO_HEX(*cbin & 0xF); dst++;
-		if(opt & TYPE_ADD_CHAR) { *dst = (*cbin < 32 || *cbin > 127)? '.' : *cbin; dst++; }
-		if(opt & TYPE_ADD_SPACE) { *dst = ' '; dst++; }
+		*dst = TYPE_BIN_TO_HEX(*cbin >> 4); dst++; if(dst >= dend) break;
+		*dst = TYPE_BIN_TO_HEX(*cbin & 0xF); dst++; if(dst >= dend) break;
+		if(opt & TYPE_ADD_CHAR) { *dst = (*cbin < 32 || *cbin > 127)? '.' : *cbin; dst++; if(dst >= dend) break;}
+		if(opt & TYPE_ADD_SPACE) { *dst = ' '; dst++; if(dst >= dend) break;}
 	}
 	*dst = '\0';
+	return dst;
 }
 
-#define	PutHexFromBinInt(dst, dst_off, src_off, len, opt)	\
-	PutHexFromBinExt(dst, dst_off, &TypeBuffer, src_off, len, opt)
+#define	GetHexFromBinInt(dst, sz, off, len, opt)	\
+	GetHexFromBinExt(dst, sz, &emType, off, len, opt)
 
-#define	PutHexFromBin(...)	\
-	Macro(Macro6(__VA_ARGS__, PutHexFromBinExt, PutHexFromBinInt)(__VA_ARGS__))
+#define	GetHexFromBin(...)	\
+	Macro(Macro6(__VA_ARGS__, GetHexFromBinExt, GetHexFromBinInt)(__VA_ARGS__))
 
 
 
 // Function:
-// PutBinFromHex(dst, dst_off, len, src, src_off, opt)
+// PutBinFromHex(dst, off, len, src, opt)
+// PutBinFromHex(off, len, src, opt)
 // 
-// Stores hexadecimal string of the soure binary data (src + src_off)
-// of specified length (len) at the destination address (dst + dst_off).
-// The options (opt) specify how the conversion is to be performed, and
-// it takes as input a set of flags. If destination base address is not 
-// specified, this library's internal buffer is assumed as the destination 
-// base address. Source address (src + src_off) is to be specified always, 
-// which is where the original hex string is stored.
+// Puts binary data from the source hex string (src) to the destination
+// address (dst + off) of specified length len. The options (opt) specify
+// how the conversion is to be performed, and it takes as input a set of
+// flags. If destination base address is not specified, this library's
+// internal buffer is assumed as the destination base address.
 // 
 // Parameters:
-// dst:		the base address of destination
-// dst_off:	the destination offset where the hex string will be stored (dst + dst_off)
-// src:		the base address of source binary data
-// src_off:	offset to the binary data to be converted (src + src_off)
-// len:		length of data to be converted
-// opt:		conversion options (TYPE_HAS_SPACE, TYPE_HAS_CHAR, TYPE_BIG_ENDIAN)
+// dst:	      the base address of destination
+// off:	      the destination offset where the binary data will be stored (dst + off)
+// len:       length of data at destination
+// src:	      the hex string to be converted
+// opt:	      conversion options (TYPE_HAS_SPACE, TYPE_HAS_CHAR, TYPE_BIG_ENDIAN)
 //
 // Returns:
-// nothing
+// the converted data (dst)
 // 
-void PutBinFromHexExt(void* dst, int dst_off, int len, string src, int src_off, byte opt)
+void PutBinFromHexExt(void* dst, int off, int len, string src, byte opt)
 {
-	char* hsrt = src + src_off;
-	char* hsrc = hsrt + strlen(src) - 1;
-	byte* cbin = dst_off + ((opt & TYPE_BIG_ENDIAN)?  (((byte*)dst)+len-1): ((byte*)dst));
+	char* hsrc = src + strlen(src) - 1;
+	byte* cbin = ((byte*)dst) + ((opt & TYPE_BIG_ENDIAN)? (off+len-1) : off);
 	int stp = (opt & TYPE_BIG_ENDIAN)? -1 : 1;
 	for(int i=0; i<len; i++, cbin+=stp)
 	{
 		if(opt & TYPE_HAS_SPACE) hsrc--;
 		if(opt & TYPE_HAS_CHAR) hsrc--;
-		*cbin = (hsrc < hsrt)? 0 : TYPE_HEX_TO_BIN(*hsrc); hsrc--;
-		*cbin |= (hsrc < hsrt)? 0 : TYPE_HEX_TO_BIN(*hsrc) << 4; hsrc--;
+		*cbin = (hsrc < src)? 0 : TYPE_HEX_TO_BIN(*hsrc); hsrc--;
+		*cbin |= (hsrc < src)? 0 : TYPE_HEX_TO_BIN(*hsrc) << 4; hsrc--;
 	}
 }
 
-#define	PutBinFromHexInt(dst_off, len, src, src_off, opt)	\
-	PutBinFromHexExt(&TypeBuffer, dst_off, len, src, src_off, opt)
+#define	PutBinFromHexInt(off, len, src, opt)	\
+	PutBinFromHexExt(&emType, off, len, src, opt)
 
 #define	PutBinFromHex(...)	\
-	Macro(Macro6(__VA_ARGS__, PutBinFromHexExt, PutBinFromHexInt)(__VA_ARGS__))
+	Macro(Macro5(__VA_ARGS__, PutBinFromHexExt, PutBinFromHexInt)(__VA_ARGS__))
 
 
 

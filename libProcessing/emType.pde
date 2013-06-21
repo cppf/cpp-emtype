@@ -1,17 +1,17 @@
 /*
 ----------------------------------------------------------------------------------------
-    Embedded_Type: Library header file for Processing
-    File: Embedded_Type.pde
+    emType: Library file for Processing
+    File: emType.pde
 
-    This file is part of Embedded_Type. For more details, go through
+    This file is part of emType. For more details, go through
     Readme.txt. For copyright information, go through copyright.txt.
 
-    Embedded_Type is free software: you can redistribute it and/or modify
+    emType is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    Embedded_Type is distributed in the hope that it will be useful,
+    emType is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
@@ -24,10 +24,9 @@
 
 
 /*
-	Embedded_Type is a generic type conversion library for Arduino/Libelium Waspmote/Processing/C/C++.
-	It has been developed mainly for simplifying the process of writing wireless communication
-	programs on Arduino, Waspmote and Processing. To use it (in Processing), copy the file Embedded_Type.pde
-	to your processing sketch directory.
+    emType is a generic type conversion library for Arduino/Waspmote/Processing/C/C++. It has been developed
+	mainly for simplifying the process of writing wireless communication programs on Arduino, Waspmote and
+	Processing. To use it (in Processing), copy the the file emType.pde to your sketch directory.
 */
 
 
@@ -50,7 +49,7 @@ public class ulong
 
 
 // internal buffer
-public byte[]	TypeBuffer = new byte[16];
+public byte[] emType = new byte[16];
 
 
 
@@ -78,7 +77,7 @@ public byte GetBit(byte[] src, int off, int bit_no)
 
 public byte GetBit(int off, int bit_no)
 {
-  return GetBit(TypeBuffer, off, bit_no);
+  return GetBit(emType, off, bit_no);
 }
 
 
@@ -93,8 +92,8 @@ public byte GetBit(int off, int bit_no)
 // is used as the source.
 // 
 // Parameters:
-// src:			the base address of stored data
-// off:			offset from which nibble index starts
+// src:		the base address of stored data
+// off:		offset from which nibble index starts
 // nibble_no:	the index of the nibble (starts from 0)
 // 
 // Returns:
@@ -107,7 +106,7 @@ public byte GetNibble(byte[] src, int off, int nibble_no)
 
 public byte GetNibble(int off, int nibble_no)
 {
-  return GetNibble(TypeBuffer, off, nibble_no);
+  return GetNibble(emType, off, nibble_no);
 }
 
 
@@ -121,8 +120,8 @@ public byte GetNibble(int off, int nibble_no)
 // then this library's internal buffer is used as the source.
 // 
 // Parameters:
-// src:			the base address of stored data
-// off:			offset of the <type> value
+// src:		the base address of stored data
+// off:		offset of the <type> value
 // 
 // Returns:
 // <type>_value:	the value of the specified <type>
@@ -134,7 +133,7 @@ public char GetChar(byte[] src, int off)
 
 public char GetChar(int off)
 {
-  return (char)TypeBuffer[off];
+  return (char)emType[off];
 }
 
 public byte GetByte(byte[] src, int off)
@@ -144,7 +143,7 @@ public byte GetByte(byte[] src, int off)
 
 public byte GetByte(int off)
 {
-  return TypeBuffer[off];
+  return emType[off];
 }
 
 public boolean GetBoolean(byte[] src, int off)
@@ -154,7 +153,7 @@ public boolean GetBoolean(byte[] src, int off)
 
 public boolean GetBoolean(int off)
 {
-  return (TypeBuffer[off] != 0);
+  return (emType[off] != 0);
 }
 
 public short GetShort(byte[] src, int off)
@@ -164,7 +163,7 @@ public short GetShort(byte[] src, int off)
 
 public short GetShort(int off)
 {
-  return GetShort(TypeBuffer, off);
+  return GetShort(emType, off);
 }
 
 public int GetUshort(byte[] src, int off)
@@ -175,7 +174,7 @@ public int GetUshort(byte[] src, int off)
 
 public int GetUshort(int off)
 {
-  return GetUshort(TypeBuffer, off);
+  return GetUshort(emType, off);
 }
 
 public short GetInt16(byte[] src, int off)
@@ -185,7 +184,7 @@ public short GetInt16(byte[] src, int off)
 
 public short GetInt16(int off)
 {
-  return GetShort(TypeBuffer, off);
+  return GetShort(emType, off);
 }
 
 public int GetUint16(byte[] src, int off)
@@ -195,7 +194,7 @@ public int GetUint16(byte[] src, int off)
 
 public int GetUint16(int off)
 {
-  return GetUshort(TypeBuffer, off);
+  return GetUshort(emType, off);
 }
 
 public int GetInt(byte[] src, int off)
@@ -205,7 +204,7 @@ public int GetInt(byte[] src, int off)
 
 public int GetInt(int off)
 {
-  return GetInt(TypeBuffer, off);
+  return GetInt(emType, off);
 }
 
 public long GetUint(byte[] src, int off)
@@ -216,7 +215,7 @@ public long GetUint(byte[] src, int off)
 
 public long GetUint(int off)
 {
-  return GetUint(TypeBuffer, off);
+  return GetUint(emType, off);
 }
 
 public int GetLong32(byte[] src, int off)
@@ -226,7 +225,7 @@ public int GetLong32(byte[] src, int off)
 
 public int GetLong32(int off)
 {
-  return GetInt(TypeBuffer, off);
+  return GetInt(emType, off);
 }
 
 public long GetUlong32(byte[] src, int off)
@@ -236,7 +235,7 @@ public long GetUlong32(byte[] src, int off)
 
 public long GetUlong32(int off)
 {
-  return GetUint(TypeBuffer, off);
+  return GetUint(emType, off);
 }
 
 public long GetLong(byte[] src, int off)
@@ -246,7 +245,7 @@ public long GetLong(byte[] src, int off)
 
 public long GetLong(int off)
 {
-  return GetLong(TypeBuffer, off);
+  return GetLong(emType, off);
 }
 
 public ulong GetUlong(byte[] src, int off)
@@ -259,7 +258,7 @@ public ulong GetUlong(byte[] src, int off)
 
 public ulong GetUlong(int off)
 {
-  return GetUlong(TypeBuffer, off);
+  return GetUlong(emType, off);
 }
 
 public long GetLong64(byte[] src, int off)
@@ -269,7 +268,7 @@ public long GetLong64(byte[] src, int off)
 
 public long GetLong64(int off)
 {
-  return GetLong(TypeBuffer, off);
+  return GetLong(emType, off);
 }
 
 public ulong GetUlong64(byte[] src, int off)
@@ -279,7 +278,7 @@ public ulong GetUlong64(byte[] src, int off)
 
 public ulong GetUlong64(int off)
 {
-  return GetUlong(TypeBuffer, off);
+  return GetUlong(emType, off);
 }
 
 public float GetFloat(byte[] src, int off)
@@ -289,7 +288,7 @@ public float GetFloat(byte[] src, int off)
 
 public float GetFloat(int off)
 {
-  return GetFloat(TypeBuffer, off);
+  return GetFloat(emType, off);
 }
 
 public double GetDouble(byte[] src, int off)
@@ -299,7 +298,7 @@ public double GetDouble(byte[] src, int off)
 
 public double GetDouble(int off)
 {
-  return GetDouble(TypeBuffer, off);
+  return GetDouble(emType, off);
 }
 
 
@@ -348,7 +347,7 @@ public String GetString(String dst, int sz, byte[] src, int off, int opt)
 
 public String GetString(String dst, int sz, int off, int opt)
 {
-  return GetString(dst, sz, TypeBuffer, off, opt);
+  return GetString(dst, sz, emType, off, opt);
 }
 
 public String GetString(byte[] src, int off, int opt)
@@ -358,7 +357,7 @@ public String GetString(byte[] src, int off, int opt)
 
 public String GetString(int off, int opt)
 {
-  return GetString(new String(), 1024, TypeBuffer, off, opt);
+  return GetString(new String(), 1024, emType, off, opt);
 }
 
 
@@ -389,7 +388,7 @@ public void PutBit(byte[] dst, int off, int bit_no, int bit_value)
 
 public void PutBit(int off, int bit_no, int bit_value)
 {
-  PutBit(TypeBuffer, off, bit_no, bit_value);
+  PutBit(emType, off, bit_no, bit_value);
 }
 
 
@@ -421,7 +420,7 @@ public void PutNibble(byte[] dst, int off, int nibble_no, int nibble_value)
 
 public void PutNibble(int off, int nibble_no, int nibble_value)
 {
-  PutNibble(TypeBuffer, off, nibble_no, nibble_value);
+  PutNibble(emType, off, nibble_no, nibble_value);
 }
 
 
@@ -450,7 +449,7 @@ public void PutChar(byte[] dst, int off, char value)
 
 public void PutChar(int off, char value)
 {
-  TypeBuffer[off] = (byte)value;
+  emType[off] = (byte)value;
 }
 
 public void PutByte(byte[] dst, int off, int value)
@@ -460,7 +459,7 @@ public void PutByte(byte[] dst, int off, int value)
 
 public void PutByte(int off, int value)
 {
-  TypeBuffer[off] = (byte)value;
+  emType[off] = (byte)value;
 }
 
 public void PutBoolean(byte[] dst, int off, boolean value)
@@ -470,7 +469,7 @@ public void PutBoolean(byte[] dst, int off, boolean value)
 
 public void PutBoolean(int off, boolean value)
 {
-  TypeBuffer[off] = (byte)((value)? 1 : 0);
+  emType[off] = (byte)((value)? 1 : 0);
 }
 
 public void PutShort(byte[] dst, int off, int value)
@@ -481,7 +480,7 @@ public void PutShort(byte[] dst, int off, int value)
 
 public void PutShort(int off, int value)
 {
-  PutShort(TypeBuffer, off, value);
+  PutShort(emType, off, value);
 }
 
 public void PutUshort(byte[] dst, int off, int value)
@@ -492,7 +491,7 @@ public void PutUshort(byte[] dst, int off, int value)
 
 public void PutUshort(int off, int value)
 {
-  PutUshort(TypeBuffer, off, value);
+  PutUshort(emType, off, value);
 }
 
 public void PutInt16(byte[] dst, int off, int value)
@@ -502,7 +501,7 @@ public void PutInt16(byte[] dst, int off, int value)
 
 public void PutInt16(int off, int value)
 {
-  PutShort(TypeBuffer, off, value);
+  PutShort(emType, off, value);
 }
 
 public void PutUint16(byte[] dst, int off, int value)
@@ -512,7 +511,7 @@ public void PutUint16(byte[] dst, int off, int value)
 
 public void PutUint16(int off, int value)
 {
-  PutUshort(TypeBuffer, off, value);
+  PutUshort(emType, off, value);
 }
 
 public void PutInt(byte[] dst, int off, int value)
@@ -523,7 +522,7 @@ public void PutInt(byte[] dst, int off, int value)
 
 public void PutInt(int off, int value)
 {
-  PutInt(TypeBuffer, off, value);
+  PutInt(emType, off, value);
 }
 
 public void PutUint(byte[] dst, int off, long value)
@@ -534,7 +533,7 @@ public void PutUint(byte[] dst, int off, long value)
 
 public void PutUint(int off, int value)
 {
-  PutUint(TypeBuffer, off, value);
+  PutUint(emType, off, value);
 }
 
 public void PutLong32(byte[] dst, int off, int value)
@@ -544,7 +543,7 @@ public void PutLong32(byte[] dst, int off, int value)
 
 public void PutLong32(int off, int value)
 {
-  PutInt(TypeBuffer, off, value);
+  PutInt(emType, off, value);
 }
 
 public void PutUlong32(byte[] dst, int off, long value)
@@ -554,7 +553,7 @@ public void PutUlong32(byte[] dst, int off, long value)
 
 public void PutUlong32(int off, long value)
 {
-  PutUlong32(TypeBuffer, off, value);
+  PutUlong32(emType, off, value);
 }
 
 public void PutLong(byte[] dst, int off, long value)
@@ -565,7 +564,7 @@ public void PutLong(byte[] dst, int off, long value)
 
 public void PutLong(int off, long value)
 {
-  PutLong(TypeBuffer, off, value);
+  PutLong(emType, off, value);
 }
 
 public void PutUlong(byte[] dst, int off, ulong value)
@@ -576,7 +575,7 @@ public void PutUlong(byte[] dst, int off, ulong value)
 
 public void PutUlong(int off, ulong value)
 {
-  PutUlong(TypeBuffer, off, value);
+  PutUlong(emType, off, value);
 }
 
 public void PutLong64(byte[] dst, int off, long value)
@@ -586,7 +585,7 @@ public void PutLong64(byte[] dst, int off, long value)
 
 public void PutLong64(int off, long value)
 {
-  PutLong(TypeBuffer, off, value);
+  PutLong(emType, off, value);
 }
 
 public void PutUlong64(byte[] dst, int off, ulong value)
@@ -596,7 +595,7 @@ public void PutUlong64(byte[] dst, int off, ulong value)
 
 public void PutUlong64(int off, ulong value)
 {
-  PutUlong(TypeBuffer, off, value);
+  PutUlong(emType, off, value);
 }
 
 public void PutFloat(byte[] dst, int off, float value)
@@ -607,7 +606,7 @@ public void PutFloat(byte[] dst, int off, float value)
 
 public void PutFloat(int off, float value)
 {
-  PutFloat(TypeBuffer, off, value);
+  PutFloat(emType, off, value);
 }
 
 public void PutDouble(byte[] dst, int off, double value)
@@ -618,7 +617,7 @@ public void PutDouble(byte[] dst, int off, double value)
 
 public void PutDouble(int off, double value)
 {
-  PutDouble(TypeBuffer, off, value);
+  PutDouble(emType, off, value);
 }
 
 
@@ -654,7 +653,7 @@ public void PutString(byte[] dst, int off, String value, int opt)
 
 public void PutString(int off, String value, int opt)
 {
-  PutString(TypeBuffer, off, value, opt);
+  PutString(emType, off, value, opt);
 }
 
 
@@ -702,14 +701,14 @@ public char ToChar(int bit7, int bit6, int bit5, int bit4, int bit3, int bit2, i
 
 public short ToShort(int byte1, int byte0)
 {
-  TypeBuffer[0] = (byte)byte0; TypeBuffer[1] = (byte)byte1;
-  return GetShort(TypeBuffer, 0);
+  emType[0] = (byte)byte0; emType[1] = (byte)byte1;
+  return GetShort(emType, 0);
 }
 
 public int ToUshort(int byte1, int byte0)
 {
-  TypeBuffer[0] = (byte)byte0; TypeBuffer[1] = (byte)byte1;
-  return GetUshort(TypeBuffer, 0);
+  emType[0] = (byte)byte0; emType[1] = (byte)byte1;
+  return GetUshort(emType, 0);
 }
 
 public short ToInt16(int byte1, int byte0)
@@ -724,28 +723,28 @@ public int ToUint16(int byte1, int byte0)
 
 public int ToInt(int ushort1, int ushort0)
 {
-  PutUshort(TypeBuffer, 0, ushort0); PutUshort(TypeBuffer, 2, ushort1);
-  return GetInt(TypeBuffer, 0);
+  PutUshort(emType, 0, ushort0); PutUshort(emType, 2, ushort1);
+  return GetInt(emType, 0);
 }
 
 public int ToInt(int byte3, int byte2, int byte1, int byte0)
 {
-  TypeBuffer[0] = (byte)byte0; TypeBuffer[1] = (byte)byte1;
-  TypeBuffer[2] = (byte)byte2; TypeBuffer[3] = (byte)byte3;
-  return GetInt(TypeBuffer, 0);
+  emType[0] = (byte)byte0; emType[1] = (byte)byte1;
+  emType[2] = (byte)byte2; emType[3] = (byte)byte3;
+  return GetInt(emType, 0);
 }
 
 public long ToUint(int ushort1, int ushort0)
 {
-  PutUshort(TypeBuffer, 0, ushort0); PutUshort(TypeBuffer, 2, ushort1);
-  return GetUint(TypeBuffer, 0);
+  PutUshort(emType, 0, ushort0); PutUshort(emType, 2, ushort1);
+  return GetUint(emType, 0);
 }
 
 public long ToUint(int byte3, int byte2, int byte1, int byte0)
 {
-  TypeBuffer[0] = (byte)byte0; TypeBuffer[1] = (byte)byte1;
-  TypeBuffer[2] = (byte)byte2; TypeBuffer[3] = (byte)byte3;
-  return GetUint(TypeBuffer, 0);
+  emType[0] = (byte)byte0; emType[1] = (byte)byte1;
+  emType[2] = (byte)byte2; emType[3] = (byte)byte3;
+  return GetUint(emType, 0);
 }
 
 public int ToLong32(int ushort1, int ushort0)
@@ -770,46 +769,46 @@ public long ToUlong32(int byte3, int byte2, int byte1, int byte0)
 
 public long ToLong(long uint1, long uint0)
 {
-  PutUint(TypeBuffer, 0, uint0); PutUint(TypeBuffer, 4, uint1);
-  return GetLong(TypeBuffer, 0);
+  PutUint(emType, 0, uint0); PutUint(emType, 4, uint1);
+  return GetLong(emType, 0);
 }
 
 public long ToLong(int ushort3, int ushort2, int ushort1, int ushort0)
 {
-  PutUshort(TypeBuffer, 0, ushort0); PutUshort(TypeBuffer, 2, ushort1);
-  PutUshort(TypeBuffer, 4, ushort2); PutUshort(TypeBuffer, 6, ushort3);
-  return GetLong(TypeBuffer, 0);
+  PutUshort(emType, 0, ushort0); PutUshort(emType, 2, ushort1);
+  PutUshort(emType, 4, ushort2); PutUshort(emType, 6, ushort3);
+  return GetLong(emType, 0);
 }
 
 public long ToLong(int byte7, int byte6, int byte5, int byte4, int byte3, int byte2, int byte1, int byte0)
 {
-  TypeBuffer[0] = (byte)byte0; TypeBuffer[1] = (byte)byte1;
-  TypeBuffer[2] = (byte)byte2; TypeBuffer[3] = (byte)byte3;
-  TypeBuffer[4] = (byte)byte4; TypeBuffer[5] = (byte)byte5;
-  TypeBuffer[6] = (byte)byte6; TypeBuffer[7] = (byte)byte7;
-  return GetLong(TypeBuffer, 0);
+  emType[0] = (byte)byte0; emType[1] = (byte)byte1;
+  emType[2] = (byte)byte2; emType[3] = (byte)byte3;
+  emType[4] = (byte)byte4; emType[5] = (byte)byte5;
+  emType[6] = (byte)byte6; emType[7] = (byte)byte7;
+  return GetLong(emType, 0);
 }
 
 public ulong ToUlong(long uint1, long uint0)
 {
-  PutUint(TypeBuffer, 0, uint0); PutUint(TypeBuffer, 4, uint1);
-  return GetUlong(TypeBuffer, 0);
+  PutUint(emType, 0, uint0); PutUint(emType, 4, uint1);
+  return GetUlong(emType, 0);
 }
 
 public ulong ToUlong(int ushort3, int ushort2, int ushort1, int ushort0)
 {
-  PutUshort(TypeBuffer, 0, ushort0); PutUshort(TypeBuffer, 2, ushort1);
-  PutUshort(TypeBuffer, 4, ushort2); PutUshort(TypeBuffer, 6, ushort3);
-  return GetUlong(TypeBuffer, 0);
+  PutUshort(emType, 0, ushort0); PutUshort(emType, 2, ushort1);
+  PutUshort(emType, 4, ushort2); PutUshort(emType, 6, ushort3);
+  return GetUlong(emType, 0);
 }
 
 public ulong ToUlong(int byte7, int byte6, int byte5, int byte4, int byte3, int byte2, int byte1, int byte0)
 {
-  TypeBuffer[0] = (byte)byte0; TypeBuffer[1] = (byte)byte1;
-  TypeBuffer[2] = (byte)byte2; TypeBuffer[3] = (byte)byte3;
-  TypeBuffer[4] = (byte)byte4; TypeBuffer[5] = (byte)byte5;
-  TypeBuffer[6] = (byte)byte6; TypeBuffer[7] = (byte)byte7;
-  return GetUlong(TypeBuffer, 0);
+  emType[0] = (byte)byte0; emType[1] = (byte)byte1;
+  emType[2] = (byte)byte2; emType[3] = (byte)byte3;
+  emType[4] = (byte)byte4; emType[5] = (byte)byte5;
+  emType[6] = (byte)byte6; emType[7] = (byte)byte7;
+  return GetUlong(emType, 0);
 }
 
 public long ToLong64(long uint1, long uint0)
@@ -844,37 +843,37 @@ public ulong ToUlong64(int byte7, int byte6, int byte5, int byte4, int byte3, in
 
 public float ToFloat(int ushort1, int ushort0)
 {
-  PutUshort(TypeBuffer, 0, ushort0); PutUshort(TypeBuffer, 2, ushort1);
-  return GetFloat(TypeBuffer, 0);
+  PutUshort(emType, 0, ushort0); PutUshort(emType, 2, ushort1);
+  return GetFloat(emType, 0);
 }
 
 public float ToFloat(int byte3, int byte2, int byte1, int byte0)
 {
-  TypeBuffer[0] = (byte)byte0; TypeBuffer[1] = (byte)byte1;
-  TypeBuffer[2] = (byte)byte2; TypeBuffer[3] = (byte)byte3;
-  return GetFloat(TypeBuffer, 0);
+  emType[0] = (byte)byte0; emType[1] = (byte)byte1;
+  emType[2] = (byte)byte2; emType[3] = (byte)byte3;
+  return GetFloat(emType, 0);
 }
 
 public double ToDouble(long uint1, long uint0)
 {
-  PutUint(TypeBuffer, 0, uint0); PutUint(TypeBuffer, 4, uint1);
-  return GetDouble(TypeBuffer, 0);
+  PutUint(emType, 0, uint0); PutUint(emType, 4, uint1);
+  return GetDouble(emType, 0);
 }
 
 public double ToDouble(int ushort3, int ushort2, int ushort1, int ushort0)
 {
-  PutUshort(TypeBuffer, 0, ushort0); PutUshort(TypeBuffer, 2, ushort1);
-  PutUshort(TypeBuffer, 4, ushort2); PutUshort(TypeBuffer, 6, ushort3);
-  return GetDouble(TypeBuffer, 0);
+  PutUshort(emType, 0, ushort0); PutUshort(emType, 2, ushort1);
+  PutUshort(emType, 4, ushort2); PutUshort(emType, 6, ushort3);
+  return GetDouble(emType, 0);
 }
 
 public double ToDouble(int byte7, int byte6, int byte5, int byte4, int byte3, int byte2, int byte1, int byte0)
 {
-  TypeBuffer[0] = (byte)byte0; TypeBuffer[1] = (byte)byte1;
-  TypeBuffer[2] = (byte)byte2; TypeBuffer[3] = (byte)byte3;
-  TypeBuffer[4] = (byte)byte4; TypeBuffer[5] = (byte)byte5;
-  TypeBuffer[6] = (byte)byte6; TypeBuffer[7] = (byte)byte7;
-  return GetDouble(TypeBuffer, 0);
+  emType[0] = (byte)byte0; emType[1] = (byte)byte1;
+  emType[2] = (byte)byte2; emType[3] = (byte)byte3;
+  emType[4] = (byte)byte4; emType[5] = (byte)byte5;
+  emType[6] = (byte)byte6; emType[7] = (byte)byte7;
+  return GetDouble(emType, 0);
 }
 
 
@@ -912,7 +911,7 @@ void DoReverse(byte[] src, int off, int len)
 
 void DoReverse(int off, int len)
 {
-  DoReverse(TypeBuffer, off, len);
+  DoReverse(emType, off, len);
 }
 
 
@@ -945,7 +944,7 @@ byte GetByteSum(byte[] src, int off, int len)
 
 byte GetByteSum(int off, int len)
 {
-  return GetByteSum(TypeBuffer, off, len);
+  return GetByteSum(emType, off, len);
 }
 
 int GetUshortSum(byte[] src, int off, int len)
@@ -959,7 +958,7 @@ int GetUshortSum(byte[] src, int off, int len)
 
 int GetUshortSum(int off, int len)
 {
-  return GetUshortSum(TypeBuffer, off, len);
+  return GetUshortSum(emType, off, len);
 }
 
 int GetUint16Sum(byte[] src, int off, int len)
@@ -969,15 +968,15 @@ int GetUint16Sum(byte[] src, int off, int len)
 
 int GetUint16Sum(int off, int len)
 {
-  return GetUshortSum(TypeBuffer, off, len);
+  return GetUshortSum(emType, off, len);
 }
 
 
 
 // Function:
 // GetHexFromBin(dst, sz, src, off, len, opt)
-// GetHexFromBin(src, off, len, opt)
 // GetHexFromBin(dst, sz, off, len, opt)
+// GetHexFromBin(src, off, len, opt)
 // GetHexFromBin(off, len, opt)
 // 
 // Get hexadecimal string (dst) of maximum specified size (sz) of
@@ -1026,15 +1025,16 @@ public byte TYPE_BIN_TO_HEX(int bn)
 
 String GetHexFromBin(String dst, int sz, byte[] src, int off, int len, int opt)
 {
+  sz--;
   byte[] xdst = new byte[sz]; int doff = 0;
   int cbin = ((opt & TYPE_BIG_ENDIAN) > 0)? off : (off + len - 1);
   int stp = ((opt & TYPE_BIG_ENDIAN) > 0)? 1 : -1;
   for(int i=0; i<len; i++, cbin+=stp)
   {
-    xdst[doff] = TYPE_BIN_TO_HEX(src[cbin] >> 4); doff++;
-    xdst[doff] = TYPE_BIN_TO_HEX(src[cbin] & 0xF); doff++;
-    if((opt & TYPE_ADD_CHAR) > 0) { xdst[doff] = (byte)((src[cbin] < 32 || src[cbin] > 127)? '.' : src[cbin]); doff++; }
-    if((opt & TYPE_ADD_SPACE) > 0) { xdst[doff] = ' '; doff++; }
+    xdst[doff] = TYPE_BIN_TO_HEX(src[cbin] >> 4); doff++; if(doff >= sz) break;
+    xdst[doff] = TYPE_BIN_TO_HEX(src[cbin] & 0xF); doff++; if(doff >= sz) break;
+    if((opt & TYPE_ADD_CHAR) > 0) { xdst[doff] = (byte)((src[cbin] < 32 || src[cbin] > 127)? '.' : src[cbin]); doff++; if(doff >= sz) break;}
+    if((opt & TYPE_ADD_SPACE) > 0) { xdst[doff] = ' '; doff++; if(doff >= sz) break;}
   }
   dst = new String(xdst, 0, doff);
   return dst;
@@ -1047,12 +1047,12 @@ String GetHexFromBin(byte[] src, int off, int len, int opt)
 
 String GetHexFromBin(String dst, int sz, int off, int len, int opt)
 {
-  return GetHexFromBin(dst, sz, TypeBuffer, off, len, opt);
+  return GetHexFromBin(dst, sz, emType, off, len, opt);
 }
 
 String GetHexFromBin(int off, int len, int opt)
 {
-  return GetHexFromBin(new String(), 1024, TypeBuffer, off, len, opt);
+  return GetHexFromBin(new String(), 1024, emType, off, len, opt);
 }
 
 
@@ -1077,7 +1077,7 @@ String GetHexFromBin(int off, int len, int opt)
 // Returns:
 // the converted data (dst)
 // 
-byte[] PutBinFromHex(byte[] dst, int off, int len, String src, int opt)
+void PutBinFromHex(byte[] dst, int off, int len, String src, int opt)
 {
   byte[] xsrc = src.getBytes();
   int hsrc = xsrc.length - 1;
@@ -1090,12 +1090,11 @@ byte[] PutBinFromHex(byte[] dst, int off, int len, String src, int opt)
     dst[cbin] = (hsrc < 0)? 0 : TYPE_HEX_TO_BIN(xsrc[hsrc]); hsrc--;
     dst[cbin] |= (hsrc < 0)? 0 : TYPE_HEX_TO_BIN(xsrc[hsrc]) << 4; hsrc--;
   }
-  return dst;
 }
 
-byte[] PutBinFromHex(int off, int len, String src, int opt)
+void PutBinFromHex(int off, int len, String src, int opt)
 {
-  return PutBinFromHex(TypeBuffer, off, len, src, opt);
+  PutBinFromHex(emType, off, len, src, opt);
 }
 
 

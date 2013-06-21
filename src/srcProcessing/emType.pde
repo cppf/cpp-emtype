@@ -1,6 +1,6 @@
 /*
 ----------------------------------------------------------------------------------------
-    emType: Library header file for Ardino
+    emType: Library file for Processing
     File: emType.pde
 
     This file is part of emType. For more details, go through

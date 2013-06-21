@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------
-	emType: Readme file for C/C++ header file
+	emType: Readme file for Waspmote
 	File: Readme.txt
 
     This file is part of emType. For more details, go through
@@ -22,6 +22,6 @@
 	
 emType is a generic type conversion library for Arduino/Waspmote/Processing/C/C++. It has been
 developed mainly for simplifying the process of writing wireless communication programs on Arduino,
-Waspmote and Processing. To use it (in C/C++), copy the file emType.h to your source directory and
+Waspmote and Processing. To use it (in Waspmote), copy the file emType.h to your sketch directory and
 include it (emType.h) in the main code.
 
