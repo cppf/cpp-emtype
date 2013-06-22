@@ -83,7 +83,7 @@ typedef unsigned long long	ulong64;
 
 
 // internal buffer format
-typedef union _emTypeBuffer
+typedef union _emTypeMold
 {
 	byte	Byte[16];
 	sbyte	Sbyte[16];
@@ -102,12 +102,12 @@ typedef union _emTypeBuffer
 	ulong64	Ulong64[2];
 	float	Float[4];
 	double	Double[2];
-}emTypeBuffer;
+}emTypeMold;
 
 
 
 // internal buffer
-emTypeBuffer	emType;
+emTypeMold	emType;
 
 
 
