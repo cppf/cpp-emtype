@@ -166,6 +166,64 @@ Returns:
 ## `Put<Type>` Functions
 
 
+### `SetRegBit`
+
+* `SetRegBit(dst, list_of_bit_nos_to_set)`
+
+Sets (to 1) the value of bits at the specified bit numbers, separated
+with commas `(list_of_bit_nos_to_set)` to the specified register `(dst)`.
+This functions is not available in Processing.
+
+Parameters:
+* `dst`: 	the register whose bits are to be set
+* `list_of_bit_nos_to_set`:	a set of bit numbers separated with commas (multi-parameters)
+
+Returns:
+nothing
+
+
+
+<br\>
+<br\>
+### `ClearRegBit`
+
+* `ClearRegBit(dst, list_of_bit_nos_to_clear)`
+
+Clears (to 0) the value of bits at the specified bit numbers, separated
+with commas `(list_of_bit_nos_to_clear)` to the specified register `(dst)`.
+This functions is not available in Processing.
+
+Parameters:
+* `dst`:  the register whose bits are to be cleared
+* `list_of_bit_nos_to_clear`:	a set of bit numbers separated with commas (multi-parameters)
+
+Returns:
+nothing
+
+
+
+<br\>
+<br\>
+### `PutRegBit`
+
+* `PutRegBit(dst, bit_no, bit_value)`
+
+Sets (to 0 or 1) the value of a bit as `(bit_value)` at the specified
+bit number `(bir_no)` to the specified register `(dst)`. This functions
+is not available in Processing.
+
+Parameters:
+* `dst`:  the register whose bit is to be set (to 0 or 1)
+* `bit_no`: the bit number specifying the bit to be set
+* `bit_value`: the value to which the bit is to be set
+
+Returns:
+nothing
+
+
+
+<br\>
+<br\>
 ### `Put<Bit/Nibble>`
 
 * `Put<Bit/Nibble>(dst, off, <bit/nibble>_no, <bit/nibble>_value)`
