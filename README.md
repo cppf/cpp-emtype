@@ -1,4 +1,4 @@
-# [emType v0.2](https://github.com/wolfram77/emType) [![Build Status](https://raw.github.com/wolfram77/emType/master/build.png)](https://raw.github.com/wolfram77/emType/master/build.png)
+# [emType v0.2.1](https://github.com/wolfram77/emType) [![Build Status](https://raw.github.com/wolfram77/emType/master/build.png)](https://raw.github.com/wolfram77/emType/master/build.png)
 
 emType is a generic type conversion library for [Arduino](http://arduino.cc/), [Waspmote](http://www.libelium.com/products/waspmote/), [Processing](http://www.processing.org/), C/C++.
 It has been developed mainly for simplifying the process of writing wireless communication
@@ -81,6 +81,24 @@ Embedded_Type has 7 types of functions:
 ## `Get<Type>` Functions
 
 
+### `GetRegBit`
+
+* `GetRegBit(src, bit_no)`
+
+Returns the value of bit at the specified bit number `(bit_no)` from
+the specified register `(src)`. This function is not available in Processing.
+
+Parameters:
+* `src`: 	the register from which bit is to be fetched
+* `bit_no`:		the index of the bit (starts from 0)
+ 
+Returns:
+`bit_value`:	the value of the specified bit
+
+
+
+<br\>
+<br\>
 ### `Get<Bit/Nibble>`
 
 * `Get<Bit/Nibble>(src, off, <bit/nibble>_no)`
