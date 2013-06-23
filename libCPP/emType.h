@@ -144,6 +144,9 @@ emTypeMold	emType;
 #define GetBit(...)	\
 	Macro(Macro3(__VA_ARGS__, GetBitExt, GetBitInt)(__VA_ARGS__))
 
+#define	GetRegBit(src, bit_no)	\
+	((src >> bit_no) & 1)
+
 
 
 // Function:
@@ -328,6 +331,57 @@ string GetStringExt(string dst, int sz, void* src, int off, byte opt)
 
 #define PutBit(...)	\
 	Macro(Macro4(__VA_ARGS__, PutBitExt, PutBitInt)(__VA_ARGS__))
+
+#define	SetRegBit1(dst, bit_no)	\
+	(dst |= (1 << bit_no))
+
+#define	SetRegBit2(dst, bit_no1, bit_no0)	\
+	(dst |= (1 << bit_no1) | (1 << bit_no0))
+
+#define	SetRegBit3(dst, bit_no2, bit_no1, bit_no0)	\
+	(dst |= (1 << bit_no2) | (1 << bit_no1) | (1 << bit_no0))
+
+#define	SetRegBit4(dst, bit_no3, bit_no2, bit_no1, bit_no0)	\
+	(dst |= (1 << bit_no3) | (1 << bit_no2) | (1 << bit_no1) | (1 << bit_no0))
+
+#define	SetRegBit5(dst, bit_no4, bit_no3, bit_no2, bit_no1, bit_no0)	\
+	(dst |= (1 << bit_no4) | (1 << bit_no3) | (1 << bit_no2) | (1 << bit_no1) | (1 << bit_no0))
+
+#define	SetRegBit6(dst, bit_no5, bit_no4, bit_no3, bit_no2, bit_no1, bit_no0)	\
+	(dst |= (1 << bit_no5) | (1 << bit_no4) | (1 << bit_no3) | (1 << bit_no2) | (1 << bit_no1) | (1 << bit_no0))
+
+#define	SetRegBit7(dst, bit_no6, bit_no5, bit_no4, bit_no3, bit_no2, bit_no1, bit_no0)	\
+	(dst |= (1 << bit_no6) | (1 << bit_no5) | (1 << bit_no4) | (1 << bit_no3) | (1 << bit_no2) | (1 << bit_no1) | (1 << bit_no0))
+
+#define	SetRegBit(...)	\
+	Macro(Macro8(__VA_ARGS__, SetRegBit7, SetRegBit6, SetRegBit5, SetRegBit4, SetRegBit3, SetRegBit2, SetRegBit1)(__VA_ARGS__))
+
+#define	ClearRegBit1(dst, bit_no)	\
+	(dst &= ~(1 << bit_no))
+
+#define	ClearRegBit2(dst, bit_no1, bit_no0)	\
+	(dst &= ~(1 << bit_no1) | (1 << bit_no0))
+
+#define	ClearRegBit3(dst, bit_no2, bit_no1, bit_no0)	\
+	(dst &= ~(1 << bit_no2) | (1 << bit_no1) | (1 << bit_no0))
+
+#define	ClearRegBit4(dst, bit_no3, bit_no2, bit_no1, bit_no0)	\
+	(dst &= ~(1 << bit_no3) | (1 << bit_no2) | (1 << bit_no1) | (1 << bit_no0))
+
+#define	ClearRegBit5(dst, bit_no4, bit_no3, bit_no2, bit_no1, bit_no0)	\
+	(dst &= ~(1 << bit_no4) | (1 << bit_no3) | (1 << bit_no2) | (1 << bit_no1) | (1 << bit_no0))
+
+#define	ClearRegBit6(dst, bit_no5, bit_no4, bit_no3, bit_no2, bit_no1, bit_no0)	\
+	(dst &= ~(1 << bit_no5) | (1 << bit_no4) | (1 << bit_no3) | (1 << bit_no2) | (1 << bit_no1) | (1 << bit_no0))
+
+#define	ClearRegBit7(dst, bit_no6, bit_no5, bit_no4, bit_no3, bit_no2, bit_no1, bit_no0)	\
+	(dst &= ~(1 << bit_no6) | (1 << bit_no5) | (1 << bit_no4) | (1 << bit_no3) | (1 << bit_no2) | (1 << bit_no1) | (1 << bit_no0))
+
+#define	ClearRegBit(...)	\
+	Macro(Macro8(__VA_ARGS__, ClearRegBit7, ClearRegBit6, ClearRegBit5, ClearRegBit4, ClearRegBit3, ClearRegBit2, ClearRegBit1)(__VA_ARGS__))
+
+#define	PutRegBit(dst, bit_no, bit_value)	\
+	((dst &= ~(1 << bit_no)) |= (bit_value << bit_no))
 
 
 
