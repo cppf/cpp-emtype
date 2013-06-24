@@ -43,7 +43,7 @@
 // macros, it is possible to support macro overloading to some
 // extent
 #ifndef	Macro
-#define	Macro(x)	x
+#define	Macro(x)	(x)
 #define	Macro2(_1, _2, func, ...)	func
 #define	Macro3(_1, _2, _3, func, ...)	func
 #define	Macro4(_1, _2, _3, _4, func, ...)	func
@@ -569,40 +569,34 @@ void PutStringExt(void* dst, int off, string value, byte opt)
 	(((emType.var[0] = dat0) & (emType.var[1] = dat1) & (emType.var[2] = dat2) & (emType.var[3] = dat3) & (emType.var[4] = dat4) & (emType.var[5] = dat5) & (emType.var[6] = dat6) & (emType.var[7] = dat7) & 0)? (rtype)0 : emType.ret[0])
 
 #define	ToShort(byte1, byte0)	\
-	ToType2(Byte, Short, short, byte1, byte0)
+	(((byte1) << 8) | (byte0))
 
-#define	ToUshort(byte0, byte1)	\
-	ToType2(Byte, Short, short, byte1, byte0)
+#define	ToUshort(...)	\
+	Macro((ushort)ToShort(__VA_ARGS__))
 
 #define	ToInt16			ToShort
 
 #define	ToUint16		ToUshort
 
-#define	ToIntSrt(ushort1, ushort0)	\
-	ToType2(Ushort, Int, int, ushort1, ushort0)
+#define	ToInt			ToShort
 
-#define	ToIntByt(byte3, byte2, byte1, byte0)	\
-	ToType4(Byte, Int, int, byte3, byte2, byte1, byte0)
+#define	ToUint			ToUshort
 
-#define	ToInt(...)	\
-	Macro(Macro4(__VA_ARGS__, ToIntByt, _3, ToIntSrt)(__VA_ARGS__))
+#define	ToLongSrt(ushort1, ushort0)	\
+	((ushort1) << 16 | (ushort0))
 
-#define	ToUintSrt(ushort1, ushort0)	\
-	ToType2(Ushort, Uint, uint, ushort1, ushort0)
+#define	ToLongByt(byte3, byte2, byte1, byte0)	\
+	(((byte3) << 24) | ((byte2) << 16) | ((byte1) << 8) | (byte0))
 
-#define	ToUintByt(byte3, byte2, byte1, byte0)	\
-	ToType4(Byte, Uint, uint, byte3, byte2, byte1, byte0)
+#define	ToLong(...)	\
+	Macro(Macro4(__VA_ARGS__, ToLongByt, _3, ToLongSrt)(__VA_ARGS__))
 
-#define	ToUint(...)	\
-	Macro(Macro4(__VA_ARGS__, ToUintByt, _3, ToUintSrt)(__VA_ARGS__))
+#define	ToUlong(...)	\
+	Macro((ulong)ToLong(__VA_ARGS__))
 
-#define	ToLong32		ToInt
+#define	ToLong32		ToLong
 
-#define	ToUlong32		ToUint
-
-#define	ToLong			ToInt
-
-#define	ToUlong			ToUint
+#define	ToUlong32		ToUlong
 
 #define	ToLong64Int(uint1, uint0)	\
 	ToType2(Uint, Long64, long64, uint1, uint0)
