@@ -23,14 +23,30 @@
 
 #include "emType.h"
 
+long Data[256];
 
 void setup()
 {
+  // start serial
   Serial.begin(57600);
+  // capture start time
+  long Time_Start = micros();
+  // loop for type conversion
+  for(int i=0; i<255; i++)
+  {
+    Data[i] = (i << 24) | ((i + 1) << 16) | ((i + 2) << 8) | (i + 3);
+    // Data[i] = ToLong(i, i + 1);
+  }
+  // capture stop time
+  long Time_Stop = micros();
+  // display time taken
+  Serial.print("Time (in us): ");
+  Serial.println(Time_Stop - Time_Start);
 }
 
 void loop()
 {
-  Serial.println(ToByte(1, 1));
+  // just wait
+  delay(1000);
 }
 

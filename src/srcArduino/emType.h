@@ -3,21 +3,21 @@
 	emType: Library header file for Arduino
 	File: emType.h
 
-    This file is part of emType. For more details, go through
+	This file is part of emType. For more details, go through
 	Readme.txt. For copyright information, go through copyright.txt.
 
-    emType is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	emType is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    emType is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	emType is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with emType.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with emType.  If not, see <http://www.gnu.org/licenses/>.
 ----------------------------------------------------------------------------------------
 */
 
@@ -574,40 +574,39 @@ void PutStringExt(void* dst, int off, string value, byte opt)
 	(((emType.var[0] = dat0) & (emType.var[1] = dat1) & (emType.var[2] = dat2) & (emType.var[3] = dat3) & (emType.var[4] = dat4) & (emType.var[5] = dat5) & (emType.var[6] = dat6) & (emType.var[7] = dat7) & 0)? (rtype)0 : emType.ret[0])
 
 #define	ToShort(byte1, byte0)	\
-	ToType2(Byte, Short, short, byte1, byte0)
+	(((byte1) << 8) | (byte0))
 
-#define	ToUshort(byte0, byte1)	\
-	ToType2(Byte, Short, short, byte1, byte0)
+#define	ToUshort		ToShort
 
 #define	ToInt16			ToShort
 
-#define	ToUint16		ToUshort
+#define	ToUint16		ToShort
 
-#define	ToIntSrt(ushort1, ushort0)	\
-	ToType2(Ushort, Int, int, ushort1, ushort0)
+#define	ToInt			ToShort
 
-#define	ToIntByt(byte3, byte2, byte1, byte0)	\
-	ToType4(Byte, Int, int, byte3, byte2, byte1, byte0)
+#define	ToUint			ToShort
 
-#define	ToInt(...)	\
-	Macro(Macro4(__VA_ARGS__, ToIntByt, _3, ToIntSrt)(__VA_ARGS__))
+#define	ToLongSrt(ushort1, ushort0)	\
+	((ushort1) << 16 | (ushort0))
 
-#define	ToUintSrt(ushort1, ushort0)	\
-	ToType2(Ushort, Uint, uint, ushort1, ushort0)
+#define	ToLongByt(byte3, byte2, byte1, byte0)	\
+	ToType4(Byte, Long, int, byte3, byte2, byte1, byte0)
 
-#define	ToUintByt(byte3, byte2, byte1, byte0)	\
-	ToType4(Byte, Uint, uint, byte3, byte2, byte1, byte0)
+#define	ToLong(...)	\
+	Macro(Macro4(__VA_ARGS__, ToLongByt, _3, ToLongSrt)(__VA_ARGS__))
 
-#define	ToUint(...)	\
-	Macro(Macro4(__VA_ARGS__, ToUintByt, _3, ToUintSrt)(__VA_ARGS__))
+#define	ToUlongSrt(ushort1, ushort0)	\
+	ToType2(Ushort, Ulong, uint, ushort1, ushort0)
 
-#define	ToLong32		ToInt
+#define	ToUlongByt(byte3, byte2, byte1, byte0)	\
+	ToType4(Byte, Ulong, uint, byte3, byte2, byte1, byte0)
 
-#define	ToUlong32		ToUint
+#define	ToUlong(...)	\
+	Macro(Macro4(__VA_ARGS__, ToUlongByt, _3, ToUlongSrt)(__VA_ARGS__))
 
-#define	ToLong			ToInt
+#define	ToLong32		ToLong
 
-#define	ToUlong			ToUint
+#define	ToUlong32		ToUlong
 
 #define	ToLong64Int(uint1, uint0)	\
 	ToType2(Uint, Long64, long64, uint1, uint0)
@@ -715,11 +714,11 @@ void DoReverseExt(void* src, int off, int len)
 // 
 byte GetByteSumExt(void* src, int off, int len)
 {
-    byte sum = 0;
-    byte* bsrc = ((byte*)src) + off;
-    for(; len>0; len--, bsrc++)
-    { sum += *bsrc; }
-    return sum;
+	byte sum = 0;
+	byte* bsrc = ((byte*)src) + off;
+	for(; len>0; len--, bsrc++)
+	{ sum += *bsrc; }
+	return sum;
 }
 
 #define	GetByteSumInt(off, len)	\
@@ -730,12 +729,12 @@ byte GetByteSumExt(void* src, int off, int len)
 
 ushort GetUshortSumExt(void* src, int off, int len)
 {
-    ushort sum = 0;
-    ushort* bsrc = ((ushort*)src) + off;
+	ushort sum = 0;
+	ushort* bsrc = ((ushort*)src) + off;
 	len >>= 1;
-    for(; len>0; len--, bsrc++)
-    { sum += *bsrc; }
-    return sum;
+	for(; len>0; len--, bsrc++)
+	{ sum += *bsrc; }
+	return sum;
 }
 
 #define	GetUshortSumInt(off, len)	\
