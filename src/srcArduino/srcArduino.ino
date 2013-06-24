@@ -34,8 +34,8 @@ void setup()
   // loop for type conversion
   for(int i=0; i<255; i++)
   {
-    Data[i] = (i << 24) | ((i + 1) << 16) | ((i + 2) << 8) | (i + 3);
-    // Data[i] = ToLong(i, i + 1);
+    // Data[i] = (i << 24) | ((i + 1) << 16) | ((i + 2) << 8) | (i + 3);
+    Data[i] = ToUlong(i, i+1, i+2, i+3);
   }
   // capture stop time
   long Time_Stop = micros();

@@ -48,7 +48,7 @@
 // macros, it is possible to support macro overloading to some
 // extent
 #ifndef	Macro
-#define	Macro(x)	x
+#define	Macro(x)	(x)
 #define	Macro2(_1, _2, func, ...)	func
 #define	Macro3(_1, _2, _3, func, ...)	func
 #define	Macro4(_1, _2, _3, _4, func, ...)	func
@@ -576,33 +576,28 @@ void PutStringExt(void* dst, int off, string value, byte opt)
 #define	ToShort(byte1, byte0)	\
 	(((byte1) << 8) | (byte0))
 
-#define	ToUshort		ToShort
+#define	ToUshort(...)	\
+	Macro((ushort)ToShort(__VA_ARGS__))
 
 #define	ToInt16			ToShort
 
-#define	ToUint16		ToShort
+#define	ToUint16		ToUshort
 
 #define	ToInt			ToShort
 
-#define	ToUint			ToShort
+#define	ToUint			ToUshort
 
 #define	ToLongSrt(ushort1, ushort0)	\
 	((ushort1) << 16 | (ushort0))
 
 #define	ToLongByt(byte3, byte2, byte1, byte0)	\
-	ToType4(Byte, Long, int, byte3, byte2, byte1, byte0)
+	(((byte3) << 24) | ((byte2) << 16) | ((byte1) << 8) | (byte0))
 
 #define	ToLong(...)	\
 	Macro(Macro4(__VA_ARGS__, ToLongByt, _3, ToLongSrt)(__VA_ARGS__))
 
-#define	ToUlongSrt(ushort1, ushort0)	\
-	ToType2(Ushort, Ulong, uint, ushort1, ushort0)
-
-#define	ToUlongByt(byte3, byte2, byte1, byte0)	\
-	ToType4(Byte, Ulong, uint, byte3, byte2, byte1, byte0)
-
 #define	ToUlong(...)	\
-	Macro(Macro4(__VA_ARGS__, ToUlongByt, _3, ToUlongSrt)(__VA_ARGS__))
+	Macro((ulong)ToLong(__VA_ARGS__))
 
 #define	ToLong32		ToLong
 
