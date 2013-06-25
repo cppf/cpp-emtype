@@ -777,120 +777,175 @@ void emType_PutStringExt(void* dst, int off, string value, byte opt)
 // Returns:
 // <type>_value:	the value of the (bigger) assembled data type
 // 
-#define	ToNibble(bit3, bit2, bit1, bit0)	\
+#define	emType_ToNibble(bit3, bit2, bit1, bit0)	\
 	((bit3 << 3) | (bit2 << 2) | (bit1 << 1) | bit0)
 
-#define ToByteNib(nibble1, nibble0)	\
+#define emType_ToByteNib(nibble1, nibble0)	\
 	((nibble1 << 4) | nibble0)
 
-#define	ToByteBit(bit7, bit6, bit5, bit4, bit3, bit2, bit1, bit0)	\
-	ToByteNib(ToNibble(bit7, bit6, bit5, bit4), ToNibble(bit3, bit2, bit1, bit0))
+#define	emType_ToByteBit(bit7, bit6, bit5, bit4, bit3, bit2, bit1, bit0)	\
+	emType_ToByteNib(emType_ToNibble(bit7, bit6, bit5, bit4), emType_ToNibble(bit3, bit2, bit1, bit0))
 
-#define ToByte(...)	\
-	Macro(Macro8(__VA_ARGS__, ToByteBit, _7, _6, _5, _4, _3, ToByteNib)(__VA_ARGS__))
+#define emType_ToByte(...)	\
+	Macro(Macro8(__VA_ARGS__, emType_ToByteBit, _7, _6, _5, _4, _3, emType_ToByteNib)(__VA_ARGS__))
 
-#define	ToChar			ToByte	
+#define	emType_ToChar	\
+	emType_ToByte	
 
-#define	ToType2(var, ret, rtype, dat1, dat0)	\
+#define	emType_ToType2(var, ret, rtype, dat1, dat0)	\
 	(((emType.var[0] = dat0) & (emType.var[1] = dat1) & 0)? (rtype)0 : emType.ret[0])
 
-#define	ToType4(var, ret, rtype, dat3, dat2, dat1, dat0)	\
+#define	emType_ToType4(var, ret, rtype, dat3, dat2, dat1, dat0)	\
 	(((emType.var[0] = dat0) & (emType.var[1] = dat1) & (emType.var[2] = dat2) & (emType.var[3] = dat3) & 0)? (rtype)0 : emType.ret[0])
 
-#define ToType8(var, ret, rtype, dat7, dat6, dat5, dat4, dat3, dat2, dat1, dat0)	\
+#define emType_ToType8(var, ret, rtype, dat7, dat6, dat5, dat4, dat3, dat2, dat1, dat0)	\
 	(((emType.var[0] = dat0) & (emType.var[1] = dat1) & (emType.var[2] = dat2) & (emType.var[3] = dat3) & (emType.var[4] = dat4) & (emType.var[5] = dat5) & (emType.var[6] = dat6) & (emType.var[7] = dat7) & 0)? (rtype)0 : emType.ret[0])
 
-#define	ToShort(byte1, byte0)	\
-	ToType2(Byte, Short, short, byte1, byte0)
+#define	emType_ToShort(byte1, byte0)	\
+	emType_ToType2(Byte, Short, short, byte1, byte0)
 
-#define	ToUshort(byte0, byte1)	\
-	ToType2(Byte, Short, short, byte1, byte0)
+#define	emType_ToUshort(byte0, byte1)	\
+	emType_ToType2(Byte, Short, short, byte1, byte0)
 
-#define	ToInt16			ToShort
+#define	emType_ToInt16	\
+	emType_ToShort
 
-#define	ToUint16		ToUshort
+#define	emType_ToUint16	\
+	emType_ToUshort
 
-#define	ToIntSrt(ushort1, ushort0)	\
-	ToType2(Ushort, Int, int, ushort1, ushort0)
+#define	emType_ToIntSrt(ushort1, ushort0)	\
+	emType_ToType2(Ushort, Int, int, ushort1, ushort0)
 
-#define	ToIntByt(byte3, byte2, byte1, byte0)	\
-	ToType4(Byte, Int, int, byte3, byte2, byte1, byte0)
+#define	emType_ToIntByt(byte3, byte2, byte1, byte0)	\
+	emType_ToType4(Byte, Int, int, byte3, byte2, byte1, byte0)
 
-#define	ToInt(...)	\
-	Macro(Macro4(__VA_ARGS__, ToIntByt, _3, ToIntSrt)(__VA_ARGS__))
+#define	emType_ToInt(...)	\
+	Macro(Macro4(__VA_ARGS__, emType_ToIntByt, _3, emType_ToIntSrt)(__VA_ARGS__))
 
-#define	ToUintSrt(ushort1, ushort0)	\
-	ToType2(Ushort, Uint, uint, ushort1, ushort0)
+#define	emType_ToUintSrt(ushort1, ushort0)	\
+	emType_ToType2(Ushort, Uint, uint, ushort1, ushort0)
 
-#define	ToUintByt(byte3, byte2, byte1, byte0)	\
-	ToType4(Byte, Uint, uint, byte3, byte2, byte1, byte0)
+#define	emType_ToUintByt(byte3, byte2, byte1, byte0)	\
+	emType_ToType4(Byte, Uint, uint, byte3, byte2, byte1, byte0)
 
-#define	ToUint(...)	\
-	Macro(Macro4(__VA_ARGS__, ToUintByt, _3, ToUintSrt)(__VA_ARGS__))
+#define	emType_ToUint(...)	\
+	Macro(Macro4(__VA_ARGS__, emType_ToUintByt, _3, emType_ToUintSrt)(__VA_ARGS__))
 
-#define	ToLong32		ToInt
+#define	emType_ToLong32	\
+	emType_ToInt
 
-#define	ToUlong32		ToUint
+#define	emType_ToUlong32	\
+	emType_ToUint
 
-#define	ToLong			ToInt
+#define	emType_ToLong	\
+	emType_ToInt
 
-#define	ToUlong			ToUint
+#define	emType_ToUlong	\
+	emType_ToUint
 
-#define	ToLong64Int(uint1, uint0)	\
-	ToType2(Uint, Long64, long64, uint1, uint0)
+#define	emType_ToLong64Ulong32(ulong32_1, ulong32_0)	\
+	emType_ToType2(Uint, Long64, long64, ulong32_1, ulong32_0)
 
-#define	ToLong64Srt(ushort3, ushort2, ushort1, ushort0)	\
-	ToType4(Ushort, Long64, long64, ushort3, ushort2, ushort1, ushort0)
+#define	emType_ToLong64Srt(ushort3, ushort2, ushort1, ushort0)	\
+	emType_ToType4(Ushort, Long64, long64, ushort3, ushort2, ushort1, ushort0)
 
-#define	ToLong64Byt(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)	\
-	ToType8(Byte, Long64, long64, byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)
+#define	emType_ToLong64Byt(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)	\
+	emType_ToType8(Byte, Long64, long64, byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)
 
-#define	ToLong64(...)	\
-	Macro(Macro8(__VA_ARGS__, ToLong64Byt, _7, _6, _5, ToLong64Srt, _3, ToLong64Int)(__VA_ARGS__))
+#define	emType_ToLong64(...)	\
+	Macro(Macro8(__VA_ARGS__, emType_ToLong64Byt, _7, _6, _5, emType_ToLong64Srt, _3, emType_ToLong64Ulong32)(__VA_ARGS__))
 
-#define	ToUlong64Int(uint1, uint0)	\
-	ToType2(Uint, Ulong64, ulong64, uint1, uint0)
+#define	emType_ToUlong64Ulong32(ulong32_1, ulong32_0)	\
+	emType_ToType2(Uint, Ulong64, ulong64, ulong32_1, ulong32_0)
 
-#define	ToUlong64Srt(ushort3, ushort2, ushort1, ushort0)	\
-	ToType4(Ushort, Ulong64, ulong64, ushort3, ushort2, ushort1, ushort0)
+#define	emType_ToUlong64Srt(ushort3, ushort2, ushort1, ushort0)	\
+	emType_ToType4(Ushort, Ulong64, ulong64, ushort3, ushort2, ushort1, ushort0)
 
-#define	ToUlong64Byt(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)	\
-	ToType8(Byte, Ulong64, ulong64, byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)
+#define	emType_ToUlong64Byt(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)	\
+	emType_ToType8(Byte, Ulong64, ulong64, byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)
 
-#define	ToUlong64(...)	\
-	Macro(Macro8(__VA_ARGS__, ToUlong64Byt, _7, _6, _5, ToUlong64Srt, _3, ToUlong64Int)(__VA_ARGS__))
+#define	emType_ToUlong64(...)	\
+	Macro(Macro8(__VA_ARGS__, emType_ToUlong64Byt, _7, _6, _5, emType_ToUlong64Srt, _3, emType_ToUlong64Ulong32)(__VA_ARGS__))
 
-#define	ToFloatSrt(ushort1, ushort0)	\
-	ToType2(Ushort, Float, float, ushort1, ushort0)
+#define	emType_ToFloatSrt(ushort1, ushort0)	\
+	emType_ToType2(Ushort, Float, float, ushort1, ushort0)
 
-#define	ToFloatByt(byte3, byte2, byte1, byte0)	\
-	ToType4(Byte, Float, float, byte3, byte2, byte1, byte0)
+#define	emType_ToFloatByt(byte3, byte2, byte1, byte0)	\
+	emType_ToType4(Byte, Float, float, byte3, byte2, byte1, byte0)
 
-#define	ToFloat(...)	\
-	Macro(Macro4(__VA_ARGS__, ToFloatByt, _3, ToFloatSrt)(__VA_ARGS__))
+#define	emType_ToFloat(...)	\
+	Macro(Macro4(__VA_ARGS__, emType_ToFloatByt, _3, emType_ToFloatSrt)(__VA_ARGS__))
 
-#define	ToDoubleInt(uint1, uint0)	\
-	ToType2(Uint, Double, double, uint1, uint0)
+#define	emType_ToDoubleUlong32(ulong32_1, ulong32_0)	\
+	emType_ToType2(Uint, Double, double, ulong32_1, ulong32_0)
 
-#define	ToDoubleSrt(ushort3, ushort2, ushort1, ushort0)	\
-	ToType4(Ushort, Double, double, ushort3, ushort2, ushort1, ushort0)
+#define	emType_ToDoubleSrt(ushort3, ushort2, ushort1, ushort0)	\
+	emType_ToType4(Ushort, Double, double, ushort3, ushort2, ushort1, ushort0)
 
-#define	ToDoubleByt(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)	\
-	ToType8(Byte, Double, double, byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)
+#define	emType_ToDoubleByt(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)	\
+	emType_ToType8(Byte, Double, double, byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)
 
-#define	ToDouble(...)	\
-	Macro(Macro8(__VA_ARGS__, ToDoubleByt, _7, _6, _5, ToDoubleSrt, _3, ToDoubleInt)(__VA_ARGS__))
+#define	emType_ToDouble(...)	\
+	Macro(Macro8(__VA_ARGS__, emType_ToDoubleByt, _7, _6, _5, emType_ToDoubleSrt, _3, emType_ToDoubleUlong32)(__VA_ARGS__))
 
 #if emType_Shorthand >= 1
-#define	emTypePutString			emType_PutString
+#define	emTypeToNibble			emType_ToNibble
+#define	emTypeToByte			emType_ToByte
+#define	emTypeToChar			emType_ToChar
+#define	emTypeToShort			emType_ToShort
+#define	emTypeToUshort			emType_ToUshort
+#define	emTypeToInt16			emType_ToInt16
+#define	emTypeToUint16			emType_ToUint16
+#define	emTypeToInt				emType_ToInt
+#define	emTypeToUint			emType_ToUint
+#define	emTypeToLong32			emType_ToLong32
+#define	emTypeToUlong32			emType_ToUlong32
+#define	emTypeToLong			emType_ToLong
+#define	emTypeToUlong			emType_ToUlong
+#define	emTypeToLong64			emType_ToLong64
+#define	emTypeToUlong64			emType_ToUlong64
+#define	emTypeToFloat			emType_ToFloat
+#define	emTypeToDouble			emType_ToDouble
 #endif
 
 #if	emType_Shorthand >= 2
-#define	typPutString			emType_PutString
+#define	typToNibble				emType_ToNibble
+#define	typToByte				emType_ToByte
+#define	typToChar				emType_ToChar
+#define	typToShort				emType_ToShort
+#define	typToUshort				emType_ToUshort
+#define	typToInt16				emType_ToInt16
+#define	typToUint16				emType_ToUint16
+#define	typToInt				emType_ToInt
+#define	typToUint				emType_ToUint
+#define	typToLong32				emType_ToLong32
+#define	typToUlong32			emType_ToUlong32
+#define	typToLong				emType_ToLong
+#define	typToUlong				emType_ToUlong
+#define	typToLong64				emType_ToLong64
+#define	typToUlong64			emType_ToUlong64
+#define	typToFloat				emType_ToFloat
+#define	typToDouble				emType_ToDouble
 #endif
 
 #if	emType_Shorthand >= 3
-#define	PutString				emType_PutString
+#define	ToNibble				emType_ToNibble
+#define	ToByte					emType_ToByte
+#define	ToChar					emType_ToChar
+#define	ToShort					emType_ToShort
+#define	ToUshort				emType_ToUshort
+#define	ToInt16					emType_ToInt16
+#define	ToUint16				emType_ToUint16
+#define	ToInt					emType_ToInt
+#define	ToUint					emType_ToUint
+#define	ToLong32				emType_ToLong32
+#define	ToUlong32				emType_ToUlong32
+#define	ToLong					emType_ToLong
+#define	ToUlong					emType_ToUlong
+#define	ToLong64				emType_ToLong64
+#define	ToUlong64				emType_ToUlong64
+#define	ToFloat					emType_ToFloat
+#define	ToDouble				emType_ToDouble
 #endif
 
 
@@ -914,7 +969,7 @@ void emType_PutStringExt(void* dst, int off, string value, byte opt)
 // Returns:
 // nothing
 // 
-void DoReverseExt(void* src, int off, int len)
+void emType_DoReverseExt(void* src, int off, int len)
 {
 	char byt;
 	char *bg, *ed;
@@ -926,11 +981,23 @@ void DoReverseExt(void* src, int off, int len)
 	}
 }
 
-#define	DoReverseInt(off, len)	\
-	DoReverseExt(&emType, off, len)
+#define	emType_DoReverseInt(off, len)	\
+	emType_DoReverseExt(&emType, off, len)
 
-#define	DoReverse(...)	\
-	Macro(Macro3(__VA_ARGS__, DoReverseExt, DoReverseInt)(__VA_ARGS__))
+#define	emType_DoReverse(...)	\
+	Macro(Macro3(__VA_ARGS__, emType_DoReverseExt, emType_DoReverseInt)(__VA_ARGS__))
+
+#if emType_Shorthand >= 1
+#define	emTypeDoReverse			emType_DoReverse
+#endif
+
+#if	emType_Shorthand >= 2
+#define	typDoReverse			emType_DoReverse
+#endif
+
+#if	emType_Shorthand >= 3
+#define	DoReverse				emType_DoReverse
+#endif
 
 
 
@@ -952,7 +1019,7 @@ void DoReverseExt(void* src, int off, int len)
 // Returns:
 // <type>_value:  the summed value
 // 
-byte GetByteSumExt(void* src, int off, int len)
+byte emType_GetByteSumExt(void* src, int off, int len)
 {
     byte sum = 0;
     byte* bsrc = ((byte*)src) + off;
@@ -961,13 +1028,13 @@ byte GetByteSumExt(void* src, int off, int len)
     return sum;
 }
 
-#define	GetByteSumInt(off, len)	\
-	GetByteSumExt(&emType, off, len)
+#define	emType_GetByteSumInt(off, len)	\
+	emType_GetByteSumExt(&emType, off, len)
 
-#define	GetByteSum(...)	\
-	Macro(Macro3(__VA_ARGS__, GetByteSumExt, GetByteSumInt)(__VA_ARGS__))
+#define	emType_GetByteSum(...)	\
+	Macro(Macro3(__VA_ARGS__, emType_GetByteSumExt, emType_GetByteSumInt)(__VA_ARGS__))
 
-ushort GetUshortSumExt(void* src, int off, int len)
+ushort emType_GetUshortSumExt(void* src, int off, int len)
 {
     ushort sum = 0;
     ushort* bsrc = ((ushort*)src) + off;
@@ -977,13 +1044,31 @@ ushort GetUshortSumExt(void* src, int off, int len)
     return sum;
 }
 
-#define	GetUshortSumInt(off, len)	\
-	GetUshortSumExt(&emType, off, len)
+#define	emType_GetUshortSumInt(off, len)	\
+	emType_GetUshortSumExt(&emType, off, len)
 
-#define	GetUshortSum(...)	\
-	Macro(Macro3(__VA_ARGS__, GetUshortSumExt, GetUshortSumInt)(__VA_ARGS__))
+#define	emType_GetUshortSum(...)	\
+	Macro(Macro3(__VA_ARGS__, emType_GetUshortSumExt, emType_GetUshortSumInt)(__VA_ARGS__))
 
-#define	GetUint16Sum		GetUshortSum
+#define	emType_GetUint16Sum		emType_GetUshortSum
+
+#if emType_Shorthand >= 1
+#define	emTypeGetByteSum		emType_GetByteSum
+#define	emTypeGetUshortSum		emType_GetUshortSum
+#define	emTypeGetUint16Sum		emType_GetUint16Sum
+#endif
+
+#if	emType_Shorthand >= 2
+#define	typGetByteSum			emType_GetByteSum
+#define	typGetUshortSum			emType_GetUshortSum
+#define	typGetUint16Sum			emType_GetUint16Sum
+#endif
+
+#if	emType_Shorthand >= 3
+#define	GetByteSum				emType_GetByteSum
+#define	GetUshortSum			emType_GetUshortSum
+#define	GetUint16Sum			emType_GetUint16Sum
+#endif
 
 
 
@@ -1009,47 +1094,111 @@ ushort GetUshortSumExt(void* src, int off, int len)
 // Returns:
 // nothing
 // 
-#define TYPE_HEX_TO_BIN(ch)		(((ch) <= '9')? (ch)-'0' : (ch)-'7')
+#define emType_HEX_TO_BIN(ch)		(((ch) <= '9')? (ch)-'0' : (ch)-'7')
 
-#define TYPE_BIN_TO_HEX(bn)		(((bn) <= 9)? (bn)+'0' : (bn)+'7' )
+#define emType_BIN_TO_HEX(bn)		(((bn) <= 9)? (bn)+'0' : (bn)+'7' )
 
-#define	TYPE_NO_SPACE			0
+#define	emType_NO_SPACE				0
 
-#define TYPE_ADD_SPACE			1
+#define emType_ADD_SPACE			1
 
-#define	TYPE_HAS_SPACE			1
+#define	emType_HAS_SPACE			1
 
-#define	TYPE_NO_CHAR			0
+#define	emType_NO_CHAR				0
 
-#define TYPE_ADD_CHAR			2
+#define emType_ADD_CHAR				2
 
-#define	TYPE_HAS_CHAR			2
+#define	emType_HAS_CHAR				2
 
-#define	TYPE_LITTLE_ENDIAN		0
+#define	emType_LITTLE_ENDIAN		0
 
-#define TYPE_BIG_ENDIAN			4
+#define emType_BIG_ENDIAN			4
 
-string GetHexFromBinExt(string dst, int sz, void* src, int off, int len, byte opt)
+string emType_GetHexFromBinExt(string dst, int sz, void* src, int off, int len, byte opt)
 {
 	char* dend = dst + sz - 1;
-	byte* cbin = ((byte*)src) + ((opt & TYPE_BIG_ENDIAN)? off : (off+len-1));
-	int stp = (opt & TYPE_BIG_ENDIAN)? 1 : -1;
+	byte* cbin = ((byte*)src) + ((opt & emType_BIG_ENDIAN)? off : (off+len-1));
+	int stp = (opt & emType_BIG_ENDIAN)? 1 : -1;
 	for(int i=0; i<len; i++, cbin+=stp)
 	{
-		*dst = TYPE_BIN_TO_HEX(*cbin >> 4); dst++; if(dst >= dend) break;
-		*dst = TYPE_BIN_TO_HEX(*cbin & 0xF); dst++; if(dst >= dend) break;
-		if(opt & TYPE_ADD_CHAR) { *dst = (*cbin < 32 || *cbin > 127)? '.' : *cbin; dst++; if(dst >= dend) break;}
-		if(opt & TYPE_ADD_SPACE) { *dst = ' '; dst++; if(dst >= dend) break;}
+		*dst = emType_BIN_TO_HEX(*cbin >> 4); dst++; if(dst >= dend) break;
+		*dst = emType_BIN_TO_HEX(*cbin & 0xF); dst++; if(dst >= dend) break;
+		if(opt & emType_ADD_CHAR) { *dst = (*cbin < 32 || *cbin > 127)? '.' : *cbin; dst++; if(dst >= dend) break;}
+		if(opt & emType_ADD_SPACE) { *dst = ' '; dst++; if(dst >= dend) break;}
 	}
 	*dst = '\0';
 	return dst;
 }
 
-#define	GetHexFromBinInt(dst, sz, off, len, opt)	\
-	GetHexFromBinExt(dst, sz, &emType, off, len, opt)
+#define	emType_GetHexFromBinInt(dst, sz, off, len, opt)	\
+	emType_GetHexFromBinExt(dst, sz, &emType, off, len, opt)
 
-#define	GetHexFromBin(...)	\
-	Macro(Macro6(__VA_ARGS__, GetHexFromBinExt, GetHexFromBinInt)(__VA_ARGS__))
+#define	emType_GetHexFromBin(...)	\
+	Macro(Macro6(__VA_ARGS__, emType_GetHexFromBinExt, emType_GetHexFromBinInt)(__VA_ARGS__))
+
+#define emType_HEX_TO_BIN(ch)		(((ch) <= '9')? (ch)-'0' : (ch)-'7')
+
+#define emType_BIN_TO_HEX(bn)		(((bn) <= 9)? (bn)+'0' : (bn)+'7' )
+
+#define	emType_NO_SPACE				0
+
+#define emType_ADD_SPACE			1
+
+#define	emType_HAS_SPACE			1
+
+#define	emType_NO_CHAR				0
+
+#define emType_ADD_CHAR				2
+
+#define	emType_HAS_CHAR				2
+
+#define	emType_LITTLE_ENDIAN		0
+
+#define emType_BIG_ENDIAN			4
+
+
+
+#if emType_Shorthand >= 1
+#define	emTypeHEX_TO_BIN		emType_HEX_TO_BIN
+#define	emTypeBIN_TO_HEX		emType_BIN_TO_HEX
+#define	emTypeNO_SPACE			emType_NO_SPACE
+#define	emTypeADD_SPACE			emType_ADD_SPACE
+#define	emTypeHAS_SPACE			emType_HAS_SPACE
+#define	emTypeNO_CHAR			emType_NO_CHAR
+#define	emTypeADD_CHAR			emType_ADD_CHAR
+#define	emTypeHAS_CHAR			emType_HAS_CHAR
+#define	emTypeLITTLE_ENDIAN		emType_LITTLE_ENDIAN
+#define	emTypeBIG_ENDIAN		emType_BIG_ENDIAN
+#define	emTypeGetHexFromBin		emType_GetHexFromBin
+#endif
+
+#if	emType_Shorthand >= 2
+#define	typHEX_TO_BIN			emType_HEX_TO_BIN
+#define	typBIN_TO_HEX			emType_BIN_TO_HEX
+#define	typNO_SPACE				emType_NO_SPACE
+#define	typADD_SPACE			emType_ADD_SPACE
+#define	typHAS_SPACE			emType_HAS_SPACE
+#define	typNO_CHAR				emType_NO_CHAR
+#define	typADD_CHAR				emType_ADD_CHAR
+#define	typHAS_CHAR				emType_HAS_CHAR
+#define	typLITTLE_ENDIAN		emType_LITTLE_ENDIAN
+#define	typBIG_ENDIAN			emType_BIG_ENDIAN
+#define	typGetHexFromBin		emType_GetHexFromBin
+#endif
+
+#if	emType_Shorthand >= 3
+#define	HEX_TO_BIN				emType_HEX_TO_BIN
+#define	BIN_TO_HEX				emType_BIN_TO_HEX
+#define	NO_SPACE				emType_NO_SPACE
+#define	ADD_SPACE				emType_ADD_SPACE
+#define	HAS_SPACE				emType_HAS_SPACE
+#define	NO_CHAR					emType_NO_CHAR
+#define	ADD_CHAR				emType_ADD_CHAR
+#define	HAS_CHAR				emType_HAS_CHAR
+#define	LITTLE_ENDIAN			emType_LITTLE_ENDIAN
+#define	BIG_ENDIAN				emType_BIG_ENDIAN
+#define	GetHexFromBin			emType_GetHexFromBin
+#endif
 
 
 
@@ -1073,25 +1222,37 @@ string GetHexFromBinExt(string dst, int sz, void* src, int off, int len, byte op
 // Returns:
 // the converted data (dst)
 // 
-void PutBinFromHexExt(void* dst, int off, int len, string src, byte opt)
+void emType_PutBinFromHexExt(void* dst, int off, int len, string src, byte opt)
 {
 	char* hsrc = src + strlen(src) - 1;
-	byte* cbin = ((byte*)dst) + ((opt & TYPE_BIG_ENDIAN)? (off+len-1) : off);
-	int stp = (opt & TYPE_BIG_ENDIAN)? -1 : 1;
+	byte* cbin = ((byte*)dst) + ((opt & emType_BIG_ENDIAN)? (off+len-1) : off);
+	int stp = (opt & emType_BIG_ENDIAN)? -1 : 1;
 	for(int i=0; i<len; i++, cbin+=stp)
 	{
-		if(opt & TYPE_HAS_SPACE) hsrc--;
-		if(opt & TYPE_HAS_CHAR) hsrc--;
-		*cbin = (hsrc < src)? 0 : TYPE_HEX_TO_BIN(*hsrc); hsrc--;
-		*cbin |= (hsrc < src)? 0 : TYPE_HEX_TO_BIN(*hsrc) << 4; hsrc--;
+		if(opt & emType_HAS_SPACE) hsrc--;
+		if(opt & emType_HAS_CHAR) hsrc--;
+		*cbin = (hsrc < src)? 0 : emType_HEX_TO_BIN(*hsrc); hsrc--;
+		*cbin |= (hsrc < src)? 0 : emType_HEX_TO_BIN(*hsrc) << 4; hsrc--;
 	}
 }
 
-#define	PutBinFromHexInt(off, len, src, opt)	\
-	PutBinFromHexExt(&emType, off, len, src, opt)
+#define	emType_PutBinFromHexInt(off, len, src, opt)	\
+	emType_PutBinFromHexExt(&emType, off, len, src, opt)
 
-#define	PutBinFromHex(...)	\
-	Macro(Macro5(__VA_ARGS__, PutBinFromHexExt, PutBinFromHexInt)(__VA_ARGS__))
+#define	emType_PutBinFromHex(...)	\
+	Macro(Macro5(__VA_ARGS__, emType_PutBinFromHexExt, emType_PutBinFromHexInt)(__VA_ARGS__))
+
+#if emType_Shorthand >= 1
+#define	emTypePutBinFromHex		emType_PutBinFromHex
+#endif
+
+#if	emType_Shorthand >= 2
+#define	typPutBinFromHex		emType_PutBinFromHex
+#endif
+
+#if	emType_Shorthand >= 3
+#define	PutBinFromHex			emType_PutBinFromHex
+#endif
 
 
 
