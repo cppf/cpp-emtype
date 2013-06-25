@@ -43,6 +43,13 @@
 
 
 
+// select shorthanding scheme
+#ifndef	emType_Shorthand
+#define	emType_Shorthand	3
+#endif
+
+
+
 // Simulate macro overloading
 // By default, C++ does not support macro overloading, but
 // through the use of variable argument macros called variadic
@@ -90,7 +97,7 @@ typedef unsigned long long	ulong64;
 
 
 // internal buffer format
-typedef union _emTypeMold
+typedef union _emType_Mold
 {
 	byte	Byte[16];
 	sbyte	Sbyte[16];
@@ -109,12 +116,20 @@ typedef union _emTypeMold
 	ulong64	Ulong64[2];
 	float	Float[4];
 	double	Double[2];
-}emTypeMold;
+}emType_Mold;
+
+#if emType_Shorthand >= 1
+#define	emTypeMold			emType_Mold
+#endif
+
+#if	emType_Shorthand >= 2
+#define	typMold				emType_Mold
+#endif
 
 
 
 // internal buffer
-emTypeMold	emType;
+emType_Mold	emType;
 
 
 
@@ -135,17 +150,32 @@ emTypeMold	emType;
 // Returns:
 // bit_value:	the value of the specified bit (0 or 1)
 // 
-#define	GetBitExt(src, off, bit_no)	\
+#define	emType_GetBitExt(src, off, bit_no)	\
 	((*(((byte*)src) + off + (bit_no >> 3)) >> (bit_no & 7)) & 1)
 
-#define	GetBitInt(off, bit_no)	\
+#define	emType_GetBitInt(off, bit_no)	\
 	GetBitExt(&emType, off, bit_no)
 
-#define GetBit(...)	\
-	Macro(Macro3(__VA_ARGS__, GetBitExt, GetBitInt)(__VA_ARGS__))
+#define emType_GetBit(...)	\
+	Macro(Macro3(__VA_ARGS__, emType_GetBitExt, emType_GetBitInt)(__VA_ARGS__))
 
-#define	GetRegBit(src, bit_no)	\
+#define	emType_GetRegBit(src, bit_no)	\
 	((src >> bit_no) & 1)
+
+#if emType_Shorthand >= 1
+#define	emTypeGetBit		emType_GetBit
+#define	emTypeGetRegBit		emType_GetRegBit
+#endif
+
+#if	emType_Shorthand >= 2
+#define	typGetBit			emType_GetBit
+#define	typGetRegBit		emType_GetRegBit
+#endif
+
+#if	emType_Shorthand >= 3
+#define	GetBit				emType_GetBit
+#define	GetRegBit			emType_GetRegBit
+#endif
 
 
 
@@ -166,14 +196,26 @@ emTypeMold	emType;
 // Returns:
 // nibble_value:	the value of the specified nibble (0 to 15 or 0x0 to 0xF)
 // 
-#define	GetNibbleExt(src, off, nibble_no)	\
+#define	emType_GetNibbleExt(src, off, nibble_no)	\
 	((*(((byte*)src) + off + (nibble_no >> 1)) >> ((nibble_no & 1) << 2)) & 0xF)
 
-#define	GetNibbleInt(off, nibble_no)	\
+#define	emType_GetNibbleInt(off, nibble_no)	\
 	GetNibbleExt(&emType, off, nibble_no)
 
-#define GetNibble(...)	\
-	Macro(Macro3(__VA_ARGS__, GetNibbleExt, GetNibbleInt)(__VA_ARGS__))
+#define emType_GetNibble(...)	\
+	Macro(Macro3(__VA_ARGS__, emType_GetNibbleExt, emType_GetNibbleInt)(__VA_ARGS__))
+
+#if emType_Shorthand >= 1
+#define	emTypeGetNibble		emType_GetNibble
+#endif
+
+#if	emType_Shorthand >= 2
+#define	typGetNibble		emType_GetNibble
+#endif
+
+#if	emType_Shorthand >= 3
+#define	GetNibble			emType_GetNibble
+#endif
 
 
 
@@ -192,74 +234,86 @@ emTypeMold	emType;
 // Returns:
 // <type>_value:	the value of the specified <type>
 // 
-#define	GetStypeExt(type, src, off)	\
+#define	emType_GetStypeExt(type, src, off)	\
 	(*(((type*)src) + off))
 
-#define	GetStypeInt(type, off)	\
-	GetStypeExt(type, &emType, off)
+#define	emType_GetStypeInt(type, off)	\
+	emType_GetStypeExt(type, &emType, off)
 
-#define GetStype(...)	\
-	Macro(Macro3(__VA_ARGS__, GetStypeExt, GetStypeInt)(__VA_ARGS__))
+#define emType_GetStype(...)	\
+	Macro(Macro3(__VA_ARGS__, emType_GetStypeExt, emType_GetStypeInt)(__VA_ARGS__))
 
-#define	GetTypeExt(type, src, off)	\
+#define	emType_GetTypeExt(type, src, off)	\
 	(*((type*)(((byte*)src) + off)))
 
-#define	GetTypeInt(type, off)	\
-	GetTypeExt(type, &emType, off)
+#define	emType_GetTypeInt(type, off)	\
+	emType_GetTypeExt(type, &emType, off)
 
-#define	GetType(...) \
-	Macro(Macro3(__VA_ARGS__, GetTypeExt, GetTypeInt)(__VA_ARGS__))
+#define	emType_GetType(...) \
+	Macro(Macro3(__VA_ARGS__, emType_GetTypeExt, emType_GetTypeInt)(__VA_ARGS__))
 
-#define GetChar(...)	\
-	Macro(GetStype(char, __VA_ARGS__))
+#define emType_GetChar(...)	\
+	Macro(emType_GetStype(char, __VA_ARGS__))
 
-#define GetByte(...)	\
-	Macro(GetStype(byte, __VA_ARGS__))
+#define emType_GetByte(...)	\
+	Macro(emType_GetStype(byte, __VA_ARGS__))
 
-#define GetBoolean(...)	\
-	Macro(((GetByte(__VA_ARGS__) == 0)? FALSE : TRUE))
+#define emType_GetBoolean(...)	\
+	Macro(((emType_GetByte(__VA_ARGS__) == 0)? FALSE : TRUE))
 
-#define	GetShort(...)	\
-	Macro(GetType(short, __VA_ARGS__))
+#define	emType_GetShort(...)	\
+	Macro(emType_GetType(short, __VA_ARGS__))
 
-#define	GetUshort(...)	\
-	Macro(GetType(ushort, __VA_ARGS__))
+#define	emType_GetUshort(...)	\
+	Macro(emType_GetType(ushort, __VA_ARGS__))
 
-#define	GetInt16(...)	\
-	Macro(GetType(int16, __VA_ARGS__))
+#define	emType_GetInt16(...)	\
+	Macro(emType_GetType(int16, __VA_ARGS__))
 
-#define	GetUint16(...)	\
-	Macro(GetType(uint16, __VA_ARGS__))
+#define	emType_GetUint16(...)	\
+	Macro(emType_GetType(uint16, __VA_ARGS__))
 
-#define	GetInt(...)	\
-	Macro(GetType(int, __VA_ARGS__))
+#define	emType_GetInt(...)	\
+	Macro(emType_GetType(int, __VA_ARGS__))
 
-#define	GetUint(...)	\
-	Macro(GetType(uint, __VA_ARGS__))
+#define	emType_GetUint(...)	\
+	Macro(emType_GetType(uint, __VA_ARGS__))
 
-#define	GetLong32(...)	\
-	Macro(GetType(long32, __VA_ARGS__))
+#define	emType_GetLong32(...)	\
+	Macro(emType_GetType(long32, __VA_ARGS__))
 
-#define	GetUlong32(...)	\
-	Macro(GetType(ulong32, __VA_ARGS__))
+#define	emType_GetUlong32(...)	\
+	Macro(emType_GetType(ulong32, __VA_ARGS__))
 
-#define	GetLong(...)	\
-	Macro(GetType(long, __VA_ARGS__))
+#define	emType_GetLong(...)	\
+	Macro(emType_GetType(long, __VA_ARGS__))
 
-#define	GetUlong(...)	\
-	Macro(GetType(ulong, __VA_ARGS__))
+#define	emType_GetUlong(...)	\
+	Macro(emType_GetType(ulong, __VA_ARGS__))
 
-#define	GetLong64(...)	\
-	Macro(GetType(long64, __VA_ARGS__))
+#define	emType_GetLong64(...)	\
+	Macro(emType_GetType(long64, __VA_ARGS__))
 
-#define	GetUlong64(...)	\
-	Macro(GetType(ulong64, __VA_ARGS__))
+#define	emType_GetUlong64(...)	\
+	Macro(emType_GetType(ulong64, __VA_ARGS__))
 
-#define	GetFloat(...)	\
-	Macro(GetType(float, __VA_ARGS__))
+#define	emType_GetFloat(...)	\
+	Macro(emType_GetType(float, __VA_ARGS__))
 
-#define	GetDouble(...)	\
-	Macro(GetType(double, __VA_ARGS__))
+#define	emType_GetDouble(...)	\
+	Macro(emType_GetType(double, __VA_ARGS__))
+
+#if emType_Shorthand >= 1
+#define	emTypeGetNibble		emType_GetNibble
+#endif
+
+#if	emType_Shorthand >= 2
+#define	typGetNibble		emType_GetNibble
+#endif
+
+#if	emType_Shorthand >= 3
+#define	GetNibble			emType_GetNibble
+#endif
 
 
 
