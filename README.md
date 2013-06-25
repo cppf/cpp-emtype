@@ -65,7 +65,7 @@ as `Int` for `int` datatype.
 
 ## Functions
 
-Embedded_Type has 7 types of functions:
+emType has 7 types of functions:
 (click to jump to)
 * [`Get<Type>`](https://github.com/wolfram77/Embedded_Type/blob/master/README.md#gettype-functions):	obtain a datatype from buffer
 * [`Put<Type>`](https://github.com/wolfram77/Embedded_Type/edit/master/README.md#puttype-functions):	store a datatype onto buffer
