@@ -67,13 +67,13 @@ as `Int` for `int` datatype.
 
 emType has 7 types of functions:
 (click to jump to)
-* [`Get<Type>`](https://github.com/wolfram77/Embedded_Type/blob/master/README.md#gettype-functions):	obtain a datatype from buffer
-* [`Put<Type>`](https://github.com/wolfram77/Embedded_Type/edit/master/README.md#puttype-functions):	store a datatype onto buffer
-* [`To<Type>`](https://github.com/wolfram77/Embedded_Type/edit/master/README.md#totype-functions):	assemble smaller datatypes to a bigger one
-* [`Do<Action>`](https://github.com/wolfram77/Embedded_Type/edit/master/README.md#doaction-functions): performs an action directly on the buffer (buffer is modified)
-* [`Get<Type><Action>`](https://github.com/wolfram77/Embedded_Type/edit/master/README.md#gettypeaction-functions): obtain the result of action performed on the buffer (buffer remains unchaged)
-* [`Get<Type1>From<Type2>`](https://github.com/wolfram77/Embedded_Type/edit/master/README.md#gettype1fromtype2-functions): obtain a type1 data from another type2 data
-* [`Put<Type1>From<Type2>`](https://github.com/wolfram77/Embedded_Type/edit/master/README.md#puttype1fromtype2-functions): store data of type1 from data of type2
+* [`Get<Type>`](https://github.com/wolfram77/emType/blob/master/README.md#gettype-functions):	obtain a datatype from buffer
+* [`Put<Type>`](https://github.com/wolfram77/emType/edit/master/README.md#puttype-functions):	store a datatype onto buffer
+* [`To<Type>`](https://github.com/wolfram77/emType/edit/master/README.md#totype-functions):	assemble smaller datatypes to a bigger one
+* [`Do<Action>`](https://github.com/wolfram77/emType/edit/master/README.md#doaction-functions): performs an action directly on the buffer (buffer is modified)
+* [`Get<Type><Action>`](https://github.com/wolfram77/emType/edit/master/README.md#gettypeaction-functions): obtain the result of action performed on the buffer (buffer remains unchaged)
+* [`Get<Type1>From<Type2>`](https://github.com/wolfram77/emType/edit/master/README.md#gettype1fromtype2-functions): obtain a type1 data from another type2 data
+* [`Put<Type1>From<Type2>`](https://github.com/wolfram77/emType/edit/master/README.md#puttype1fromtype2-functions): store data of type1 from data of type2
 
 
 <br\>
