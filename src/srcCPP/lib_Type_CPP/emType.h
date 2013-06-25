@@ -304,15 +304,63 @@ emType_Mold	emType;
 	Macro(emType_GetType(double, __VA_ARGS__))
 
 #if emType_Shorthand >= 1
-#define	emTypeGetNibble		emType_GetNibble
+#define	emTypeGetChar		emType_GetChar
+#define	emTypeGetByte		emType_GetByte
+#define	emTypeGetBoolean	emType_GetBoolean
+#define	emTypeGetShort		emType_GetShort
+#define	emTypeGetUshort		emType_GetUshort
+#define	emTypeGetInt16		emType_GetInt16
+#define	emTypeGetUint16		emType_GetUint16
+#define	emTypeGetInt		emType_GetInt
+#define	emTypeGetUint		emType_GetUint
+#define	emTypeGetLong32		emType_GetLong32
+#define	emTypeGetUlong32	emType_GetUlong32
+#define	emTypeGetLong		emType_GetLong
+#define	emTypeGetUlong		emType_GetUlong
+#define	emTypeGetLong64		emType_GetLong64
+#define	emTypeGetUlong64	emType_GetUlong64
+#define	emTypeGetFloat		emType_GetFloat
+#define	emTypeGetDouble		emType_GetDouble
 #endif
 
 #if	emType_Shorthand >= 2
-#define	typGetNibble		emType_GetNibble
+#define	typGetChar			emType_GetChar
+#define	typGetByte			emType_GetByte
+#define	typGetBoolean		emType_GetBoolean
+#define	typGetShort			emType_GetShort
+#define	typGetUshort		emType_GetUshort
+#define	typGetInt16			emType_GetInt16
+#define	typGetUint16		emType_GetUint16
+#define	typGetInt			emType_GetInt
+#define	typGetUint			emType_GetUint
+#define	typGetLong32		emType_GetLong32
+#define	typGetUlong32		emType_GetUlong32
+#define	typGetLong			emType_GetLong
+#define	typGetUlong			emType_GetUlong
+#define	typGetLong64		emType_GetLong64
+#define	typGetUlong64		emType_GetUlong64
+#define	typGetFloat			emType_GetFloat
+#define	typGetDouble		emType_GetDouble
 #endif
 
 #if	emType_Shorthand >= 3
-#define	GetNibble			emType_GetNibble
+#define	GetChar				emType_GetChar
+#define	GetByte				emType_GetByte
+#define	GetBoolean			emType_GetBoolean
+#define	GetShort			emType_GetShort
+#define	GetUshort			emType_GetUshort
+#define	GetInt16			emType_GetInt16
+#define	GetUint16			emType_GetUint16
+#define	GetInt				emType_GetInt
+#define	GetUint				emType_GetUint
+#define	GetLong32			emType_GetLong32
+#define	GetUlong32			emType_GetUlong32
+#define	GetLong				emType_GetLong
+#define	GetUlong			emType_GetUlong
+#define	GetLong64			emType_GetLong64
+#define	GetUlong64			emType_GetUlong64
+#define	GetFloat			emType_GetFloat
+#define	GetDouble			emType_GetDouble
 #endif
 
 
