@@ -110,8 +110,8 @@ typedef union _emType_Mold
 	uint	Uint[4];
 	long32	Long32[4];
 	ulong32	Ulong32[4];
-	long	Long[2];
-	ulong	Ulong[2];
+	long	Long[4];
+	ulong	Ulong[4];
 	long64	Long64[2];
 	ulong64	Ulong64[2];
 	float	Float[4];
@@ -1135,28 +1135,6 @@ string emType_GetHexFromBinExt(string dst, int sz, void* src, int off, int len, 
 
 #define	emType_GetHexFromBin(...)	\
 	Macro(Macro6(__VA_ARGS__, emType_GetHexFromBinExt, emType_GetHexFromBinInt)(__VA_ARGS__))
-
-#define emType_HEX_TO_BIN(ch)		(((ch) <= '9')? (ch)-'0' : (ch)-'7')
-
-#define emType_BIN_TO_HEX(bn)		(((bn) <= 9)? (bn)+'0' : (bn)+'7' )
-
-#define	emType_NO_SPACE				0
-
-#define emType_ADD_SPACE			1
-
-#define	emType_HAS_SPACE			1
-
-#define	emType_NO_CHAR				0
-
-#define emType_ADD_CHAR				2
-
-#define	emType_HAS_CHAR				2
-
-#define	emType_LITTLE_ENDIAN		0
-
-#define emType_BIG_ENDIAN			4
-
-
 
 #if emType_Shorthand >= 1
 #define	emTypeHEX_TO_BIN		emType_HEX_TO_BIN

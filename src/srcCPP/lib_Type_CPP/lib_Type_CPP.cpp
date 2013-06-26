@@ -37,10 +37,10 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	char str[128];
 	emType.Byte[1] = 65;
-	GetHexFromBin(str, 10, &emType, 0, 2, TYPE_LITTLE_ENDIAN | TYPE_ADD_SPACE | TYPE_ADD_CHAR);
+	GetHexFromBin(str, 10, &emType, 0, 2, LITTLE_ENDIAN | ADD_SPACE | ADD_CHAR);
 	printf("str = %s\n", str);
 	strcpy(str, "103");
-	PutBinFromHex(0, 4, str, TYPE_LITTLE_ENDIAN);
+	PutBinFromHex(0, 4, str, LITTLE_ENDIAN);
 	printf("The short is: %d\n", GetShort(buff, 0));
 
 	// wait for keypress before exit
