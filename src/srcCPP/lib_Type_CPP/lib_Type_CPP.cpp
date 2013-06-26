@@ -41,7 +41,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	printf("str = %s\n", str);
 	strcpy(str, "103");
 	PutBinFromHex(0, 4, str, LITTLE_ENDIAN);
-	printf("The short is: %d\n", GetShort(buff, 0));
+	printf("The short is: %d\n", GetShort(0));
 
 	// wait for keypress before exit
 	system("PAUSE");
