@@ -43,6 +43,13 @@
 
 
 
+// select shorthanding scheme
+#ifndef	emType_Shorthand
+#define	emType_Shorthand	3
+#endif
+
+
+
 // Simulate macro overloading
 // By default, C++ does not support macro overloading, but
 // through the use of variable argument macros called variadic
@@ -90,7 +97,7 @@ typedef unsigned long long	ulong64;
 
 
 // internal buffer format
-typedef union _emTypeMold
+typedef union _emType_Mold
 {
 	byte	Byte[16];
 	sbyte	Sbyte[16];
@@ -103,18 +110,26 @@ typedef union _emTypeMold
 	uint	Uint[4];
 	long32	Long32[4];
 	ulong32	Ulong32[4];
-	long	Long[2];
-	ulong	Ulong[2];
+	long	Long[4];
+	ulong	Ulong[4];
 	long64	Long64[2];
 	ulong64	Ulong64[2];
 	float	Float[4];
 	double	Double[2];
-}emTypeMold;
+}emType_Mold;
+
+#if emType_Shorthand >= 1
+#define	emTypeMold				emType_Mold
+#endif
+
+#if	emType_Shorthand >= 2
+#define	typMold					emType_Mold
+#endif
 
 
 
 // internal buffer
-emTypeMold	emType;
+emType_Mold	emType;
 
 
 
@@ -135,17 +150,32 @@ emTypeMold	emType;
 // Returns:
 // bit_value:	the value of the specified bit (0 or 1)
 // 
-#define	GetBitExt(src, off, bit_no)	\
+#define	emType_GetBitExt(src, off, bit_no)	\
 	((*(((byte*)src) + off + (bit_no >> 3)) >> (bit_no & 7)) & 1)
 
-#define	GetBitInt(off, bit_no)	\
-	GetBitExt(&emType, off, bit_no)
+#define	emType_GetBitInt(off, bit_no)	\
+	emType_GetBitExt(&emType, off, bit_no)
 
-#define GetBit(...)	\
-	Macro(Macro3(__VA_ARGS__, GetBitExt, GetBitInt)(__VA_ARGS__))
+#define emType_GetBit(...)	\
+	Macro(Macro3(__VA_ARGS__, emType_GetBitExt, emType_GetBitInt)(__VA_ARGS__))
 
-#define	GetRegBit(src, bit_no)	\
+#define	emType_GetRegBit(src, bit_no)	\
 	((src >> bit_no) & 1)
+
+#if emType_Shorthand >= 1
+#define	emTypeGetBit			emType_GetBit
+#define	emTypeGetRegBit			emType_GetRegBit
+#endif
+
+#if	emType_Shorthand >= 2
+#define	typGetBit				emType_GetBit
+#define	typGetRegBit			emType_GetRegBit
+#endif
+
+#if	emType_Shorthand >= 3
+#define	GetBit					emType_GetBit
+#define	GetRegBit				emType_GetRegBit
+#endif
 
 
 
@@ -166,14 +196,26 @@ emTypeMold	emType;
 // Returns:
 // nibble_value:	the value of the specified nibble (0 to 15 or 0x0 to 0xF)
 // 
-#define	GetNibbleExt(src, off, nibble_no)	\
+#define	emType_GetNibbleExt(src, off, nibble_no)	\
 	((*(((byte*)src) + off + (nibble_no >> 1)) >> ((nibble_no & 1) << 2)) & 0xF)
 
-#define	GetNibbleInt(off, nibble_no)	\
-	GetNibbleExt(&emType, off, nibble_no)
+#define	emType_GetNibbleInt(off, nibble_no)	\
+	emType_GetNibbleExt(&emType, off, nibble_no)
 
-#define GetNibble(...)	\
-	Macro(Macro3(__VA_ARGS__, GetNibbleExt, GetNibbleInt)(__VA_ARGS__))
+#define emType_GetNibble(...)	\
+	Macro(Macro3(__VA_ARGS__, emType_GetNibbleExt, emType_GetNibbleInt)(__VA_ARGS__))
+
+#if emType_Shorthand >= 1
+#define	emTypeGetNibble			emType_GetNibble
+#endif
+
+#if	emType_Shorthand >= 2
+#define	typGetNibble			emType_GetNibble
+#endif
+
+#if	emType_Shorthand >= 3
+#define	GetNibble				emType_GetNibble
+#endif
 
 
 
@@ -192,74 +234,134 @@ emTypeMold	emType;
 // Returns:
 // <type>_value:	the value of the specified <type>
 // 
-#define	GetStypeExt(type, src, off)	\
+#define	emType_GetStypeExt(type, src, off)	\
 	(*(((type*)src) + off))
 
-#define	GetStypeInt(type, off)	\
-	GetStypeExt(type, &emType, off)
+#define	emType_GetStypeInt(type, off)	\
+	emType_GetStypeExt(type, &emType, off)
 
-#define GetStype(...)	\
-	Macro(Macro3(__VA_ARGS__, GetStypeExt, GetStypeInt)(__VA_ARGS__))
+#define emType_GetStype(...)	\
+	Macro(Macro3(__VA_ARGS__, emType_GetStypeExt, emType_GetStypeInt)(__VA_ARGS__))
 
-#define	GetTypeExt(type, src, off)	\
+#define	emType_GetTypeExt(type, src, off)	\
 	(*((type*)(((byte*)src) + off)))
 
-#define	GetTypeInt(type, off)	\
-	GetTypeExt(type, &emType, off)
+#define	emType_GetTypeInt(type, off)	\
+	emType_GetTypeExt(type, &emType, off)
 
-#define	GetType(...) \
-	Macro(Macro3(__VA_ARGS__, GetTypeExt, GetTypeInt)(__VA_ARGS__))
+#define	emType_GetType(...) \
+	Macro(Macro3(__VA_ARGS__, emType_GetTypeExt, emType_GetTypeInt)(__VA_ARGS__))
 
-#define GetChar(...)	\
-	Macro(GetStype(char, __VA_ARGS__))
+#define emType_GetChar(...)	\
+	Macro(emType_GetStype(char, __VA_ARGS__))
 
-#define GetByte(...)	\
-	Macro(GetStype(byte, __VA_ARGS__))
+#define emType_GetByte(...)	\
+	Macro(emType_GetStype(byte, __VA_ARGS__))
 
-#define GetBoolean(...)	\
-	Macro(((GetByte(__VA_ARGS__) == 0)? FALSE : TRUE))
+#define emType_GetBoolean(...)	\
+	Macro(((emType_GetByte(__VA_ARGS__) == 0)? FALSE : TRUE))
 
-#define	GetShort(...)	\
-	Macro(GetType(short, __VA_ARGS__))
+#define	emType_GetShort(...)	\
+	Macro(emType_GetType(short, __VA_ARGS__))
 
-#define	GetUshort(...)	\
-	Macro(GetType(ushort, __VA_ARGS__))
+#define	emType_GetUshort(...)	\
+	Macro(emType_GetType(ushort, __VA_ARGS__))
 
-#define	GetInt16(...)	\
-	Macro(GetType(int16, __VA_ARGS__))
+#define	emType_GetInt16(...)	\
+	Macro(emType_GetType(int16, __VA_ARGS__))
 
-#define	GetUint16(...)	\
-	Macro(GetType(uint16, __VA_ARGS__))
+#define	emType_GetUint16(...)	\
+	Macro(emType_GetType(uint16, __VA_ARGS__))
 
-#define	GetInt(...)	\
-	Macro(GetType(int, __VA_ARGS__))
+#define	emType_GetInt(...)	\
+	Macro(emType_GetType(int, __VA_ARGS__))
 
-#define	GetUint(...)	\
-	Macro(GetType(uint, __VA_ARGS__))
+#define	emType_GetUint(...)	\
+	Macro(emType_GetType(uint, __VA_ARGS__))
 
-#define	GetLong32(...)	\
-	Macro(GetType(long32, __VA_ARGS__))
+#define	emType_GetLong32(...)	\
+	Macro(emType_GetType(long32, __VA_ARGS__))
 
-#define	GetUlong32(...)	\
-	Macro(GetType(ulong32, __VA_ARGS__))
+#define	emType_GetUlong32(...)	\
+	Macro(emType_GetType(ulong32, __VA_ARGS__))
 
-#define	GetLong(...)	\
-	Macro(GetType(long, __VA_ARGS__))
+#define	emType_GetLong(...)	\
+	Macro(emType_GetType(long, __VA_ARGS__))
 
-#define	GetUlong(...)	\
-	Macro(GetType(ulong, __VA_ARGS__))
+#define	emType_GetUlong(...)	\
+	Macro(emType_GetType(ulong, __VA_ARGS__))
 
-#define	GetLong64(...)	\
-	Macro(GetType(long64, __VA_ARGS__))
+#define	emType_GetLong64(...)	\
+	Macro(emType_GetType(long64, __VA_ARGS__))
 
-#define	GetUlong64(...)	\
-	Macro(GetType(ulong64, __VA_ARGS__))
+#define	emType_GetUlong64(...)	\
+	Macro(emType_GetType(ulong64, __VA_ARGS__))
 
-#define	GetFloat(...)	\
-	Macro(GetType(float, __VA_ARGS__))
+#define	emType_GetFloat(...)	\
+	Macro(emType_GetType(float, __VA_ARGS__))
 
-#define	GetDouble(...)	\
-	Macro(GetType(double, __VA_ARGS__))
+#define	emType_GetDouble(...)	\
+	Macro(emType_GetType(double, __VA_ARGS__))
+
+#if emType_Shorthand >= 1
+#define	emTypeGetChar			emType_GetChar
+#define	emTypeGetByte			emType_GetByte
+#define	emTypeGetBoolean		emType_GetBoolean
+#define	emTypeGetShort			emType_GetShort
+#define	emTypeGetUshort			emType_GetUshort
+#define	emTypeGetInt16			emType_GetInt16
+#define	emTypeGetUint16			emType_GetUint16
+#define	emTypeGetInt			emType_GetInt
+#define	emTypeGetUint			emType_GetUint
+#define	emTypeGetLong32			emType_GetLong32
+#define	emTypeGetUlong32		emType_GetUlong32
+#define	emTypeGetLong			emType_GetLong
+#define	emTypeGetUlong			emType_GetUlong
+#define	emTypeGetLong64			emType_GetLong64
+#define	emTypeGetUlong64		emType_GetUlong64
+#define	emTypeGetFloat			emType_GetFloat
+#define	emTypeGetDouble			emType_GetDouble
+#endif
+
+#if	emType_Shorthand >= 2
+#define	typGetChar				emType_GetChar
+#define	typGetByte				emType_GetByte
+#define	typGetBoolean			emType_GetBoolean
+#define	typGetShort				emType_GetShort
+#define	typGetUshort			emType_GetUshort
+#define	typGetInt16				emType_GetInt16
+#define	typGetUint16			emType_GetUint16
+#define	typGetInt				emType_GetInt
+#define	typGetUint				emType_GetUint
+#define	typGetLong32			emType_GetLong32
+#define	typGetUlong32			emType_GetUlong32
+#define	typGetLong				emType_GetLong
+#define	typGetUlong				emType_GetUlong
+#define	typGetLong64			emType_GetLong64
+#define	typGetUlong64			emType_GetUlong64
+#define	typGetFloat				emType_GetFloat
+#define	typGetDouble			emType_GetDouble
+#endif
+
+#if	emType_Shorthand >= 3
+#define	GetChar					emType_GetChar
+#define	GetByte					emType_GetByte
+#define	GetBoolean				emType_GetBoolean
+#define	GetShort				emType_GetShort
+#define	GetUshort				emType_GetUshort
+#define	GetInt16				emType_GetInt16
+#define	GetUint16				emType_GetUint16
+#define	GetInt					emType_GetInt
+#define	GetUint					emType_GetUint
+#define	GetLong32				emType_GetLong32
+#define	GetUlong32				emType_GetUlong32
+#define	GetLong					emType_GetLong
+#define	GetUlong				emType_GetUlong
+#define	GetLong64				emType_GetLong64
+#define	GetUlong64				emType_GetUlong64
+#define	GetFloat				emType_GetFloat
+#define	GetDouble				emType_GetDouble
+#endif
 
 
 
@@ -276,20 +378,20 @@ emTypeMold	emType;
 // sz:       size of destination in bytes (max. length of string-1)
 // src:      the base address of stored string (which will be fetched)
 // off:      offset of the stored string
-// opt:      options for string fetching (TYPE_ZEROED_STRING, TYPE_LENGTH_STRING)
+// opt:      options for string fetching (emType_ZEROED_STRING, emType_LENGTH_STRING)
 // 
 // Returns:
 // string_value:  the fetched string
 // 
-#define	TYPE_ZEROED_STRING			0
+#define	emType_ZEROED_STRING		0
 
-#define	TYPE_LENGTH_STRING			1
+#define	emType_LENGTH_STRING		1
 
-string GetStringExt(string dst, int sz, void* src, int off, byte opt)
+string emType_GetStringExt(string dst, int sz, void* src, int off, byte opt)
 {
 	int len;
 	char* xsrc = ((char*)src) + off;
-	if(opt & TYPE_LENGTH_STRING) len = *xsrc;
+	if(opt & emType_LENGTH_STRING) len = *xsrc;
 	else len = strlen(xsrc);
 	len = ((sz - 1) < len)? (sz - 1) : len;
 	memcpy(dst, xsrc+1, len);
@@ -297,11 +399,29 @@ string GetStringExt(string dst, int sz, void* src, int off, byte opt)
 	return dst;
 }
 
-#define	GetStringInt(dst, sz, off, opt)	\
-	GetStringExt(dst, sz, &emType, off, opt)
+#define	emType_GetStringInt(dst, sz, off, opt)	\
+	emType_GetStringExt(dst, sz, &emType, off, opt)
 
-#define GetString(...)	\
-	Macro(Macro5(__VA_ARGS__, GetStringExt, GetStringInt)(__VA_ARGS__))
+#define emType_GetString(...)	\
+	Macro(Macro5(__VA_ARGS__, emType_GetStringExt, emType_GetStringInt)(__VA_ARGS__))
+
+#if emType_Shorthand >= 1
+#define	emTypeZEROED_STRING		emType_ZEROED_STRING
+#define	emTypeLENGTH_STRING		emType_LENGTH_STRING
+#define	emTypeGetString			emType_GetString
+#endif
+
+#if	emType_Shorthand >= 2
+#define	typZEROED_STRING		emType_ZEROED_STRING
+#define	typLENGTH_STRING		emType_LENGTH_STRING
+#define	typGetString			emType_GetString
+#endif
+
+#if	emType_Shorthand >= 3
+#define	ZEROED_STRING			emType_ZEROED_STRING
+#define	LENGTH_STRING			emType_LENGTH_STRING
+#define	GetString				emType_GetString
+#endif
 
 
 
@@ -323,65 +443,86 @@ string GetStringExt(string dst, int sz, void* src, int off, byte opt)
 // Returns:
 // nothing
 // 
-#define	PutBitExt(dst, off, bit_no, bit_value)	\
+#define	emType_PutBitExt(dst, off, bit_no, bit_value)	\
 	((bit_value == 0)?(*(((byte*)dst) + off + (bit_no >> 3)) &= ~(1 << ((byte)bit_no & (byte)7))) : (*(((byte*)dst) + off + (bit_no >> 3)) |= (1 << ((byte)bit_no & (byte)7))))
 
-#define	PutBitInt(off, bit_no, bit_value)	\
-	PutBitExt(&emType, off, bit_no, bit_value)
+#define	emType_PutBitInt(off, bit_no, bit_value)	\
+	emType_PutBitExt(&emType, off, bit_no, bit_value)
 
-#define PutBit(...)	\
-	Macro(Macro4(__VA_ARGS__, PutBitExt, PutBitInt)(__VA_ARGS__))
+#define emType_PutBit(...)	\
+	Macro(Macro4(__VA_ARGS__, emType_PutBitExt, emType_PutBitInt)(__VA_ARGS__))
 
-#define	SetRegBit1(dst, bit_no)	\
+#define	emType_SetRegBit1(dst, bit_no)	\
 	(dst |= (1 << bit_no))
 
-#define	SetRegBit2(dst, bit_no1, bit_no0)	\
+#define	emType_SetRegBit2(dst, bit_no1, bit_no0)	\
 	(dst |= (1 << bit_no1) | (1 << bit_no0))
 
-#define	SetRegBit3(dst, bit_no2, bit_no1, bit_no0)	\
+#define	emType_SetRegBit3(dst, bit_no2, bit_no1, bit_no0)	\
 	(dst |= (1 << bit_no2) | (1 << bit_no1) | (1 << bit_no0))
 
-#define	SetRegBit4(dst, bit_no3, bit_no2, bit_no1, bit_no0)	\
+#define	emType_SetRegBit4(dst, bit_no3, bit_no2, bit_no1, bit_no0)	\
 	(dst |= (1 << bit_no3) | (1 << bit_no2) | (1 << bit_no1) | (1 << bit_no0))
 
-#define	SetRegBit5(dst, bit_no4, bit_no3, bit_no2, bit_no1, bit_no0)	\
+#define	emType_SetRegBit5(dst, bit_no4, bit_no3, bit_no2, bit_no1, bit_no0)	\
 	(dst |= (1 << bit_no4) | (1 << bit_no3) | (1 << bit_no2) | (1 << bit_no1) | (1 << bit_no0))
 
-#define	SetRegBit6(dst, bit_no5, bit_no4, bit_no3, bit_no2, bit_no1, bit_no0)	\
+#define	emType_SetRegBit6(dst, bit_no5, bit_no4, bit_no3, bit_no2, bit_no1, bit_no0)	\
 	(dst |= (1 << bit_no5) | (1 << bit_no4) | (1 << bit_no3) | (1 << bit_no2) | (1 << bit_no1) | (1 << bit_no0))
 
-#define	SetRegBit7(dst, bit_no6, bit_no5, bit_no4, bit_no3, bit_no2, bit_no1, bit_no0)	\
+#define	emType_SetRegBit7(dst, bit_no6, bit_no5, bit_no4, bit_no3, bit_no2, bit_no1, bit_no0)	\
 	(dst |= (1 << bit_no6) | (1 << bit_no5) | (1 << bit_no4) | (1 << bit_no3) | (1 << bit_no2) | (1 << bit_no1) | (1 << bit_no0))
 
-#define	SetRegBit(...)	\
-	Macro(Macro8(__VA_ARGS__, SetRegBit7, SetRegBit6, SetRegBit5, SetRegBit4, SetRegBit3, SetRegBit2, SetRegBit1)(__VA_ARGS__))
+#define	emType_SetRegBit(...)	\
+	Macro(Macro8(__VA_ARGS__, emType_SetRegBit7, emType_SetRegBit6, emType_SetRegBit5, emType_SetRegBit4, emType_SetRegBit3, emType_SetRegBit2, emType_SetRegBit1)(__VA_ARGS__))
 
-#define	ClearRegBit1(dst, bit_no)	\
+#define	emType_ClearRegBit1(dst, bit_no)	\
 	(dst &= ~(1 << bit_no))
 
-#define	ClearRegBit2(dst, bit_no1, bit_no0)	\
+#define	emType_ClearRegBit2(dst, bit_no1, bit_no0)	\
 	(dst &= ~(1 << bit_no1) | (1 << bit_no0))
 
-#define	ClearRegBit3(dst, bit_no2, bit_no1, bit_no0)	\
+#define	emType_ClearRegBit3(dst, bit_no2, bit_no1, bit_no0)	\
 	(dst &= ~(1 << bit_no2) | (1 << bit_no1) | (1 << bit_no0))
 
-#define	ClearRegBit4(dst, bit_no3, bit_no2, bit_no1, bit_no0)	\
+#define	emType_ClearRegBit4(dst, bit_no3, bit_no2, bit_no1, bit_no0)	\
 	(dst &= ~(1 << bit_no3) | (1 << bit_no2) | (1 << bit_no1) | (1 << bit_no0))
 
-#define	ClearRegBit5(dst, bit_no4, bit_no3, bit_no2, bit_no1, bit_no0)	\
+#define	emType_ClearRegBit5(dst, bit_no4, bit_no3, bit_no2, bit_no1, bit_no0)	\
 	(dst &= ~(1 << bit_no4) | (1 << bit_no3) | (1 << bit_no2) | (1 << bit_no1) | (1 << bit_no0))
 
-#define	ClearRegBit6(dst, bit_no5, bit_no4, bit_no3, bit_no2, bit_no1, bit_no0)	\
+#define	emType_ClearRegBit6(dst, bit_no5, bit_no4, bit_no3, bit_no2, bit_no1, bit_no0)	\
 	(dst &= ~(1 << bit_no5) | (1 << bit_no4) | (1 << bit_no3) | (1 << bit_no2) | (1 << bit_no1) | (1 << bit_no0))
 
-#define	ClearRegBit7(dst, bit_no6, bit_no5, bit_no4, bit_no3, bit_no2, bit_no1, bit_no0)	\
+#define	emType_ClearRegBit7(dst, bit_no6, bit_no5, bit_no4, bit_no3, bit_no2, bit_no1, bit_no0)	\
 	(dst &= ~(1 << bit_no6) | (1 << bit_no5) | (1 << bit_no4) | (1 << bit_no3) | (1 << bit_no2) | (1 << bit_no1) | (1 << bit_no0))
 
-#define	ClearRegBit(...)	\
-	Macro(Macro8(__VA_ARGS__, ClearRegBit7, ClearRegBit6, ClearRegBit5, ClearRegBit4, ClearRegBit3, ClearRegBit2, ClearRegBit1)(__VA_ARGS__))
+#define	emType_ClearRegBit(...)	\
+	Macro(Macro8(__VA_ARGS__, emType_ClearRegBit7, emType_ClearRegBit6, emType_ClearRegBit5, emType_ClearRegBit4, emType_ClearRegBit3, emType_ClearRegBit2, emType_ClearRegBit1)(__VA_ARGS__))
 
-#define	PutRegBit(dst, bit_no, bit_value)	\
+#define	emType_PutRegBit(dst, bit_no, bit_value)	\
 	((dst &= ~(1 << bit_no)) |= (bit_value << bit_no))
+
+#if emType_Shorthand >= 1
+#define	emTypePutBit			emType_PutBit
+#define	emTypeSetRegBit			emType_SetRegBit
+#define	emTypeClearRegBit		emType_ClearRegBit
+#define	emTypePutRegBit			emType_PutRegBit
+#endif
+
+#if	emType_Shorthand >= 2
+#define	typPutBit				emType_PutBit
+#define	typSetRegBit			emType_SetRegBit
+#define	typClearRegBit			emType_ClearRegBit
+#define	typPutRegBit			emType_PutRegBit
+#endif
+
+#if	emType_Shorthand >= 3
+#define	PutBit					emType_PutBit
+#define	SetRegBit				emType_SetRegBit
+#define	ClearRegBit				emType_ClearRegBit
+#define	PutRegBit				emType_PutRegBit
+#endif
 
 
 
@@ -404,14 +545,26 @@ string GetStringExt(string dst, int sz, void* src, int off, byte opt)
 // Returns:
 // nothing
 // 
-#define	PutNibbleExt(dst, off, nibble_no, nibble_value)	\
+#define	emType_PutNibbleExt(dst, off, nibble_no, nibble_value)	\
 	(*(((byte*)dst) + off + (nibble_no >> 1)) = (*(((byte*)dst) + off + (nibble_no >> 1)) & (~(0xF << ((nibble_no & 1) << 2)))) | (nibble_value << ((nibble_no & 1) << 2)))
 
-#define	PutNibbleInt(off, nibble_no, nibble_value)	\
-	PutNibbleExt(&emType, off, nibble_no, nibble_value)
+#define	emType_PutNibbleInt(off, nibble_no, nibble_value)	\
+	emType_PutNibbleExt(&emType, off, nibble_no, nibble_value)
 
-#define PutNibble(...)	\
-	Macro(Macro4(__VA_ARGS__, PutNibbleExt, PutNibbleInt)(__VA_ARGS__))
+#define emType_PutNibble(...)	\
+	Macro(Macro4(__VA_ARGS__, emType_PutNibbleExt, emType_PutNibbleInt)(__VA_ARGS__))
+
+#if emType_Shorthand >= 1
+#define	emTypePutNibble			emType_PutNibble
+#endif
+
+#if	emType_Shorthand >= 2
+#define	typPutNibble			emType_PutNibble
+#endif
+
+#if	emType_Shorthand >= 3
+#define	PutNibble				emType_PutNibble
+#endif
 
 
 
@@ -432,74 +585,134 @@ string GetStringExt(string dst, int sz, void* src, int off, byte opt)
 // Returns:
 // nothing
 // 
-#define	PutStypeExt(type, dst, off, value)	\
+#define	emType_PutStypeExt(type, dst, off, value)	\
 	(*(((type*)dst) + off) = value)
 
-#define	PutStypeInt(type, off, value)	\
-	PutStypeExt(type, &emType, off, value)
+#define	emType_PutStypeInt(type, off, value)	\
+	emType_PutStypeExt(type, &emType, off, value)
 
-#define PutStype(...)	\
-	Macro(Macro4(__VA_ARGS__, PutStypeExt, PutStypeInt)(__VA_ARGS__))
+#define emType_PutStype(...)	\
+	Macro(Macro4(__VA_ARGS__, emType_PutStypeExt, emType_PutStypeInt)(__VA_ARGS__))
 
-#define	PutTypeExt(type, dst, off, value)	\
+#define	emType_PutTypeExt(type, dst, off, value)	\
 	(*((type*)(((byte*)dst) + off)) = value)
 
-#define	PutTypeInt(type, off, value)	\
-	PutTypeExt(type, &emType, off, value)
+#define	emType_PutTypeInt(type, off, value)	\
+	emType_PutTypeExt(type, &emType, off, value)
 
-#define	PutType(...) \
-	Macro(Macro4(__VA_ARGS__, PutTypeExt, PutTypeInt)(__VA_ARGS__))
+#define	emType_PutType(...) \
+	Macro(Macro4(__VA_ARGS__, emType_PutTypeExt, emType_PutTypeInt)(__VA_ARGS__))
 
-#define PutChar(...)	\
-	Macro(PutStype(char, __VA_ARGS__))
+#define emType_PutChar(...)	\
+	Macro(emType_PutStype(char, __VA_ARGS__))
 
-#define PutByte(...)	\
-	Macro(PutStype(byte, __VA_ARGS__))
+#define emType_PutByte(...)	\
+	Macro(emType_PutStype(byte, __VA_ARGS__))
 
-#define PutBoolean(...)	\
-	Macro(((PutByte(__VA_ARGS__) == 0)? FALSE : TRUE))
+#define emType_PutBoolean(...)	\
+	Macro(((emType_PutByte(__VA_ARGS__) == 0)? FALSE : TRUE))
 
-#define	PutShort(...)	\
-	Macro(PutType(short, __VA_ARGS__))
+#define	emType_PutShort(...)	\
+	Macro(emType_PutType(short, __VA_ARGS__))
 
-#define	PutUshort(...)	\
-	Macro(PutType(ushort, __VA_ARGS__))
+#define	emType_PutUshort(...)	\
+	Macro(emType_PutType(ushort, __VA_ARGS__))
 
-#define	PutInt16(...)	\
-	Macro(PutType(int16, __VA_ARGS__))
+#define	emType_PutInt16(...)	\
+	Macro(emType_PutType(int16, __VA_ARGS__))
 
-#define	PutUint16(...)	\
-	Macro(PutType(uint16, __VA_ARGS__))
+#define	emType_PutUint16(...)	\
+	Macro(emType_PutType(uint16, __VA_ARGS__))
 
-#define	PutInt(...)	\
-	Macro(PutType(int, __VA_ARGS__))
+#define	emType_PutInt(...)	\
+	Macro(emType_PutType(int, __VA_ARGS__))
 
-#define	PutUint(...)	\
-	Macro(PutType(uint, __VA_ARGS__))
+#define	emType_PutUint(...)	\
+	Macro(emType_PutType(uint, __VA_ARGS__))
 
-#define	PutLong32(...)	\
-	Macro(PutType(long32, __VA_ARGS__))
+#define	emType_PutLong32(...)	\
+	Macro(emType_PutType(long32, __VA_ARGS__))
 
-#define	PutUlong32(...)	\
-	Macro(PutType(ulong32, __VA_ARGS__))
+#define	emType_PutUlong32(...)	\
+	Macro(emType_PutType(ulong32, __VA_ARGS__))
 
-#define	PutLong(...)	\
-	Macro(PutType(long, __VA_ARGS__))
+#define	emType_PutLong(...)	\
+	Macro(emType_PutType(long, __VA_ARGS__))
 
-#define	PutUlong(...)	\
-	Macro(PutType(ulong, __VA_ARGS__))
+#define	emType_PutUlong(...)	\
+	Macro(emType_PutType(ulong, __VA_ARGS__))
 
-#define	PutLong64(...)	\
-	Macro(PutType(long64, __VA_ARGS__))
+#define	emType_PutLong64(...)	\
+	Macro(emType_PutType(long64, __VA_ARGS__))
 
-#define	PutUlong64(...)	\
-	Macro(PutType(ulong64, __VA_ARGS__))
+#define	emType_PutUlong64(...)	\
+	Macro(emType_PutType(ulong64, __VA_ARGS__))
 
-#define	PutFloat(...)	\
-	Macro(PutType(float, __VA_ARGS__))
+#define	emType_PutFloat(...)	\
+	Macro(emType_PutType(float, __VA_ARGS__))
 
-#define	PutDouble(...)	\
-	Macro(PutType(double, __VA_ARGS__))
+#define	emType_PutDouble(...)	\
+	Macro(emType_PutType(double, __VA_ARGS__))
+
+#if emType_Shorthand >= 1
+#define	emTypePutChar			emType_PutChar
+#define	emTypePutByte			emType_PutByte
+#define	emTypePutBoolean		emType_PutBoolean
+#define	emTypePutShort			emType_PutShort
+#define	emTypePutUshort			emType_PutUshort
+#define	emTypePutInt16			emType_PutInt16
+#define	emTypePutUint16			emType_PutUint16
+#define	emTypePutInt			emType_PutInt
+#define	emTypePutUint			emType_PutUint
+#define	emTypePutLong32			emType_PutLong32
+#define	emTypePutUlong32		emType_PutUlong32
+#define	emTypePutLong			emType_PutLong
+#define	emTypePutUlong			emType_PutUlong
+#define	emTypePutLong64			emType_PutLong64
+#define	emTypePutUlong64		emType_PutUlong64
+#define	emTypePutFloat			emType_PutFloat
+#define	emTypePutDouble			emType_PutDouble
+#endif
+
+#if	emType_Shorthand >= 2
+#define	typPutChar				emType_PutChar
+#define	typPutByte				emType_PutByte
+#define	typPutBoolean			emType_PutBoolean
+#define	typPutShort				emType_PutShort
+#define	typPutUshort			emType_PutUshort
+#define	typPutInt16				emType_PutInt16
+#define	typPutUint16			emType_PutUint16
+#define	typPutInt				emType_PutInt
+#define	typPutUint				emType_PutUint
+#define	typPutLong32			emType_PutLong32
+#define	typPutUlong32			emType_PutUlong32
+#define	typPutLong				emType_PutLong
+#define	typPutUlong				emType_PutUlong
+#define	typPutLong64			emType_PutLong64
+#define	typPutUlong64			emType_PutUlong64
+#define	typPutFloat				emType_PutFloat
+#define	typPutDouble			emType_PutDouble
+#endif
+
+#if	emType_Shorthand >= 3
+#define	PutChar					emType_PutChar
+#define	PutByte					emType_PutByte
+#define	PutBoolean				emType_PutBoolean
+#define	PutShort				emType_PutShort
+#define	PutUshort				emType_PutUshort
+#define	PutInt16				emType_PutInt16
+#define	PutUint16				emType_PutUint16
+#define	PutInt					emType_PutInt
+#define	PutUint					emType_PutUint
+#define	PutLong32				emType_PutLong32
+#define	PutUlong32				emType_PutUlong32
+#define	PutLong					emType_PutLong
+#define	PutUlong				emType_PutUlong
+#define	PutLong64				emType_PutLong64
+#define	PutUlong64				emType_PutUlong64
+#define	PutFloat				emType_PutFloat
+#define	PutDouble				emType_PutDouble
+#endif
 
 
 
@@ -515,25 +728,37 @@ string GetStringExt(string dst, int sz, void* src, int off, byte opt)
 // dst:      destination base address where the string is to be stored
 // off:      offset to destination from where the stored string will start
 // value:    the string that is to be stored
-// opt:      options for string writing (TYPE_ZEROED_STRING, TYPE_LENGTH_STRING)
+// opt:      options for string writing (emType_ZEROED_STRING, emType_LENGTH_STRING)
 // 
 // Returns:
 // nothing
 // 
-void PutStringExt(void* dst, int off, string value, byte opt)
+void emType_PutStringExt(void* dst, int off, string value, byte opt)
 {
 	char* xdst = ((char*)dst) + off;
 	int len = strlen(value);
-	if(opt & TYPE_LENGTH_STRING) {*xdst = (char)len; xdst++;}
+	if(opt & emType_LENGTH_STRING) {*xdst = (char)len; xdst++;}
 	else len++;
 	memcpy(xdst, value, len);
 }
 
-#define	PutStringInt(off, value, opt)	\
-	PutStringExt(&emType, off, value, opt)
+#define	emType_PutStringInt(off, value, opt)	\
+	emType_PutStringExt(&emType, off, value, opt)
 
-#define	PutString(...)	\
-	Macro(Macro4(__VA_ARGS__, PutStringExt, PutStringInt)(__VA_ARGS__))
+#define	emType_PutString(...)	\
+	Macro(Macro4(__VA_ARGS__, emType_PutStringExt, emType_PutStringInt)(__VA_ARGS__))
+
+#if emType_Shorthand >= 1
+#define	emTypePutString			emType_PutString
+#endif
+
+#if	emType_Shorthand >= 2
+#define	typPutString			emType_PutString
+#endif
+
+#if	emType_Shorthand >= 3
+#define	PutString				emType_PutString
+#endif
 
 
 
@@ -552,109 +777,176 @@ void PutStringExt(void* dst, int off, string value, byte opt)
 // Returns:
 // <type>_value:	the value of the (bigger) assembled data type
 // 
-#define	ToNibble(bit3, bit2, bit1, bit0)	\
+#define	emType_ToNibble(bit3, bit2, bit1, bit0)	\
 	((bit3 << 3) | (bit2 << 2) | (bit1 << 1) | bit0)
 
-#define ToByteNib(nibble1, nibble0)	\
+#define emType_ToByteNib(nibble1, nibble0)	\
 	((nibble1 << 4) | nibble0)
 
-#define	ToByteBit(bit7, bit6, bit5, bit4, bit3, bit2, bit1, bit0)	\
-	ToByteNib(ToNibble(bit7, bit6, bit5, bit4), ToNibble(bit3, bit2, bit1, bit0))
+#define	emType_ToByteBit(bit7, bit6, bit5, bit4, bit3, bit2, bit1, bit0)	\
+	emType_ToByteNib(emType_ToNibble(bit7, bit6, bit5, bit4), emType_ToNibble(bit3, bit2, bit1, bit0))
 
-#define ToByte(...)	\
-	Macro(Macro8(__VA_ARGS__, ToByteBit, _7, _6, _5, _4, _3, ToByteNib)(__VA_ARGS__))
+#define emType_ToByte(...)	\
+	Macro(Macro8(__VA_ARGS__, emType_ToByteBit, _7, _6, _5, _4, _3, emType_ToByteNib)(__VA_ARGS__))
 
-#define	ToChar			ToByte	
+#define	emType_ToChar	\
+	emType_ToByte	
 
-#define	ToType2(var, ret, rtype, dat1, dat0)	\
+#define	emType_ToType2(var, ret, rtype, dat1, dat0)	\
 	(((emType.var[0] = dat0) & (emType.var[1] = dat1) & 0)? (rtype)0 : emType.ret[0])
 
-#define	ToType4(var, ret, rtype, dat3, dat2, dat1, dat0)	\
+#define	emType_ToType4(var, ret, rtype, dat3, dat2, dat1, dat0)	\
 	(((emType.var[0] = dat0) & (emType.var[1] = dat1) & (emType.var[2] = dat2) & (emType.var[3] = dat3) & 0)? (rtype)0 : emType.ret[0])
 
-#define ToType8(var, ret, rtype, dat7, dat6, dat5, dat4, dat3, dat2, dat1, dat0)	\
+#define emType_ToType8(var, ret, rtype, dat7, dat6, dat5, dat4, dat3, dat2, dat1, dat0)	\
 	(((emType.var[0] = dat0) & (emType.var[1] = dat1) & (emType.var[2] = dat2) & (emType.var[3] = dat3) & (emType.var[4] = dat4) & (emType.var[5] = dat5) & (emType.var[6] = dat6) & (emType.var[7] = dat7) & 0)? (rtype)0 : emType.ret[0])
 
-#define	ToShort(byte1, byte0)	\
-	ToType2(Byte, Short, short, byte1, byte0)
+#define	emType_ToShort(byte1, byte0)	\
+	emType_ToType2(Byte, Short, short, byte1, byte0)
 
-#define	ToUshort(byte0, byte1)	\
-	ToType2(Byte, Short, short, byte1, byte0)
+#define	emType_ToUshort(byte0, byte1)	\
+	emType_ToType2(Byte, Short, short, byte1, byte0)
 
-#define	ToInt16			ToShort
+#define	emType_ToInt16	\
+	emType_ToShort
 
-#define	ToUint16		ToUshort
+#define	emType_ToUint16	\
+	emType_ToUshort
 
-#define	ToIntSrt(ushort1, ushort0)	\
-	ToType2(Ushort, Int, int, ushort1, ushort0)
+#define	emType_ToIntSrt(ushort1, ushort0)	\
+	emType_ToType2(Ushort, Int, int, ushort1, ushort0)
 
-#define	ToIntByt(byte3, byte2, byte1, byte0)	\
-	ToType4(Byte, Int, int, byte3, byte2, byte1, byte0)
+#define	emType_ToIntByt(byte3, byte2, byte1, byte0)	\
+	emType_ToType4(Byte, Int, int, byte3, byte2, byte1, byte0)
 
-#define	ToInt(...)	\
-	Macro(Macro4(__VA_ARGS__, ToIntByt, _3, ToIntSrt)(__VA_ARGS__))
+#define	emType_ToInt(...)	\
+	Macro(Macro4(__VA_ARGS__, emType_ToIntByt, _3, emType_ToIntSrt)(__VA_ARGS__))
 
-#define	ToUintSrt(ushort1, ushort0)	\
-	ToType2(Ushort, Uint, uint, ushort1, ushort0)
+#define	emType_ToUintSrt(ushort1, ushort0)	\
+	emType_ToType2(Ushort, Uint, uint, ushort1, ushort0)
 
-#define	ToUintByt(byte3, byte2, byte1, byte0)	\
-	ToType4(Byte, Uint, uint, byte3, byte2, byte1, byte0)
+#define	emType_ToUintByt(byte3, byte2, byte1, byte0)	\
+	emType_ToType4(Byte, Uint, uint, byte3, byte2, byte1, byte0)
 
-#define	ToUint(...)	\
-	Macro(Macro4(__VA_ARGS__, ToUintByt, _3, ToUintSrt)(__VA_ARGS__))
+#define	emType_ToUint(...)	\
+	Macro(Macro4(__VA_ARGS__, emType_ToUintByt, _3, emType_ToUintSrt)(__VA_ARGS__))
 
-#define	ToLong32		ToInt
+#define	emType_ToLong32	\
+	emType_ToInt
 
-#define	ToUlong32		ToUint
+#define	emType_ToUlong32	\
+	emType_ToUint
 
-#define	ToLong			ToInt
+#define	emType_ToLong	\
+	emType_ToInt
 
-#define	ToUlong			ToUint
+#define	emType_ToUlong	\
+	emType_ToUint
 
-#define	ToLong64Int(uint1, uint0)	\
-	ToType2(Uint, Long64, long64, uint1, uint0)
+#define	emType_ToLong64Ulong32(ulong32_1, ulong32_0)	\
+	emType_ToType2(Uint, Long64, long64, ulong32_1, ulong32_0)
 
-#define	ToLong64Srt(ushort3, ushort2, ushort1, ushort0)	\
-	ToType4(Ushort, Long64, long64, ushort3, ushort2, ushort1, ushort0)
+#define	emType_ToLong64Srt(ushort3, ushort2, ushort1, ushort0)	\
+	emType_ToType4(Ushort, Long64, long64, ushort3, ushort2, ushort1, ushort0)
 
-#define	ToLong64Byt(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)	\
-	ToType8(Byte, Long64, long64, byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)
+#define	emType_ToLong64Byt(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)	\
+	emType_ToType8(Byte, Long64, long64, byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)
 
-#define	ToLong64(...)	\
-	Macro(Macro8(__VA_ARGS__, ToLong64Byt, _7, _6, _5, ToLong64Srt, _3, ToLong64Int)(__VA_ARGS__))
+#define	emType_ToLong64(...)	\
+	Macro(Macro8(__VA_ARGS__, emType_ToLong64Byt, _7, _6, _5, emType_ToLong64Srt, _3, emType_ToLong64Ulong32)(__VA_ARGS__))
 
-#define	ToUlong64Int(uint1, uint0)	\
-	ToType2(Uint, Ulong64, ulong64, uint1, uint0)
+#define	emType_ToUlong64Ulong32(ulong32_1, ulong32_0)	\
+	emType_ToType2(Uint, Ulong64, ulong64, ulong32_1, ulong32_0)
 
-#define	ToUlong64Srt(ushort3, ushort2, ushort1, ushort0)	\
-	ToType4(Ushort, Ulong64, ulong64, ushort3, ushort2, ushort1, ushort0)
+#define	emType_ToUlong64Srt(ushort3, ushort2, ushort1, ushort0)	\
+	emType_ToType4(Ushort, Ulong64, ulong64, ushort3, ushort2, ushort1, ushort0)
 
-#define	ToUlong64Byt(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)	\
-	ToType8(Byte, Ulong64, ulong64, byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)
+#define	emType_ToUlong64Byt(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)	\
+	emType_ToType8(Byte, Ulong64, ulong64, byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)
 
-#define	ToUlong64(...)	\
-	Macro(Macro8(__VA_ARGS__, ToUlong64Byt, _7, _6, _5, ToUlong64Srt, _3, ToUlong64Int)(__VA_ARGS__))
+#define	emType_ToUlong64(...)	\
+	Macro(Macro8(__VA_ARGS__, emType_ToUlong64Byt, _7, _6, _5, emType_ToUlong64Srt, _3, emType_ToUlong64Ulong32)(__VA_ARGS__))
 
-#define	ToFloatSrt(ushort1, ushort0)	\
-	ToType2(Ushort, Float, float, ushort1, ushort0)
+#define	emType_ToFloatSrt(ushort1, ushort0)	\
+	emType_ToType2(Ushort, Float, float, ushort1, ushort0)
 
-#define	ToFloatByt(byte3, byte2, byte1, byte0)	\
-	ToType4(Byte, Float, float, byte3, byte2, byte1, byte0)
+#define	emType_ToFloatByt(byte3, byte2, byte1, byte0)	\
+	emType_ToType4(Byte, Float, float, byte3, byte2, byte1, byte0)
 
-#define	ToFloat(...)	\
-	Macro(Macro4(__VA_ARGS__, ToFloatByt, _3, ToFloatSrt)(__VA_ARGS__))
+#define	emType_ToFloat(...)	\
+	Macro(Macro4(__VA_ARGS__, emType_ToFloatByt, _3, emType_ToFloatSrt)(__VA_ARGS__))
 
-#define	ToDoubleInt(uint1, uint0)	\
-	ToType2(Uint, Double, double, uint1, uint0)
+#define	emType_ToDoubleUlong32(ulong32_1, ulong32_0)	\
+	emType_ToType2(Uint, Double, double, ulong32_1, ulong32_0)
 
-#define	ToDoubleSrt(ushort3, ushort2, ushort1, ushort0)	\
-	ToType4(Ushort, Double, double, ushort3, ushort2, ushort1, ushort0)
+#define	emType_ToDoubleSrt(ushort3, ushort2, ushort1, ushort0)	\
+	emType_ToType4(Ushort, Double, double, ushort3, ushort2, ushort1, ushort0)
 
-#define	ToDoubleByt(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)	\
-	ToType8(Byte, Double, double, byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)
+#define	emType_ToDoubleByt(byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)	\
+	emType_ToType8(Byte, Double, double, byte7, byte6, byte5, byte4, byte3, byte2, byte1, byte0)
 
-#define	ToDouble(...)	\
-	Macro(Macro8(__VA_ARGS__, ToDoubleByt, _7, _6, _5, ToDoubleSrt, _3, ToDoubleInt)(__VA_ARGS__))
+#define	emType_ToDouble(...)	\
+	Macro(Macro8(__VA_ARGS__, emType_ToDoubleByt, _7, _6, _5, emType_ToDoubleSrt, _3, emType_ToDoubleUlong32)(__VA_ARGS__))
+
+#if emType_Shorthand >= 1
+#define	emTypeToNibble			emType_ToNibble
+#define	emTypeToByte			emType_ToByte
+#define	emTypeToChar			emType_ToChar
+#define	emTypeToShort			emType_ToShort
+#define	emTypeToUshort			emType_ToUshort
+#define	emTypeToInt16			emType_ToInt16
+#define	emTypeToUint16			emType_ToUint16
+#define	emTypeToInt				emType_ToInt
+#define	emTypeToUint			emType_ToUint
+#define	emTypeToLong32			emType_ToLong32
+#define	emTypeToUlong32			emType_ToUlong32
+#define	emTypeToLong			emType_ToLong
+#define	emTypeToUlong			emType_ToUlong
+#define	emTypeToLong64			emType_ToLong64
+#define	emTypeToUlong64			emType_ToUlong64
+#define	emTypeToFloat			emType_ToFloat
+#define	emTypeToDouble			emType_ToDouble
+#endif
+
+#if	emType_Shorthand >= 2
+#define	typToNibble				emType_ToNibble
+#define	typToByte				emType_ToByte
+#define	typToChar				emType_ToChar
+#define	typToShort				emType_ToShort
+#define	typToUshort				emType_ToUshort
+#define	typToInt16				emType_ToInt16
+#define	typToUint16				emType_ToUint16
+#define	typToInt				emType_ToInt
+#define	typToUint				emType_ToUint
+#define	typToLong32				emType_ToLong32
+#define	typToUlong32			emType_ToUlong32
+#define	typToLong				emType_ToLong
+#define	typToUlong				emType_ToUlong
+#define	typToLong64				emType_ToLong64
+#define	typToUlong64			emType_ToUlong64
+#define	typToFloat				emType_ToFloat
+#define	typToDouble				emType_ToDouble
+#endif
+
+#if	emType_Shorthand >= 3
+#define	ToNibble				emType_ToNibble
+#define	ToByte					emType_ToByte
+#define	ToChar					emType_ToChar
+#define	ToShort					emType_ToShort
+#define	ToUshort				emType_ToUshort
+#define	ToInt16					emType_ToInt16
+#define	ToUint16				emType_ToUint16
+#define	ToInt					emType_ToInt
+#define	ToUint					emType_ToUint
+#define	ToLong32				emType_ToLong32
+#define	ToUlong32				emType_ToUlong32
+#define	ToLong					emType_ToLong
+#define	ToUlong					emType_ToUlong
+#define	ToLong64				emType_ToLong64
+#define	ToUlong64				emType_ToUlong64
+#define	ToFloat					emType_ToFloat
+#define	ToDouble				emType_ToDouble
+#endif
 
 
 
@@ -677,7 +969,7 @@ void PutStringExt(void* dst, int off, string value, byte opt)
 // Returns:
 // nothing
 // 
-void DoReverseExt(void* src, int off, int len)
+void emType_DoReverseExt(void* src, int off, int len)
 {
 	char byt;
 	char *bg, *ed;
@@ -689,11 +981,23 @@ void DoReverseExt(void* src, int off, int len)
 	}
 }
 
-#define	DoReverseInt(off, len)	\
-	DoReverseExt(&emType, off, len)
+#define	emType_DoReverseInt(off, len)	\
+	emType_DoReverseExt(&emType, off, len)
 
-#define	DoReverse(...)	\
-	Macro(Macro3(__VA_ARGS__, DoReverseExt, DoReverseInt)(__VA_ARGS__))
+#define	emType_DoReverse(...)	\
+	Macro(Macro3(__VA_ARGS__, emType_DoReverseExt, emType_DoReverseInt)(__VA_ARGS__))
+
+#if emType_Shorthand >= 1
+#define	emTypeDoReverse			emType_DoReverse
+#endif
+
+#if	emType_Shorthand >= 2
+#define	typDoReverse			emType_DoReverse
+#endif
+
+#if	emType_Shorthand >= 3
+#define	DoReverse				emType_DoReverse
+#endif
 
 
 
@@ -715,7 +1019,7 @@ void DoReverseExt(void* src, int off, int len)
 // Returns:
 // <type>_value:  the summed value
 // 
-byte GetByteSumExt(void* src, int off, int len)
+byte emType_GetByteSumExt(void* src, int off, int len)
 {
     byte sum = 0;
     byte* bsrc = ((byte*)src) + off;
@@ -724,13 +1028,13 @@ byte GetByteSumExt(void* src, int off, int len)
     return sum;
 }
 
-#define	GetByteSumInt(off, len)	\
-	GetByteSumExt(&emType, off, len)
+#define	emType_GetByteSumInt(off, len)	\
+	emType_GetByteSumExt(&emType, off, len)
 
-#define	GetByteSum(...)	\
-	Macro(Macro3(__VA_ARGS__, GetByteSumExt, GetByteSumInt)(__VA_ARGS__))
+#define	emType_GetByteSum(...)	\
+	Macro(Macro3(__VA_ARGS__, emType_GetByteSumExt, emType_GetByteSumInt)(__VA_ARGS__))
 
-ushort GetUshortSumExt(void* src, int off, int len)
+ushort emType_GetUshortSumExt(void* src, int off, int len)
 {
     ushort sum = 0;
     ushort* bsrc = ((ushort*)src) + off;
@@ -740,13 +1044,31 @@ ushort GetUshortSumExt(void* src, int off, int len)
     return sum;
 }
 
-#define	GetUshortSumInt(off, len)	\
-	GetUshortSumExt(&emType, off, len)
+#define	emType_GetUshortSumInt(off, len)	\
+	emType_GetUshortSumExt(&emType, off, len)
 
-#define	GetUshortSum(...)	\
-	Macro(Macro3(__VA_ARGS__, GetUshortSumExt, GetUshortSumInt)(__VA_ARGS__))
+#define	emType_GetUshortSum(...)	\
+	Macro(Macro3(__VA_ARGS__, emType_GetUshortSumExt, emType_GetUshortSumInt)(__VA_ARGS__))
 
-#define	GetUint16Sum		GetUshortSum
+#define	emType_GetUint16Sum		emType_GetUshortSum
+
+#if emType_Shorthand >= 1
+#define	emTypeGetByteSum		emType_GetByteSum
+#define	emTypeGetUshortSum		emType_GetUshortSum
+#define	emTypeGetUint16Sum		emType_GetUint16Sum
+#endif
+
+#if	emType_Shorthand >= 2
+#define	typGetByteSum			emType_GetByteSum
+#define	typGetUshortSum			emType_GetUshortSum
+#define	typGetUint16Sum			emType_GetUint16Sum
+#endif
+
+#if	emType_Shorthand >= 3
+#define	GetByteSum				emType_GetByteSum
+#define	GetUshortSum			emType_GetUshortSum
+#define	GetUint16Sum			emType_GetUint16Sum
+#endif
 
 
 
@@ -772,47 +1094,89 @@ ushort GetUshortSumExt(void* src, int off, int len)
 // Returns:
 // nothing
 // 
-#define TYPE_HEX_TO_BIN(ch)		(((ch) <= '9')? (ch)-'0' : (ch)-'7')
+#define emType_HEX_TO_BIN(ch)		(((ch) <= '9')? (ch)-'0' : (ch)-'7')
 
-#define TYPE_BIN_TO_HEX(bn)		(((bn) <= 9)? (bn)+'0' : (bn)+'7' )
+#define emType_BIN_TO_HEX(bn)		(((bn) <= 9)? (bn)+'0' : (bn)+'7' )
 
-#define	TYPE_NO_SPACE			0
+#define	emType_NO_SPACE				0
 
-#define TYPE_ADD_SPACE			1
+#define emType_ADD_SPACE			1
 
-#define	TYPE_HAS_SPACE			1
+#define	emType_HAS_SPACE			1
 
-#define	TYPE_NO_CHAR			0
+#define	emType_NO_CHAR				0
 
-#define TYPE_ADD_CHAR			2
+#define emType_ADD_CHAR				2
 
-#define	TYPE_HAS_CHAR			2
+#define	emType_HAS_CHAR				2
 
-#define	TYPE_LITTLE_ENDIAN		0
+#define	emType_LITTLE_ENDIAN		0
 
-#define TYPE_BIG_ENDIAN			4
+#define emType_BIG_ENDIAN			4
 
-string GetHexFromBinExt(string dst, int sz, void* src, int off, int len, byte opt)
+string emType_GetHexFromBinExt(string dst, int sz, void* src, int off, int len, byte opt)
 {
 	char* dend = dst + sz - 1;
-	byte* cbin = ((byte*)src) + ((opt & TYPE_BIG_ENDIAN)? off : (off+len-1));
-	int stp = (opt & TYPE_BIG_ENDIAN)? 1 : -1;
+	byte* cbin = ((byte*)src) + ((opt & emType_BIG_ENDIAN)? off : (off+len-1));
+	int stp = (opt & emType_BIG_ENDIAN)? 1 : -1;
 	for(int i=0; i<len; i++, cbin+=stp)
 	{
-		*dst = TYPE_BIN_TO_HEX(*cbin >> 4); dst++; if(dst >= dend) break;
-		*dst = TYPE_BIN_TO_HEX(*cbin & 0xF); dst++; if(dst >= dend) break;
-		if(opt & TYPE_ADD_CHAR) { *dst = (*cbin < 32 || *cbin > 127)? '.' : *cbin; dst++; if(dst >= dend) break;}
-		if(opt & TYPE_ADD_SPACE) { *dst = ' '; dst++; if(dst >= dend) break;}
+		*dst = emType_BIN_TO_HEX(*cbin >> 4); dst++; if(dst >= dend) break;
+		*dst = emType_BIN_TO_HEX(*cbin & 0xF); dst++; if(dst >= dend) break;
+		if(opt & emType_ADD_CHAR) { *dst = (*cbin < 32 || *cbin > 127)? '.' : *cbin; dst++; if(dst >= dend) break;}
+		if(opt & emType_ADD_SPACE) { *dst = ' '; dst++; if(dst >= dend) break;}
 	}
 	*dst = '\0';
 	return dst;
 }
 
-#define	GetHexFromBinInt(dst, sz, off, len, opt)	\
-	GetHexFromBinExt(dst, sz, &emType, off, len, opt)
+#define	emType_GetHexFromBinInt(dst, sz, off, len, opt)	\
+	emType_GetHexFromBinExt(dst, sz, &emType, off, len, opt)
 
-#define	GetHexFromBin(...)	\
-	Macro(Macro6(__VA_ARGS__, GetHexFromBinExt, GetHexFromBinInt)(__VA_ARGS__))
+#define	emType_GetHexFromBin(...)	\
+	Macro(Macro6(__VA_ARGS__, emType_GetHexFromBinExt, emType_GetHexFromBinInt)(__VA_ARGS__))
+
+#if emType_Shorthand >= 1
+#define	emTypeHEX_TO_BIN		emType_HEX_TO_BIN
+#define	emTypeBIN_TO_HEX		emType_BIN_TO_HEX
+#define	emTypeNO_SPACE			emType_NO_SPACE
+#define	emTypeADD_SPACE			emType_ADD_SPACE
+#define	emTypeHAS_SPACE			emType_HAS_SPACE
+#define	emTypeNO_CHAR			emType_NO_CHAR
+#define	emTypeADD_CHAR			emType_ADD_CHAR
+#define	emTypeHAS_CHAR			emType_HAS_CHAR
+#define	emTypeLITTLE_ENDIAN		emType_LITTLE_ENDIAN
+#define	emTypeBIG_ENDIAN		emType_BIG_ENDIAN
+#define	emTypeGetHexFromBin		emType_GetHexFromBin
+#endif
+
+#if	emType_Shorthand >= 2
+#define	typHEX_TO_BIN			emType_HEX_TO_BIN
+#define	typBIN_TO_HEX			emType_BIN_TO_HEX
+#define	typNO_SPACE				emType_NO_SPACE
+#define	typADD_SPACE			emType_ADD_SPACE
+#define	typHAS_SPACE			emType_HAS_SPACE
+#define	typNO_CHAR				emType_NO_CHAR
+#define	typADD_CHAR				emType_ADD_CHAR
+#define	typHAS_CHAR				emType_HAS_CHAR
+#define	typLITTLE_ENDIAN		emType_LITTLE_ENDIAN
+#define	typBIG_ENDIAN			emType_BIG_ENDIAN
+#define	typGetHexFromBin		emType_GetHexFromBin
+#endif
+
+#if	emType_Shorthand >= 3
+#define	HEX_TO_BIN				emType_HEX_TO_BIN
+#define	BIN_TO_HEX				emType_BIN_TO_HEX
+#define	NO_SPACE				emType_NO_SPACE
+#define	ADD_SPACE				emType_ADD_SPACE
+#define	HAS_SPACE				emType_HAS_SPACE
+#define	NO_CHAR					emType_NO_CHAR
+#define	ADD_CHAR				emType_ADD_CHAR
+#define	HAS_CHAR				emType_HAS_CHAR
+#define	LITTLE_ENDIAN			emType_LITTLE_ENDIAN
+#define	BIG_ENDIAN				emType_BIG_ENDIAN
+#define	GetHexFromBin			emType_GetHexFromBin
+#endif
 
 
 
@@ -836,25 +1200,37 @@ string GetHexFromBinExt(string dst, int sz, void* src, int off, int len, byte op
 // Returns:
 // the converted data (dst)
 // 
-void PutBinFromHexExt(void* dst, int off, int len, string src, byte opt)
+void emType_PutBinFromHexExt(void* dst, int off, int len, string src, byte opt)
 {
 	char* hsrc = src + strlen(src) - 1;
-	byte* cbin = ((byte*)dst) + ((opt & TYPE_BIG_ENDIAN)? (off+len-1) : off);
-	int stp = (opt & TYPE_BIG_ENDIAN)? -1 : 1;
+	byte* cbin = ((byte*)dst) + ((opt & emType_BIG_ENDIAN)? (off+len-1) : off);
+	int stp = (opt & emType_BIG_ENDIAN)? -1 : 1;
 	for(int i=0; i<len; i++, cbin+=stp)
 	{
-		if(opt & TYPE_HAS_SPACE) hsrc--;
-		if(opt & TYPE_HAS_CHAR) hsrc--;
-		*cbin = (hsrc < src)? 0 : TYPE_HEX_TO_BIN(*hsrc); hsrc--;
-		*cbin |= (hsrc < src)? 0 : TYPE_HEX_TO_BIN(*hsrc) << 4; hsrc--;
+		if(opt & emType_HAS_SPACE) hsrc--;
+		if(opt & emType_HAS_CHAR) hsrc--;
+		*cbin = (hsrc < src)? 0 : emType_HEX_TO_BIN(*hsrc); hsrc--;
+		*cbin |= (hsrc < src)? 0 : emType_HEX_TO_BIN(*hsrc) << 4; hsrc--;
 	}
 }
 
-#define	PutBinFromHexInt(off, len, src, opt)	\
-	PutBinFromHexExt(&emType, off, len, src, opt)
+#define	emType_PutBinFromHexInt(off, len, src, opt)	\
+	emType_PutBinFromHexExt(&emType, off, len, src, opt)
 
-#define	PutBinFromHex(...)	\
-	Macro(Macro5(__VA_ARGS__, PutBinFromHexExt, PutBinFromHexInt)(__VA_ARGS__))
+#define	emType_PutBinFromHex(...)	\
+	Macro(Macro5(__VA_ARGS__, emType_PutBinFromHexExt, emType_PutBinFromHexInt)(__VA_ARGS__))
+
+#if emType_Shorthand >= 1
+#define	emTypePutBinFromHex		emType_PutBinFromHex
+#endif
+
+#if	emType_Shorthand >= 2
+#define	typPutBinFromHex		emType_PutBinFromHex
+#endif
+
+#if	emType_Shorthand >= 3
+#define	PutBinFromHex			emType_PutBinFromHex
+#endif
 
 
 
