@@ -6,63 +6,6 @@ programs on Arduino, Waspmote and Processing. Created and maintained by [Subhaji
 
 
 
-## Getting started
-
-* [Download the latest release](https://github.com/wolfram77/emType/version/emType.zip)
-* For Arduino, copy the file `libArduino/emType.h` to your sketch folder and include it in main code.
-* For Waspmote, copy the file `libWaspmote/emType.h` to your sketch folder and include it in main code.
-* For Processing, copy the file `libProcessing/emType.pde` to your sketch folder and include it in main code.
-* For C/C++, copy the file `libCPP/emType.h` to your source folder and include it in main code.
-
-
-
-## Using it
-
-### Constants
-
-* `null`			Null Pointer
-* `TRUE`			boolean true
-* `FALSE`			boolean false
-
-
-### Datatypes
-
-* `bool` | `boolean`		8bits boolean
-* `sbyte` | `byte`		8bits byte
-* `short` | `ushort`		16bits short
-* `int16` | `uint16`		16bits int
-* `int` | `uint`		platform dependent int
-* `long32` | `ulong32`		32bits long
-* `long` | `ulong`		platform dependent long
-* `long64` | `ulong64`		64bits long
-* `string`			string (use String in Processing)
-
-In Processing, only default Java datatypes are available. The following replacements are required:
-* `bool` -> `boolean`
-* `sbyte` -> `byte`
-* `ushort` -> `int`
-* `int16` -> `short`
-* `uint16` -> `int`
-* `uint` -> `long`
-* `long32` -> `int`
-* `ulong32` -> `long`
-* `long64` -> `long`
-* `ulong64` -> `ulong`
-* `ulong` is a class whose object can be used as `<object>.Uint[<index 0/1>]`.
-
-
-## Internal Buffer
-
-emType has an internal buffer used by it for type conversions.
-It can also be used as (in C/C++/Arduino only):
-
-`emType.<Type>[<index>]`
-
-where, `<Type>` is the name of a datatype, but starts with a capital character
-as `Int` for `int` datatype.
-
-
-
 ## Functions
 
 emType has 7 types of functions:
