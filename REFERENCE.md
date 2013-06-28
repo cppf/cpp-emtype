@@ -386,5 +386,5 @@ GNU General Public License for more details.
 
 <p>
 You should have received a copy of the GNU General Public License
-along with emType.  If not, see <http://www.gnu.org/licenses/>.
+along with emType.  If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.
 </p>
