@@ -3,31 +3,30 @@
 	emType: Library header file for C/C++
 	File: emType.h
 
-    This file is part of emType. For more details, go through
+    This file is part of embd. For more details, go through
 	Readme.txt. For copyright information, go through copyright.txt.
 
-    emType is free software: you can redistribute it and/or modify
+    embd is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    emType is distributed in the hope that it will be useful,
+    embd is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with emType.  If not, see <http://www.gnu.org/licenses/>.
+    along with embd.  If not, see <http://www.gnu.org/licenses/>.
 ----------------------------------------------------------------------------------------
 */
 
 
 
 /*
-	emType is a generic type conversion library for Arduino/Waspmote/Processing/C/C++. It has been
-	developed mainly for simplifying the process of writing wireless communication programs on Arduino,
-	Waspmote and Processing. To use it (in C/C++), copy the file emType.h to your source directory and
-	include it (emType.h) in the main code.
+	emType is a type definition and conversion library for emdb library. It has been developed for
+	for being used in the development of the internet of things for AVR processors. For information,
+	on its usage, please visit: https://github.com/wolfram77/embd.
 */
 
 
@@ -38,19 +37,26 @@
 
 
 // Requisite headers
+#if embd_Platform == embdPlatformPC
 #include <stdio.h>
 #include <string.h>
+#endif
 
 
 
-// select shorthanding scheme
+// Select shorthand level
+// 
+// The default shorthand level is 3 i.e., members of this
+// library can be accessed as <function_name> directly.
+// The shorthand level can be selected in the main header
+// file of embd library
 #ifndef	emType_Shorthand
 #define	emType_Shorthand	3
 #endif
 
 
 
-// Simulate macro overloading
+// Support macro overloading
 // By default, C++ does not support macro overloading, but
 // through the use of variable argument macros called variadic
 // macros, it is possible to support macro overloading to some
@@ -80,13 +86,17 @@
 #define	Macro22(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, _22, func, ...)	func
 #define	Macro23(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, _22, _23, func, ...)	func
 #define	Macro24(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, _22, _23, _24, func, ...)	func
+#define	EmptyMacro(...)
 #endif
 
 
 
 // shorthand constants
 #ifndef null
-#define null ((void*)0)
+#define null	((void*)0)
+#endif
+#ifndef	NULL
+#define	NULL	((void*)0)
 #endif
 #ifndef TRUE
 #define TRUE	1
@@ -97,54 +107,122 @@
 
 // shorthand datatypes
 typedef bool				boolean;
+#if embd_Platform == embd_PlatformPC
 typedef unsigned char		byte;
+#endif
 typedef signed char			sbyte;
 typedef unsigned short		ushort;
-typedef short				int16;
-typedef unsigned short		uint16;
 typedef unsigned int		uint;
-typedef int					long32;
-typedef unsigned int		ulong32;
 typedef unsigned long		ulong;
+#define	int8				sbyte
+#define	uint8				byte
+#define	int16				short
+#define	uint16				ushort
+#define	int32				long
+#define	uint32				ulong
+typedef long long			int64;
+typedef unsigned long long	uint64;
 typedef char*				string;
-typedef long long			long64;
-typedef unsigned long long	ulong64;
 
 
 
-// internal buffer format
-typedef union _emType_Mold
-{
-	byte	Byte[16];
-	sbyte	Sbyte[16];
-	char	Char[16];
-	short	Short[8];
-	ushort	Ushort[8];
-	int16	Int16[8];
-	uint16	Uint16[8];
-	int		Int[4];
-	uint	Uint[4];
-	long32	Long32[4];
-	ulong32	Ulong32[4];
-	long	Long[4];
-	ulong	Ulong[4];
-	long64	Long64[2];
-	ulong64	Ulong64[2];
-	float	Float[4];
-	double	Double[2];
-}emType_Mold;
+// Type Mold format
+// 
+// Type objects can be created with different sizes. emType_Mold16 has a size of 16 bytes,
+// emType_Mold32 has 32 bytes size, and so on. The range is from 16 to 256 bytes (in powers
+// of 2). Type molds of other sizes can be made using MoldMake(size). The default Mold has
+// a size of 16 bytes.
+// 
+#if embd_Platform == embd_PlatformPC
+#define	emType_MoldMake(size)	\
+typedef union _emType_Mold##size	\
+{	\
+	byte	Byte[size];	\
+	sbyte	Sbyte[16];	\
+	char	Char[16];	\
+	short	Short[8];	\
+	ushort	Ushort[8];	\
+	int		Int[4];		\
+	uint	Uint[4];	\
+	long	Long[4];	\
+	ulong	Ulong[4];	\
+	int8	Int8[16];	\
+	uint8	Uint8[16];	\
+	int16	Int16[8];	\
+	uint16	Uint16[8];	\
+	int32	Int32[4];	\
+	uint32	Uint32[4];	\
+	int64	Int64[2];	\
+	uint64	Uint64[2];	\
+	float	Float[4];	\
+	double	Double[2];	\
+}emType_Mold##size
+#else
+#define	emType_MoldMake(size)	\
+typedef union _emType_Mold##size	\
+{	\
+	byte	Byte[size];	\
+	sbyte	Sbyte[16];	\
+	char	Char[16];	\
+	short	Short[8];	\
+	ushort	Ushort[8];	\
+	int		Int[8];		\
+	uint	Uint[8];	\
+	long	Long[4];	\
+	ulong	Ulong[4];	\
+	int8	Int8[16];	\
+	uint8	Uint8[16];	\
+	int16	Int16[8];	\
+	uint16	Uint16[8];	\
+	int32	Int32[4];	\
+	uint32	Uint32[4];	\
+	int64	Int64[2];	\
+	uint64	Uint64[2];	\
+	float	Float[4];	\
+	double	Double[2];	\
+}emType_Mold##size
+#endif
+
+emType_MoldMake(16);
+
+emType_MoldMake(32);
+
+emType_MoldMake(64);
+
+emType_MoldMake(128);
+
+emType_MoldMake(256);
+
+#define	emType_Mold			emType_Mold16
 
 #if emType_Shorthand >= 1
+#define	type_MoldMake			emType_MoldMake
+#define	type_Mold16				emType_Mold16
+#define	type_Mold32				emType_Mold32
+#define	type_Mold64				emType_Mold64
+#define	type_Mold128			emType_Mold128
+#define	type_Mold256			emType_Mold256
 #define	type_Mold				emType_Mold
 #endif
 
 #if	emType_Shorthand >= 2
+#define	typMoldMake				emType_MoldMake
+#define	typMold16				emType_Mold16
+#define	typMold32				emType_Mold32
+#define	typMold64				emType_Mold64
+#define	typMold128				emType_Mold128
+#define	typMold256				emType_Mold256
 #define	typMold					emType_Mold
 #endif
 
 
 
-// internal buffer
+// Internal Type object
+// 
+// emType has an internal type object used for type conversions. It can be used
+// through functions provided in this library, and can also be accessed manually
+// as "emType".
+// 
 emType_Mold	emType;
 
 
@@ -283,23 +361,11 @@ emType_Mold	emType;
 #define	emType_GetUshort(...)	\
 	Macro(emType_GetType(ushort, __VA_ARGS__))
 
-#define	emType_GetInt16(...)	\
-	Macro(emType_GetType(int16, __VA_ARGS__))
-
-#define	emType_GetUint16(...)	\
-	Macro(emType_GetType(uint16, __VA_ARGS__))
-
 #define	emType_GetInt(...)	\
 	Macro(emType_GetType(int, __VA_ARGS__))
 
 #define	emType_GetUint(...)	\
 	Macro(emType_GetType(uint, __VA_ARGS__))
-
-#define	emType_GetLong32(...)	\
-	Macro(emType_GetType(long32, __VA_ARGS__))
-
-#define	emType_GetUlong32(...)	\
-	Macro(emType_GetType(ulong32, __VA_ARGS__))
 
 #define	emType_GetLong(...)	\
 	Macro(emType_GetType(long, __VA_ARGS__))
@@ -307,11 +373,29 @@ emType_Mold	emType;
 #define	emType_GetUlong(...)	\
 	Macro(emType_GetType(ulong, __VA_ARGS__))
 
-#define	emType_GetLong64(...)	\
-	Macro(emType_GetType(long64, __VA_ARGS__))
+#define	emType_GetInt8(...)	\
+	Macro(emType_GetType(int8, __VA_ARGS__))
 
-#define	emType_GetUlong64(...)	\
-	Macro(emType_GetType(ulong64, __VA_ARGS__))
+#define	emType_GetUint8(...)	\
+	Macro(emType_GetType(uint8, __VA_ARGS__))
+
+#define	emType_GetInt16(...)	\
+	Macro(emType_GetType(int16, __VA_ARGS__))
+
+#define	emType_GetUint16(...)	\
+	Macro(emType_GetType(uint16, __VA_ARGS__))
+
+#define	emType_GetInt32(...)	\
+	Macro(emType_GetType(int32, __VA_ARGS__))
+
+#define	emType_GetUint32(...)	\
+	Macro(emType_GetType(uint32, __VA_ARGS__))
+
+#define	emType_GetInt64(...)	\
+	Macro(emType_GetType(int64, __VA_ARGS__))
+
+#define	emType_GetUint64(...)	\
+	Macro(emType_GetType(uint64, __VA_ARGS__))
 
 #define	emType_GetFloat(...)	\
 	Macro(emType_GetType(float, __VA_ARGS__))
@@ -325,16 +409,18 @@ emType_Mold	emType;
 #define	type_GetBoolean			emType_GetBoolean
 #define	type_GetShort			emType_GetShort
 #define	type_GetUshort			emType_GetUshort
-#define	type_GetInt16			emType_GetInt16
-#define	type_GetUint16			emType_GetUint16
 #define	type_GetInt				emType_GetInt
 #define	type_GetUint			emType_GetUint
-#define	type_GetLong32			emType_GetLong32
-#define	type_GetUlong32			emType_GetUlong32
 #define	type_GetLong			emType_GetLong
 #define	type_GetUlong			emType_GetUlong
-#define	type_GetLong64			emType_GetLong64
-#define	type_GetUlong64			emType_GetUlong64
+#define	type_GetInt8			emType_GetInt8
+#define	type_GetUint8			emType_GetUint8
+#define	type_GetInt16			emType_GetInt16
+#define	type_GetUint16			emType_GetUint16
+#define	type_GetInt32			emType_GetInt32
+#define	type_GetUint32			emType_GetUint32
+#define	type_GetInt64			emType_GetInt64
+#define	type_GetUint64			emType_GetUint64
 #define	type_GetFloat			emType_GetFloat
 #define	type_GetDouble			emType_GetDouble
 #endif
@@ -345,16 +431,18 @@ emType_Mold	emType;
 #define	typGetBoolean			emType_GetBoolean
 #define	typGetShort				emType_GetShort
 #define	typGetUshort			emType_GetUshort
-#define	typGetInt16				emType_GetInt16
-#define	typGetUint16			emType_GetUint16
 #define	typGetInt				emType_GetInt
 #define	typGetUint				emType_GetUint
-#define	typGetLong32			emType_GetLong32
-#define	typGetUlong32			emType_GetUlong32
 #define	typGetLong				emType_GetLong
 #define	typGetUlong				emType_GetUlong
-#define	typGetLong64			emType_GetLong64
-#define	typGetUlong64			emType_GetUlong64
+#define	typGetInt8				emType_GetInt8
+#define	typGetUint8				emType_GetUint8
+#define	typGetInt16				emType_GetInt16
+#define	typGetUint16			emType_GetUint16
+#define	typGetInt32				emType_GetInt32
+#define	typGetUint32			emType_GetUint32
+#define	typGetInt64				emType_GetInt64
+#define	typGetUint64			emType_GetUint64
 #define	typGetFloat				emType_GetFloat
 #define	typGetDouble			emType_GetDouble
 #endif
