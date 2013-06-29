@@ -52,7 +52,7 @@
 
 
 // Requisite headers
-#if emdb_Platform == emdb_PlatformAVR
+#if emdb_Platform == embd_PlatformAVR
 #include <Arduino.h>
 #endif
 
@@ -83,7 +83,7 @@
 
 
 // Include Library headers
-#include "emdb/emType.h"
+#include "embd/emType.h"
 
 
 

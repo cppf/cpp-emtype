@@ -74,11 +74,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="copyright.txt" />
-    <None Include="gpl-3.0.txt" />
-    <None Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="embd.h" />
     <ClInclude Include="embd\emType.h" />
     <ClInclude Include="stdafx.h" />

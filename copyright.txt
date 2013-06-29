@@ -1,17 +1,20 @@
 ----------------------------------------------------------------------------------------
-  Embedded_Type, A generic Type conversion library for Arduino/Libelium Waspmote/Processing/Java/C/C++
-  Copyright (c) 2013, Subhajit Sahu. All rights reserved.
-  
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
+	emType: Type definition and conversion library for emdb library (C/C++)
+	File: emType.h
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+    This file is part of embd. For more details, go through
+	Readme.txt. For copyright information, go through copyright.txt.
 
-  You should have received a copy of the GNU General Public License
-  along with Embedded_Type.  If not, see <http://www.gnu.org/licenses/>.
+    embd is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    embd is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with embd.  If not, see <http://www.gnu.org/licenses/>.
 ----------------------------------------------------------------------------------------
