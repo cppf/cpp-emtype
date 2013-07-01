@@ -105,7 +105,7 @@
 
 
 // shorthand datatypes
-typedef bool				boolean;
+// typedef bool				boolean;
 #if embd_Platform == embd_PlatformPC
 typedef unsigned char		byte;
 #endif
