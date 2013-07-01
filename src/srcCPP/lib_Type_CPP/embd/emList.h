@@ -100,11 +100,11 @@ emList_MoldMake(ByteByte, byte, byte, 256);
 
 
 // Function:
-// Init(list, size)
+// Init(*list, size)
 // 
 // Initializes a list before use. The size of list (size) is required
 // to be specified so that the list can be initialized according to its
-// size. When using a pointer to list, just use Init(*list, size).
+// size. When using list variable, just use Init(&list, size).
 // 
 // Parameters:
 // list:	the list to initialize
@@ -115,8 +115,8 @@ emList_MoldMake(ByteByte, byte, byte, 256);
 //
 #define	emList_Init(list, size)	\
 	do{	\
-		(list).Count = 0;	\
-		(list).Max = (size) - 1;	\
+		(*(list)).Count = 0;	\
+		(*(list)).Max = (size) - 1;	\
 	}while(0)
 
 #if emList_Shorthand >= 1
@@ -130,10 +130,10 @@ emList_MoldMake(ByteByte, byte, byte, 256);
 
 
 // Function:
-// Clear(list)
+// Clear(*list)
 // 
-// Clears a list of all data. When using a pointer to list, just use
-// Clear(*list).
+// Clears a list of all data. When using list variable, just use
+// Clear(&list).
 // 
 // Parameters:
 // list:	the list to clear
@@ -142,7 +142,7 @@ emList_MoldMake(ByteByte, byte, byte, 256);
 // nothing
 //
 #define	emList_Clear(list)	\
-		((list).Count = 0)
+		((*(list)).Count = 0)
 
 #if emList_Shorthand >= 1
 #define	list_Clear				emList_Clear
@@ -155,10 +155,10 @@ emList_MoldMake(ByteByte, byte, byte, 256);
 
 
 // Function:
-// GetAvail(list)
+// GetAvail(*list)
 // 
-// Gives the number of pairs available in a list. When using a
-// pointer to list, just use GetAvail(*list).
+// Gives the number of pairs available in a list. When using
+// list variable, just use GetAvail(&list).
 // 
 // Parameters:
 // list:	the list whose available pairs are to be known
@@ -167,7 +167,7 @@ emList_MoldMake(ByteByte, byte, byte, 256);
 // pairs_avail:	number of available pairs in list
 //
 #define	emList_GetAvail(list)	\
-	((list).Count)
+	((*(list)).Count)
 
 #if emList_Shorthand >= 1
 #define	list_GetAvail			emList_GetAvail
@@ -180,10 +180,10 @@ emList_MoldMake(ByteByte, byte, byte, 256);
 
 
 // Function:
-// GetFree(list)
+// GetFree(*list)
 // 
 // Gives the number of free cells (space to store a pair) available in a list.
-// When using a pointer to list, just use GetFree(*list).
+// When using list variable, just use GetFree(&list).
 // 
 // Parameters:
 // list:	the list whose number of free cells are to be known
@@ -192,7 +192,7 @@ emList_MoldMake(ByteByte, byte, byte, 256);
 // cells_free:	number of free cells in list
 //
 #define	emList_GetFree(list)	\
-	(1 + (list).Max - (list).Count)
+	(1 + (*(list)).Max - (*(list)).Count)
 
 #if emList_Shorthand >= 1
 #define	list_GetFree			emList_GetFree
@@ -205,7 +205,7 @@ emList_MoldMake(ByteByte, byte, byte, 256);
 
 
 // Function:
-// GetIndexFrom<Key/Value>(list, <key/value>)
+// GetIndexFrom<Key/Value>(*list, *<key/value>)
 // 
 // Get the index of a <key/value> from the list.
 // 
@@ -216,7 +216,7 @@ emList_MoldMake(ByteByte, byte, byte, 256);
 // Returns: (nothing if index is provided as parameter)
 // index:	index of <key/value> (0xFF for not found)
 //
-byte emList_GetIndexFromElemFn(void* list, void* list_elements, void* element, byte elem_size)
+byte emList_GetIndexFromElemFn(void* list, void* list_elements, byte elem_size, void* element)
 {
 	byte index = 0xFF;
 	byte *elems = (byte*)list_elements, *elem = (byte*)element;
@@ -237,10 +237,10 @@ byte emList_GetIndexFromElemFn(void* list, void* list_elements, void* element, b
 	emList_GetIndexFromElemFn(list, ((list)->elem), key_value, sizeof((list)->elem[0]))
 
 #define	emList_GetIndexFromKey(list, key)	\
-	emList_GetIndexFromElemRef(Key, &(list), &(key))
+	emList_GetIndexFromElemFn(list, (*(list)).Key, sizeof((*(list)).Key[0]), key)
 
 #define	emList_GetIndexFromValue(list, value)	\
-	emList_GetIndexFromElemRef(Value, &(list), &(value))
+	emList_GetIndexFromElemFn(list, (*(list)).Value, sizeof((*(list)).Value[0]), value)
 
 #if emList_Shorthand >= 1
 #define	list_GetIndexFromKey	emList_GetIndexFromKey
@@ -255,7 +255,7 @@ byte emList_GetIndexFromElemFn(void* list, void* list_elements, void* element, b
 
 
 // Function:
-// Add(list, key, value)
+// Add(*list, *key, *value)
 // 
 // Add a key-value pair to the list. If another key-value pair exists with
 // the same key, then it will be overwritten. If sufficient space is not
@@ -269,12 +269,12 @@ byte emList_GetIndexFromElemFn(void* list, void* list_elements, void* element, b
 // Returns:
 // status:	0 for success, 0xFF for full
 //
-byte emList_AddFn(void* list, void* list_keys, void* list_values, void* key, byte key_size, void* value, byte value_size)
+byte emList_AddFn(void* list, void* list_keys, void* list_values, byte key_size, byte value_size, void* key, void* value)
 {
 	emList_ByteByteMold256* lst = (emList_ByteByteMold256*)list;
 	if((lst->Count) > (lst->Max)) return 0xFF;	// list is full
 	byte *keys = (byte*)list_keys, *values = (byte*)list_values, *vkey = (byte*)key, *vvalue = (byte*)value;
-	byte *dst, i, index = emList_GetIndexFromElemFn(list, list_keys, key, key_size);
+	byte *dst, i, index = emList_GetIndexFromElemFn(list, list_keys, key_size, key);
 	if(index == 0xFF) {index = lst->Count; lst->Count++; }
 	dst = keys + (key_size * index);
 	for(i=0; i<key_size; i++)
@@ -285,11 +285,8 @@ byte emList_AddFn(void* list, void* list_keys, void* list_values, void* key, byt
 	return 0;
 }
 
-#define	emList_AddRef(list, key, value)	\
-	emList_AddFn(list, ((list)->Key), ((list)->Value), key, sizeof((list)->Key[0]), value, sizeof((list)->Value[0]))
-
 #define	emList_Add(list, key, value)	\
-	emList_AddRef(&(list), &(key), &(value))
+	emList_AddFn(list, (*(list)).Key, (*(list)).Value, sizeof((*(list)).Key[0]), sizeof((*(list)).Value[0]), key, value)
 
 #if emList_Shorthand >= 1
 #define	list_Add				emList_Add
@@ -302,7 +299,7 @@ byte emList_AddFn(void* list, void* list_keys, void* list_values, void* key, byt
 
 
 // Function:
-// RemoveAt(list, index)
+// RemoveAt(*list, index)
 // 
 // Removes a key-value pair at specified index of list (index). If specified
 // index is empty the removal cannot be done (status will be -1)
@@ -335,11 +332,8 @@ byte emList_RemoveAtFn(void* list, void* list_keys, void* list_values, byte key_
 	return 0;
 }
 
-#define	emList_RemoveAtRef(list, index)	\
-	emList_RemoveAtFn(list, (list)->Key, (list)->Value, sizeof((list)->Key[0]), sizeof((list)->Value[0]), index)
-
 #define	emList_RemoveAt(list, index)	\
-	emList_RemoveAtRef(&(list), index)
+	emList_RemoveAtFn(list, (*(list)).Key, (*(list)).Value, sizeof((*(list)).Key[0]), sizeof((*(list)).Value[0]), index)
 
 #if emList_Shorthand >= 1
 #define	list_RemoveAt			emList_RemoveAt
@@ -352,7 +346,7 @@ byte emList_RemoveAtFn(void* list, void* list_keys, void* list_values, byte key_
 
 
 // Function:
-// Remove(list, key)
+// Remove(*list, *key)
 // 
 // Removes a key-value pair having specified key (key). If specified
 // key is not present the removal cannot be done (status will be -1)
@@ -364,18 +358,15 @@ byte emList_RemoveAtFn(void* list, void* list_keys, void* list_values, byte key_
 // Returns:
 // status:	0 for success, 0xFF for unavailable
 //
-byte emList_RemoveFn(void* list, void* list_keys, void* list_values, void* key, byte key_size, byte value_size)
+byte emList_RemoveFn(void* list, void* list_keys, void* list_values, byte key_size, byte value_size, void* key)
 {
-	byte index = emList_GetIndexFromElemFn(list, list_keys, key, key_size);
+	byte index = emList_GetIndexFromElemFn(list, list_keys, key_size, key);
 	if(index == 0xFF) return 0xFF;
 	return emList_RemoveAtFn(list, list_keys, list_values, key_size, value_size, index);
 }
 
 #define	emList_RemoveRef(list, key)	\
-	emList_RemoveFn(list, (list)->Key, (list)->Value, key, sizeof((list)->Key[0]), sizeof((list)->Value[0]))
-
-#define	emList_Remove(list, key)	\
-	emList_RemoveRef(&(list), &(key))
+	emList_RemoveFn(list, (*(list)).Key, (*(list)).Value, sizeof((*(list)).Key[0]), sizeof((*(list)).Value[0]), key)
 
 #if emList_Shorthand >= 1
 #define	list_Remove				emList_Remove

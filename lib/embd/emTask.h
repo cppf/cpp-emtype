@@ -124,21 +124,24 @@ typedef int emTask_Semaphore;
 
 
 
-// Internal Task List
+// Task List Mold
 // 
-// The internal Task list is used to store pointers to task functions and pointers to
-// their task object. This list is used to perform task switching. By default, a max.
-// of 32 tasks are allowed. For larger number of taks support, define emTask_ManualTaskList
-// and create your own internal task object, having name "emTask". In such a case, you have
-// initialize it as well.
+// An internal Task list is used to store pointers to task functions and pointers to
+// their task object. This list is used to perform task switching. This list object is
+// required while initializing emTask library. The list must be pre-iniltialized. To make
+// a task list, first a task list mold of desired size can be made using TaskListMoldMake(),
+// and then, an object needs to be created from the mold and initilized using emList library.
 // 
-#ifndef	emTask_ManualTaskList
-emList_MoldMake(Task, emTask_Mold256*, emTask_FnPtr, 32);
-emList_TaskMold32 emTask;
-#endif
+#define	emList_TaskListMoldMake(size)	\
+	emList_MoldMake(TaskList, emTask_Mold256*, emTask_FnPtr, size)
 
-byte	emTask_RunIndex;	
-byte	emTask_ExitStatus;
+emList_TaskListMoldMake(256);
+
+#define	emList_TaskListMold			emList_TaskListMold256
+
+emList_TaskListMold*	emTask;
+byte					emTask_RunIndex;	
+byte					emTask_ExitStatus;
 
 #if emTask_Shorthand >= 1
 #define	task_RunIndex			emTask_RunIndex
@@ -183,20 +186,22 @@ byte	emTask_ExitStatus;
 
 
 // Function:
-// InitMain()
+// InitMain(*task_list)
 // 
 // Initializes Task Management System before use. This is required before
-// anything else.
+// anything else. 
 // 
 // Parameters:
-// none
+// task_list:	pre-initalized task list object for use internally by the emTask library
+//				the size of task list defines the maximum number of concurrently running
+//				tasks.
 // 
 // Returns:
 // nothing
 //
-void emTask_InitMain()
+void emTask_InitMain(void* task_list)
 {
-	emList_Init(emTask, 32);
+	emTask = (emList_TaskListMold*)task_list;
 	emTask_RunIndex = 0;
 }
 
@@ -211,10 +216,9 @@ void emTask_InitMain()
 
 
 // Function:
-// Init(task)
+// Init(*task)
 // 
-// Initializes a task objet (task) before use. When using a pointer to task object,
-// just use Init(*task).
+// Initializes a task object (task) before use.
 // 
 // Parameters:
 // task:	the task object to initialize
@@ -224,8 +228,8 @@ void emTask_InitMain()
 //
 #define	emTask_Init(task)	\
 	do{	\
-		(task).Line = 0;	\
-		(task).Status = 0;	\
+		(*(task)).Line = 0;	\
+		(*(task)).Status = 0;	\
 	}while(0)
 
 #if emTask_Shorthand >= 1
@@ -251,7 +255,7 @@ void emTask_InitMain()
 // num_tasks:	number of running tasks
 //
 #define	emTask_GetNumTasks()	\
-	(emTask.Count)
+	((*emTask).Count)
 
 #if emTask_Shorthand >= 1
 #define	task_GetNumTasks		emTask_GetNumTasks
@@ -275,7 +279,7 @@ void emTask_InitMain()
 // cells_free:	number of free cells in task list
 //
 #define	emTask_GetFree()	\
-	(1 + emTask.Max - emTask.Count)
+	(1 + (*emTask).Max - (*emTask).Count)
 
 #if emTask_Shorthand >= 1
 #define	task_GetFree			emTask_GetFree
@@ -288,7 +292,7 @@ void emTask_InitMain()
 
 
 // Function:
-// Add(task, taskfn)
+// Add(*task, *taskfn)
 // 
 // Adds a new task to the list of tasks to be executed. 
 // 
@@ -299,13 +303,13 @@ void emTask_InitMain()
 // Returns:
 // status:	0 for success, 0xFF for failed to add
 // 
-byte emTask_AddRef(void* task, emTask_FnPtr taskfn)
+byte emTask_AddFn(void* task, emTask_FnPtr taskfn)
 {
 	return emList_Add(emTask, task, taskfn);
 }
 
 #define	emTask_Add(task, taskfn)	\
-	emTask_AddRef(&(task), (emTask_FnPtr)(taskfn))
+	emTask_AddFn(task, (emTask_FnPtr)(taskfn))
 
 #if emTask_Shorthand >= 1
 #define	task_Add				emTask_Add
@@ -318,7 +322,7 @@ byte emTask_AddRef(void* task, emTask_FnPtr taskfn)
 
 
 // Function:
-// Remove(task)
+// Remove(*task)
 // 
 // Removes an existing task from the list of tasks to be executed. 
 // 
@@ -328,13 +332,10 @@ byte emTask_AddRef(void* task, emTask_FnPtr taskfn)
 // Returns:
 // status:	0 for success, 0xFF for failed to add
 // 
-byte emTask_RemoveRef(void* task)
+byte emTask_Remove(void* task)
 {
 	return emList_Remove(emTask, task);
 }
-
-#define	emTask_Remove(task)	\
-	emTask_RemoveRef(&(task))
 
 #if emTask_Shorthand >= 1
 #define	task_Remove				emTask_Remove
@@ -347,23 +348,21 @@ byte emTask_RemoveRef(void* task)
 
 
 // Function:
-// RemoveAll()
-// RemoveAll()
+// RemoveAll(exit_status)
 // 
 // Removes all running tasks, and thus the Run() returns with a exit status
 // 
 // Parameters:
-// ptr:		just write "ptr" without quotes to indicate use of task obj. pointer
-// task:	the task obj. to initialize (may be a pointer to task obj., if ptr field is used)
+// exit_status:	the exit status of removal of all tasks
 // 
 // Returns:
 // nothing
 //
-void emTask_RemoveAll()
+void emTask_RemoveAll(byte exit_status)
 {
 	emList_Clear(emTask);
 	emTask_RunIndex = 0;
-	emTask_ExitStatus = emTask_ExitStatusError;
+	emTask_ExitStatus = exit_status;
 }
 
 #if emTask_Shorthand >= 1
@@ -391,8 +390,8 @@ byte emTask_Run()
 {
 	while(emTask_GetNumTasks())
 	{
-		if(emTask_RunIndex >= emTask_GetNumTasks()) emTask_RunIndex %= emTask_GetNumTasks();
-		emTask.Key[emTask_RunIndex]->Status = (*emTask.Value[emTask_RunIndex])(emTask.Key[emTask_RunIndex]);
+		if(emTask_RunIndex >= emTask_GetNumTasks()) emTask_RunIndex -= emTask_GetNumTasks();
+		(*emTask).Key[emTask_RunIndex]->Status = (*(*emTask).Value[emTask_RunIndex])((*emTask).Key[emTask_RunIndex]);
 		emTask_RunIndex++;
 	}
 	return emTask_ExitStatus;
@@ -416,7 +415,6 @@ byte emTask_Run()
 // Parameters:
 // taskname:	name of the task function
 // taskmold:	mold to be used with this task
-// task:		task object (of type taskmold) used with this task
 // 
 #define	emTask_TaskFn(taskname, taskmold)	\
 	byte taskname(taskmold* emTask_Obj)
@@ -486,12 +484,11 @@ byte emTask_Run()
 
 
 // Function:
-// SaveState(task, <state variables list>)
+// SaveState(<state variables list>)
 // 
 // Save state variables to the state buffer of task object
 // 
 // Parameters:
-// task:		task object used with this task (use *task is task is a pointer)
 // <state variables list>:	a list of state variables (as type1, state1, type2, state2, ...) to store separated with commas
 // 
 // Returns:
@@ -579,12 +576,11 @@ byte emTask_Run()
 
 
 // Function:
-// LoadState(task, <state variables list>)
+// LoadState(<state variables list>)
 // 
 // Load state variables from the state buffer of task object
 // 
 // Parameters:
-// task:		task object used with this task (use *task is task is a pointer)
 // <state variables list>:	a list of state variables (as type1, state1, type2, state2, ...) to load separated with commas
 // 
 // Returns:
@@ -697,7 +693,7 @@ byte emTask_Run()
 
 
 // Function:
-// Switch<WithState>(<state variables list>)
+// Switch(<state variables list>)
 // 
 // Used to switch from task. If no state variables are present in task, use Switch(), else if state variables are presNext time, the task will continue.
 // 
@@ -795,7 +791,7 @@ byte emTask_Run()
 // 
 #define	emTask_Exit(exitstatus)	\
 	do{	\
-	emTask_Remove(*emTask_Obj);	\
+	emTask_Remove(emTask_Obj);	\
 	return exitstatus;	\
 	}while(0)
 
