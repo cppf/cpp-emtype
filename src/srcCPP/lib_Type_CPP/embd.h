@@ -45,8 +45,8 @@
 // For PC:		Set emdb_Platform to embd_PlatformPC
 // For AVR:		Set embd_Platform to embd_PlatformAVR
 //
-#define	emdb_PlatformPC			0
-#define	embd_PlatformAVR		1
+#define	emdb_PlatformPC			1
+#define	embd_PlatformAVR		2
 #define	emdb_Platform			embd_PlatformPC
 
 
@@ -84,6 +84,9 @@
 
 // Include Library headers
 #include "embd/emType.h"
+#include "embd/emList.h"
+#include "embd/emTask.h"
+#include "embd/emStream.h"
 
 
 

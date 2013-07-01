@@ -1,4 +1,4 @@
-/*
+/**
 ----------------------------------------------------------------------------------------
 	emType: Type definition and conversion library for emdb library (C/C++)
 	File: emType.h
@@ -37,7 +37,7 @@
 
 
 // Requisite headers
-#if embd_Platform == embdPlatformPC
+#if embd_Platform == embd_PlatformPC
 #include <string.h>
 #endif
 
@@ -105,8 +105,8 @@
 
 
 // shorthand datatypes
-// typedef bool				boolean;
 #if embd_Platform == embd_PlatformPC
+typedef bool				boolean;
 typedef unsigned char		byte;
 #endif
 typedef signed char			sbyte;
