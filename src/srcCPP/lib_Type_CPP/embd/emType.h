@@ -1,4 +1,4 @@
-/**
+/*
 ----------------------------------------------------------------------------------------
 	emType: Type definition and conversion library for emdb library (C/C++)
 	File: emType.h
@@ -227,7 +227,7 @@ emType_Mold	emType;
 
 
 // Function:
-// GetBit(src, off, bit_no)
+// GetBit(*src, off, bit_no)
 // GetBit(off, bit_no)
 // 
 // Returns the value of bit at the specified bit number (bit_no)
@@ -297,7 +297,7 @@ emType_Mold	emType;
 
 
 // Function:
-// GetNibble(src, off, nibble_no)
+// GetNibble(*src, off, nibble_no)
 // GetNibble(off, nibble_no)
 // 
 // Returns the value of nibble at the specified nibble number (nibble_no)
@@ -337,7 +337,7 @@ emType_Mold	emType;
 
 
 // Function:
-// Get<type>(src, off)
+// Get<type>(*src, off)
 // Get<type>(off)
 // 
 // Returns the <type> value at the specified source address with 
@@ -501,8 +501,8 @@ emType_Mold	emType;
 
 
 // Function:
-// GetString(dst, sz, src, off, opt)
-// GetString(dst, sz, off, opt)
+// GetString(*dst, sz, *src, off, opt)
+// GetString(*dst, sz, off, opt)
 // 
 // Returns the string from the specified source address with 
 // offset (src + off). If source address (src) is not specified,
@@ -561,7 +561,7 @@ string emType_GetStringExt(string dst, int sz, void* src, int off, byte opt)
 
 
 // Function:
-// PutBit(dst, off, bit_no, bit_value)
+// PutBit(*dst, off, bit_no, bit_value)
 // PutBit(off, bit_no, bit_value)
 // 
 // Stores the value of bit at the specified bit number (bit_no)
@@ -735,7 +735,7 @@ string emType_GetStringExt(string dst, int sz, void* src, int off, byte opt)
 
 
 // Function:
-// PutNibble(dst, off, nibble_no, nibble_value)
+// PutNibble(*dst, off, nibble_no, nibble_value)
 // PutNibble(off, nibble_no, nibble_value)
 // 
 // Stores the value of nibble at the specified nibble number
@@ -777,7 +777,7 @@ string emType_GetStringExt(string dst, int sz, void* src, int off, byte opt)
 
 
 // Function:
-// Put<type>(dst, off, value)
+// Put<type>(*dst, off, value)
 // Put<type>(off, value)
 // 
 // Stores the value of <type> at the specified destination
@@ -943,8 +943,8 @@ string emType_GetStringExt(string dst, int sz, void* src, int off, byte opt)
 
 
 // Function:
-// PutString(dst, off, value, opt)
-// PutString(off, value, opt)
+// PutString(*dst, off, *value, opt)
+// PutString(off, *value, opt)
 // 
 // Stores the string at the specified destination address with 
 // offset (dst + off). If destination address (dst) is not specified,
@@ -1197,7 +1197,7 @@ void emType_PutStringExt(void* dst, int off, string value, byte opt)
 
 
 // Function:
-// DoReverse(src, off, len)
+// DoReverse(*src, off, len)
 // DoReverse(off, len)
 // 
 // Reverses the data stored at the source address (src + off)
@@ -1248,7 +1248,7 @@ void emType_DoReverseExt(void* src, int off, int len)
 
 
 // Function:
-// Get<Byte/Uint8/Ushort/Uint16>Sum(src, off, len)
+// Get<Byte/Uint8/Ushort/Uint16>Sum(*src, off, len)
 // Get<Byte/Uint8/Ushort/Uint16>Sum(off, len)
 // 
 // Finds the sum of all bytes/ushorts at the specified source
@@ -1325,8 +1325,8 @@ ushort emType_GetUshortSumExt(void* src, int off, int len)
 
 
 // Function:
-// GetHexFromBin(dst, sz, src, off, len, opt)
-// GetHexFromBin(dst, sz, off, len, opt)
+// GetHexFromBin(*dst, sz, *src, off, len, opt)
+// GetHexFromBin(*dst, sz, off, len, opt)
 // 
 // Get hexadecimal string (dst) of maximum specified size (sz) of
 // the soure binary data (src + off) of specified length (len). The
@@ -1433,8 +1433,8 @@ string emType_GetHexFromBinExt(string dst, int sz, void* src, int off, int len, 
 
 
 // Function:
-// PutBinFromHex(dst, off, len, src, opt)
-// PutBinFromHex(off, len, src, opt)
+// PutBinFromHex(*dst, off, len, *src, opt)
+// PutBinFromHex(off, len, *src, opt)
 // 
 // Puts binary data from the source hex string (src) to the destination
 // address (dst + off) of specified length len. The options (opt) specify

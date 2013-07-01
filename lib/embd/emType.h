@@ -1,4 +1,4 @@
-/**
+/*
 ----------------------------------------------------------------------------------------
 	emType: Type definition and conversion library for emdb library (C/C++)
 	File: emType.h
