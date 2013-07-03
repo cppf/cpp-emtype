@@ -135,9 +135,35 @@ typedef int emTask_Semaphore;
 #define	emList_TaskListMoldMake(size)	\
 	emList_MoldMake(TaskList, emTask_Mold256*, emTask_FnPtr, size)
 
+#if emTask_Shorthand >= 1
+#define	list_TaskListMoldMake	emList_TaskListMoldMake
+#endif
+
+#if	emTask_Shorthand >= 2
+#define	lstTaskListMoldMake		emList_TaskListMoldMake
+#endif
+
+emList_TaskListMoldMake(8);
+
+emList_TaskListMoldMake(16);
+
+emList_TaskListMoldMake(32);
+
+emList_TaskListMoldMake(64);
+
+emList_TaskListMoldMake(128);
+
 emList_TaskListMoldMake(256);
 
-#define	emList_TaskListMold			emList_TaskListMold256
+#define	emList_TaskListMold		emList_TaskListMold256
+
+#if emTask_Shorthand >= 1
+#define	list_TaskListMold		emList_TaskListMold
+#endif
+
+#if	emTask_Shorthand >= 2
+#define	lstTaskListMold			emList_TaskListMold
+#endif
 
 emList_TaskListMold*	emTask;
 byte					emTask_RunIndex;	

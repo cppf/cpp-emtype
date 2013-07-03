@@ -522,17 +522,20 @@ emType_Mold	emType;
 
 #define	emType_LENGTH_STRING		1
 
-string emType_GetStringExt(string dst, int sz, void* src, int off, byte opt)
+string emType_GetStringExtFn(string dst, int sz, char* src, int off, byte opt)
 {
-	int len;
-	char* xsrc = ((char*)src) + off;
-	if(opt & emType_LENGTH_STRING) len = *xsrc;
-	else len = strlen(xsrc);
+	byte len;
+	src += off;
+	if(opt & emType_LENGTH_STRING) {len = (byte)(*src); src++;}
+	else len = (byte)strlen(src);
 	len = ((sz - 1) < len)? (sz - 1) : len;
-	memcpy(dst, xsrc+1, len);
+	memcpy(dst, src, len);
 	dst[len] = '\0';
 	return dst;
 }
+
+#define	emType_GetStringExt(dst, sz, src, off, opt)	\
+	emType_GetStringExtFn((string)(dst), (int)(sz), (char*)(src), (int)(off), (byte)(opt))
 
 #define	emType_GetStringInt(dst, sz, off, opt)	\
 	emType_GetStringExt(dst, sz, &emType, off, opt)
@@ -959,14 +962,17 @@ string emType_GetStringExt(string dst, int sz, void* src, int off, byte opt)
 // Returns:
 // nothing
 // 
-void emType_PutStringExt(void* dst, int off, string value, byte opt)
+void emType_PutStringExtFn(char* dst, int off, string value, byte opt)
 {
-	char* xdst = ((char*)dst) + off;
-	int len = strlen(value);
-	if(opt & emType_LENGTH_STRING) {*xdst = (char)len; xdst++;}
+	dst += off;
+	byte len = (byte)strlen(value);
+	if(opt & emType_LENGTH_STRING) {*dst = (char)len; dst++;}
 	else len++;
-	memcpy(xdst, value, len);
+	memcpy(dst, value, len);
 }
+
+#define	emType_PutStringExt(dst, off, value, opt)	\
+	emType_PutStringExtFn((char*)(dst), (int)(off), (string)(value), (byte)(opt))
 
 #define	emType_PutStringInt(off, value, opt)	\
 	emType_PutStringExt(&emType, off, value, opt)
@@ -1215,17 +1221,19 @@ void emType_PutStringExt(void* dst, int off, string value, byte opt)
 // Returns:
 // nothing
 // 
-void emType_DoReverseExt(void* src, int off, int len)
+void emType_DoReverseExtFn(byte* src, int off, int len)
 {
-	char byt;
-	char *bg, *ed;
-	for(bg=(char*)src, ed=bg+len-1; bg<ed; bg++, ed--)
+	byte byt, *end;
+	for(src += off, end=src+len-1; src<end; src++, end--)
 	{
-		byt = *bg;
-		*bg = *ed;
-		*ed = byt;
+		byt = *src;
+		*src = *end;
+		*end = byt;
 	}
 }
+
+#define	emType_DoReverseExt(src, off, len)	\
+	emType_DoReverseExt((byte*)(src), (int)(off), (int)(len))
 
 #define	emType_DoReverseInt(off, len)	\
 	emType_DoReverseExt(&emType, off, len)
@@ -1265,14 +1273,16 @@ void emType_DoReverseExt(void* src, int off, int len)
 // Returns:
 // <type>_value:  the summed value
 // 
-byte emType_GetByteSumExt(void* src, int off, int len)
+byte emType_GetByteSumExtFn(byte* src, int off, int len)
 {
     byte sum = 0;
-    byte* bsrc = ((byte*)src) + off;
-    for(; len>0; len--, bsrc++)
-    { sum += *bsrc; }
+    for(src += off; len>0; len--, src++)
+    { sum += *src; }
     return sum;
 }
+
+#define	emType_GetByteSumExt(src, off, len)	\
+	emType_GetByteSumExtFn((byte*)(src), (int)(off), (int)(len))
 
 #define	emType_GetByteSumInt(off, len)	\
 	emType_GetByteSumExt(&emType, off, len)
@@ -1283,15 +1293,17 @@ byte emType_GetByteSumExt(void* src, int off, int len)
 #define	emType_GetUint8Sum	\
 	emType_GetByteSum
 
-ushort emType_GetUshortSumExt(void* src, int off, int len)
+ushort emType_GetUshortSumExtFn(ushort* src, int off, int len)
 {
     ushort sum = 0;
-    ushort* bsrc = ((ushort*)src) + off;
 	len >>= 1;
-    for(; len>0; len--, bsrc++)
-    { sum += *bsrc; }
+    for(src = (ushort*)(((byte*)src) + off); len>0; len--, src++)
+    { sum += *src; }
     return sum;
 }
+
+#define	emType_GetUshortSumExt(src, off, len)	\
+	emType_GetUshortSumExtFn((ushort*)(src), (int)(off), (int)(len))
 
 #define	emType_GetUshortSumInt(off, len)	\
 	emType_GetUshortSumExt(&emType, off, len)
@@ -1366,21 +1378,24 @@ ushort emType_GetUshortSumExt(void* src, int off, int len)
 
 #define emType_BIG_ENDIAN			4
 
-string emType_GetHexFromBinExt(string dst, int sz, void* src, int off, int len, byte opt)
+string emType_GetHexFromBinExtFn(string dst, int sz, byte* src, int off, int len, byte opt)
 {
-	char* dend = dst + sz - 1;
-	byte* cbin = ((byte*)src) + ((opt & emType_BIG_ENDIAN)? off : (off+len-1));
+	string dend = dst + (sz - 1);
+	src += off + ((opt & emType_BIG_ENDIAN)? 0 : (len - 1));
 	int stp = (opt & emType_BIG_ENDIAN)? 1 : -1;
-	for(int i=0; i<len; i++, cbin+=stp)
+	for(int i=0; i<len; i++, src+=stp)
 	{
-		*dst = emType_BIN_TO_HEX(*cbin >> 4); dst++; if(dst >= dend) break;
-		*dst = emType_BIN_TO_HEX(*cbin & 0xF); dst++; if(dst >= dend) break;
-		if(opt & emType_ADD_CHAR) { *dst = (*cbin < 32 || *cbin > 127)? '.' : *cbin; dst++; if(dst >= dend) break;}
+		*dst = emType_BIN_TO_HEX(*src >> 4); dst++; if(dst >= dend) break;
+		*dst = emType_BIN_TO_HEX(*src & 0xF); dst++; if(dst >= dend) break;
+		if(opt & emType_ADD_CHAR) { *dst = (*src < 32 || *src > 127)? '.' : *src; dst++; if(dst >= dend) break;}
 		if(opt & emType_ADD_SPACE) { *dst = ' '; dst++; if(dst >= dend) break;}
 	}
 	*dst = '\0';
 	return dst;
 }
+
+#define	emType_GetHexFromBinExt(dst, sz, src, off, len, opt)	\
+	emType_GetHexFromBinExtFn((string)(dst), (int)(sz), (byte*)(src), (int)(off), (int)(len), (byte)(opt))
 
 #define	emType_GetHexFromBinInt(dst, sz, off, len, opt)	\
 	emType_GetHexFromBinExt(dst, sz, &emType, off, len, opt)
@@ -1452,19 +1467,22 @@ string emType_GetHexFromBinExt(string dst, int sz, void* src, int off, int len, 
 // Returns:
 // the converted data (dst)
 // 
-void emType_PutBinFromHexExt(void* dst, int off, int len, string src, byte opt)
+void emType_PutBinFromHexExtFn(byte* dst, int off, int len, string src, byte opt)
 {
-	char* hsrc = src + strlen(src) - 1;
-	byte* cbin = ((byte*)dst) + ((opt & emType_BIG_ENDIAN)? (off+len-1) : off);
-	int stp = (opt & emType_BIG_ENDIAN)? -1 : 1;
-	for(int i=0; i<len; i++, cbin+=stp)
+	char* psrc = src + strlen(src) - 1;
+	dst += off + ((opt & emType_BIG_ENDIAN)? (len - 1) : 0);
+	int i ,stp = (opt & emType_BIG_ENDIAN)? -1 : 1;
+	for(i=0; i<len; i++, dst+=stp)
 	{
-		if(opt & emType_HAS_SPACE) hsrc--;
-		if(opt & emType_HAS_CHAR) hsrc--;
-		*cbin = (hsrc < src)? 0 : emType_HEX_TO_BIN(*hsrc); hsrc--;
-		*cbin |= (hsrc < src)? 0 : emType_HEX_TO_BIN(*hsrc) << 4; hsrc--;
+		if(opt & emType_HAS_SPACE) psrc--;
+		if(opt & emType_HAS_CHAR) psrc--;
+		*dst = (psrc < src)? 0 : emType_HEX_TO_BIN(*psrc); psrc--;
+		*dst |= (psrc < src)? 0 : emType_HEX_TO_BIN(*psrc) << 4; psrc--;
 	}
 }
+
+#define	emType_PutBinFromHexExt(dst, off, len, src, opt)	\
+	emType_PutBinFromHexExtFn((byte*)(dst), (int)(off), (int)(len), (string)(src), (byte)(opt))
 
 #define	emType_PutBinFromHexInt(off, len, src, opt)	\
 	emType_PutBinFromHexExt(&emType, off, len, src, opt)

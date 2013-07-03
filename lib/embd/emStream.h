@@ -306,7 +306,7 @@ byte	emStream_LoopI = 0;
 
 // Function:
 // Read<Type></Int>(*stream)
-// Read<Type></Int>(*stream, <Type>_var)
+// Read<Type></Int>(*stream, *dst)
 // 
 // Reads a type data from the stream. If the stream does not have sufficient
 // number of bytes available, then the current task/thread will be blocked
@@ -320,39 +320,36 @@ byte	emStream_LoopI = 0;
 // 
 // Parameters:
 // stream:	the stream from which type data is to be read
-// <Type>_var:	variable where type value is stored
+// dst:		destination address where type value is stored
 // 
-// Returns: (if <Type>_var not used)
+// Returns: (if dst not used)
 // <Type>_value:	the value of type data read
 //
-#define	emStream_ReadByteIntVal(stream, byte_var)	\
+#define	emStream_ReadByteIntVal(stream, dst)	\
 	do{	\
-		if(emStream_GetAvail(stream) < 1) break;	\
-		(byte_var) = (stream).Data[(stream).Front];	\
-		(stream).Front = ((stream).Front + 1) & (stream).Max;	\
-		(stream).Count--;	\
+		if(emStream_GetAvail(stream) >= 1)	\
+		{	\
+			*((byte*)(dst)) = (*(stream)).Data[(*(stream)).Front];	\
+			(*(stream)).Front = ((*(stream)).Front + 1) & (*(stream)).Max;	\
+			(*(stream)).Count--;	\
+		}	\
 	}while(0)
 
 #define	emStream_ReadByteIntRet(stream)	\
 	({	\
-		emStream_ReadByteIntVal(stream, emType.Byte[0]);	\
+		emStream_ReadByteIntVal(stream, emType.Byte);	\
 		emType.Byte[0];	\
 	})
 
 #define	emStream_ReadByteInt(...)	\
 	Macro(Macro2(__VA_ARGS__, emStream_ReadByteIntVal, emStream_ReadByteIntRet)(__VA_ARGS__))
 
-#define	emStream_ReadSbyteIntVal(stream, sbyte_var)	\
-	do{	\
-		if(emStream_GetAvail(stream) < 1) break;	\
-		(sbyte_var) = (sbyte)(stream).Data[(stream).Front];	\
-		(stream).Front = ((stream).Front + 1) & (stream).Max;	\
-		(stream).Count--;	\
-	}while(0)
+#define	emStream_ReadSbyteIntVal(stream, dst)	\
+	emStream_ReadSbyteIntVal(stream, dst)
 
 #define	emStream_ReadSbyteIntRet(stream)	\
 	({	\
-		emStream_ReadSbyteIntVal(stream, emType.Sbyte[0]);	\
+		emStream_ReadSbyteIntVal(stream, emType.Sbyte);	\
 		emType.Sbyte[0];	\
 	})
 
@@ -361,48 +358,48 @@ byte	emStream_LoopI = 0;
 
 #define	emStream_ReadShortIntRet(stream)	\
 	({	\
-		emStream_ReadBytesInt(stream, emType.Short[0], 2);	\
+		emStream_ReadBytesInt(stream, emType.Short, 2);	\
 		emType.Short[0];	\
 	})
 
-#define	emStream_ReadShortIntVal(stream, short_var)	\
-	emStream_ReadBytesInt(stream, short_var, 2)
+#define	emStream_ReadShortIntVal(stream, dst)	\
+	emStream_ReadBytesInt(stream, dst, 2)
 
 #define	emStream_ReadShortInt(...)	\
 	Macro(Macro2(__VA_ARGS__, emStream_ReadShortIntVal, emStream_ReadShortIntRet)(__VA_ARGS__))
 
+#define	emStream_ReadUshortIntVal(stream, dst)	\
+	emStream_ReadShortIntVal(stream, dst)
+
 #define	emStream_ReadUshortIntRet(stream)	\
 	({	\
-		emStream_ReadBytesInt(stream, emType.Ushort[0], 2);	\
+		emStream_ReadBytesInt(stream, emType.Ushort, 2);	\
 		emType.Ushort[0];	\
 	})
-
-#define	emStream_ReadUshortIntVal(stream, ushort_var)	\
-	emStream_ReadBytesInt(stream, ushort_var, 2)
 
 #define	emStream_ReadUshortInt(...)	\
 	Macro(Macro2(__VA_ARGS__, emStream_ReadUshortIntVal, emStream_ReadUshortIntRet)(__VA_ARGS__))
 
 #define	emStream_ReadLongIntRet(stream)	\
 	({	\
-		emStream_ReadBytesInt(stream, emType.Long[0], 4);	\
+		emStream_ReadBytesInt(stream, emType.Long, 4);	\
 		emType.Long[0];	\
 	})
 
-#define	emStream_ReadLongIntVal(stream, long_var)	\
-	emStream_ReadBytesInt(stream, long_var, 4)
+#define	emStream_ReadLongIntVal(stream, dst)	\
+	emStream_ReadBytesInt(stream, dst, 4)
 
 #define	emStream_ReadLongInt(...)	\
 	Macro(Macro2(__VA_ARGS__, emStream_ReadLongIntVal, emStream_ReadLongIntRet)(__VA_ARGS__))
 
 #define	emStream_ReadUlongIntRet(stream)	\
 	({	\
-		emStream_ReadBytesInt(stream, emType.Ulong[0], 4);	\
+		emStream_ReadBytesInt(stream, emType.Ulong, 4);	\
 		emType.Ulong[0];	\
 	})
 
-#define	emStream_ReadUlongIntVal(stream, ulong_var)	\
-	emStream_ReadBytesInt(stream, ulong_var, 4)
+#define	emStream_ReadUlongIntVal(stream, dst)	\
+	emStream_ReadBytesInt(stream, dst, 4)
 
 #define	emStream_ReadUlongInt(...)	\
 	Macro(Macro2(__VA_ARGS__, emStream_ReadUlongIntVal, emStream_ReadUlongIntRet)(__VA_ARGS__))
@@ -444,80 +441,75 @@ byte	emStream_LoopI = 0;
 
 #define	emStream_ReadInt64IntRet(stream)	\
 	({	\
-		emStream_ReadBytesInt(stream, emType.Int64[0], 8);	\
+		emStream_ReadBytesInt(stream, emType.Int64, 8);	\
 		emType.Int64[0];	\
 	})
 
-#define	emStream_ReadInt64IntVal(stream, int64_var)	\
-	emStream_ReadBytesInt(stream, int64_var, 8)
+#define	emStream_ReadInt64IntVal(stream, dst)	\
+	emStream_ReadBytesInt(stream, dst, 8)
 
 #define	emStream_ReadInt64Int(...)	\
 	Macro(Macro2(__VA_ARGS__, emStream_ReadInt64IntVal, emStream_ReadInt64IntRet)(__VA_ARGS__))
 
 #define	emStream_ReadUint64IntRet(stream)	\
 	({	\
-		emStream_ReadBytesInt(stream, emType.Uint64[0], 8);	\
+		emStream_ReadBytesInt(stream, emType.Uint64, 8);	\
 		emType.Uint64[0];	\
 	})
 
-#define	emStream_ReadUint64IntVal(stream, uint64_var)	\
-	emStream_ReadBytesInt(stream, uint64_var, 8)
+#define	emStream_ReadUint64IntVal(stream, dst)	\
+	emStream_ReadBytesInt(stream, dst, 8)
 
 #define	emStream_ReadUint64Int(...)	\
 	Macro(Macro2(__VA_ARGS__, emStream_ReadUint64IntVal, emStream_ReadUint64IntRet)(__VA_ARGS__))
 
 #define	emStream_ReadFloatIntRet(stream)	\
 	({	\
-		emStream_ReadBytesInt(stream, emType.Float[0], 4);	\
+		emStream_ReadBytesInt(stream, emType.Float, 4);	\
 		emType.Float[0];	\
 	})
 
-#define	emStream_ReadFloatIntVal(stream, float_var)	\
-	emStream_ReadBytesInt(stream, float_var, 4)
+#define	emStream_ReadFloatIntVal(stream, dst)	\
+	emStream_ReadBytesInt(stream, dst, 4)
 
 #define	emStream_ReadFloatInt(...)	\
 	Macro(Macro2(__VA_ARGS__, emStream_ReadFloatIntVal, emStream_ReadFloatIntRet)(__VA_ARGS__))
 
 #define	emStream_ReadDoubleIntRet(stream)	\
 	({	\
-		emStream_ReadBytesInt(stream, emType.Double[0], 8);	\
+		emStream_ReadBytesInt(stream, emType.Double, 8);	\
 		emType.Double[0];	\
 	})
 
-#define	emStream_ReadDoubleIntVal(stream, double_var)	\
-	emStream_ReadBytesInt(stream, double_var, 8)
+#define	emStream_ReadDoubleIntVal(stream, dst)	\
+	emStream_ReadBytesInt(stream, dst, 8)
 
 #define	emStream_ReadDoubleInt(...)	\
 	Macro(Macro2(__VA_ARGS__, emStream_ReadDoubleIntVal, emStream_ReadDoubleIntRet)(__VA_ARGS__))
 
-#define	emStream_ReadByteVal(stream, byte_var)	\
+#define	emStream_ReadByteVal(stream, dst)	\
 	do{	\
 		emTask_WaitWhile(emStream_GetAvail(stream) < 1);	\
-		(byte_var) = (stream).Data[(stream).Front];	\
-		(stream).Front = ((stream).Front + 1) & (stream).Max;	\
-		(stream).Count--;	\
+		*((byte*)(dst)) = (*(stream)).Data[(*(stream)).Front];	\
+		(*(stream)).Front = ((*(stream)).Front + 1) & (*(stream)).Max;	\
+		(*(stream)).Count--;	\
 	}while(0)
 
 #define	emStream_ReadByteRet(stream)	\
 	({	\
-		emStream_ReadByteVal(stream, emType.Byte[0]);	\
+		emStream_ReadByteVal(stream, emType.Byte);	\
 		emType.Byte[0];	\
 	})
 
 #define	emStream_ReadByte(...)	\
 	Macro(Macro2(__VA_ARGS__, emStream_ReadByteVal, emStream_ReadByteRet)(__VA_ARGS__))
 
-#define	emStream_ReadSbyteVal(stream, sbyte_var)	\
-	do{	\
-		emTask_WaitWhile(emStream_GetAvail(stream) < 1);	\
-		(sbyte_var) = (sbyte)((stream).Data[(stream).Front]);	\
-		(stream).Front = ((stream).Front + 1) & (stream).Max;	\
-		(stream).Count--;	\
-	}while(0)
+#define	emStream_ReadSbyteVal(stream, dst)	\
+	emType_ReadByteVal(stream, dst)
 
 #define	emStream_ReadSbyteRet(stream)	\
 	({	\
-		emStream_ReadByteVal(stream, emType.Sbyte[0]);	\
+		emStream_ReadSbyteVal(stream, emType.Sbyte);	\
 		emType.Sbyte[0];	\
 	})
 
@@ -526,48 +518,48 @@ byte	emStream_LoopI = 0;
 
 #define	emStream_ReadShortRet(stream)	\
 	({	\
-		emStream_ReadBytes(stream, emType.Short[0], 2);	\
+		emStream_ReadBytes(stream, emType.Short, 2);	\
 		emType.Short[0];	\
 	})
 
-#define	emStream_ReadShortVal(stream, short_var)	\
-	emStream_ReadBytes(stream, short_var, 2)
+#define	emStream_ReadShortVal(stream, dst)	\
+	emStream_ReadBytes(stream, dst, 2)
 
 #define	emStream_ReadShort(...)	\
 	Macro(Macro2(__VA_ARGS__, emStream_ReadShortVal, emStream_ReadShortRet)(__VA_ARGS__))
 
 #define	emStream_ReadUshortRet(stream)	\
 	({	\
-		emStream_ReadBytes(stream, emType.Ushort[0], 2);	\
+		emStream_ReadBytes(stream, emType.Ushort, 2);	\
 		emType.Ushort[0];	\
 	})
 
-#define	emStream_ReadUshortVal(stream, ushort_var)	\
-	emStream_ReadBytes(stream, ushort_var, 2)
+#define	emStream_ReadUshortVal(stream, dst)	\
+	emStream_ReadBytes(stream, dst, 2)
 
 #define	emStream_ReadUshort(...)	\
 	Macro(Macro2(__VA_ARGS__, emStream_ReadUshortVal, emStream_ReadUshortRet)(__VA_ARGS__))
 
 #define	emStream_ReadLongRet(stream)	\
 	({	\
-		emStream_ReadBytes(stream, emType.Long[0], 4);	\
+		emStream_ReadBytes(stream, emType.Long, 4);	\
 		emType.Long[0];	\
 	})
 
-#define	emStream_ReadLongVal(stream, long_var)	\
-	emStream_ReadBytes(stream, long_var, 4)
+#define	emStream_ReadLongVal(stream, dst)	\
+	emStream_ReadBytes(stream, dst, 4)
 
 #define	emStream_ReadLong(...)	\
 	Macro(Macro2(__VA_ARGS__, emStream_ReadLongVal, emStream_ReadLongRet)(__VA_ARGS__))
 
 #define	emStream_ReadUlongRet(stream)	\
 	({	\
-		emStream_ReadBytes(stream, emType.Ulong[0], 4);	\
+		emStream_ReadBytes(stream, emType.Ulong, 4);	\
 		emType.Ulong[0];	\
 	})
 
-#define	emStream_ReadUlongVal(stream, ulong_var)	\
-	emStream_ReadBytes(stream, ulong_var, 4)
+#define	emStream_ReadUlongVal(stream, dst)	\
+	emStream_ReadBytes(stream, dst, 4)
 
 #define	emStream_ReadUlong(...)	\
 	Macro(Macro2(__VA_ARGS__, emStream_ReadUlongVal, emStream_ReadUlongRet)(__VA_ARGS__))
@@ -609,48 +601,48 @@ byte	emStream_LoopI = 0;
 
 #define	emStream_ReadInt64Ret(stream)	\
 	({	\
-		emStream_ReadBytes(stream, emType.Int64[0], 8);	\
+		emStream_ReadBytes(stream, emType.Int64, 8);	\
 		emType.Int64[0];	\
 	})
 
-#define	emStream_ReadInt64Val(stream, int64_var)	\
-	emStream_ReadBytes(stream, int64_var, 8)
+#define	emStream_ReadInt64Val(stream, dst)	\
+	emStream_ReadBytes(stream, dst, 8)
 
 #define	emStream_ReadInt64(...)	\
 	Macro(Macro2(__VA_ARGS__, emStream_ReadInt64Val, emStream_ReadInt64Ret)(__VA_ARGS__))
 
 #define	emStream_ReadUint64Ret(stream)	\
 	({	\
-		emStream_ReadBytes(stream, emType.Uint64[0], 8);	\
+		emStream_ReadBytes(stream, emType.Uint64, 8);	\
 		emType.Uint64[0];	\
 	})
 
-#define	emStream_ReadUint64Val(stream, uint64_var)	\
-	emStream_ReadBytes(stream, uint64_var, 8)
+#define	emStream_ReadUint64Val(stream, dst)	\
+	emStream_ReadBytes(stream, dst, 8)
 
 #define	emStream_ReadUint64(...)	\
 	Macro(Macro2(__VA_ARGS__, emStream_ReadUint64Val, emStream_ReadUint64Ret)(__VA_ARGS__))
 
 #define	emStream_ReadFloatRet(stream)	\
 	({	\
-		emStream_ReadBytes(stream, emType.Float[0], 4);	\
+		emStream_ReadBytes(stream, emType.Float, 4);	\
 		emType.Float[0];	\
 	})
 
-#define	emStream_ReadFloatVal(stream, float_var)	\
-	emStream_ReadBytes(stream, float_var, 4)
+#define	emStream_ReadFloatVal(stream, dst)	\
+	emStream_ReadBytes(stream, dst, 4)
 
 #define	emStream_ReadFloat(...)	\
 	Macro(Macro2(__VA_ARGS__, emStream_ReadFloatVal, emStream_ReadFloatRet)(__VA_ARGS__))
 
 #define	emStream_ReadDoubleRet(stream)	\
 	({	\
-		emStream_ReadBytes(stream, emType.Double[0], 8);	\
+		emStream_ReadBytes(stream, emType.Double, 8);	\
 		emType.Double[0];	\
 	})
 
-#define	emStream_ReadDoubleVal(stream, double_var)	\
-	emStream_ReadBytes(stream, double_var, 8)
+#define	emStream_ReadDoubleVal(stream, dst)	\
+	emStream_ReadBytes(stream, dst, 8)
 
 #define	emStream_ReadDouble(...)	\
 	Macro(Macro2(__VA_ARGS__, emStream_ReadDoubleVal, emStream_ReadDoubleRet)(__VA_ARGS__))
@@ -740,7 +732,7 @@ byte	emStream_LoopI = 0;
 
 
 // Function:
-// ReadString(stream, dst, len)
+// ReadString(*stream, *dst, len)
 // 
 // Reads a string of specified length (len) from the stream. If the stream does
 // not have sufficient number of bytes available, then the current task/thread
@@ -762,13 +754,13 @@ byte	emStream_LoopI = 0;
 #define	emStream_ReadStringInt(stream, dst, len)	\
 	do{	\
 		emStream_ReadBytesInt(stream, dst, len);	\
-		*(((byte*)(&(dst))) + len) = 0;	\
+		*(((byte*)(dst)) + len) = 0;	\
 	}while(0)
 
 #define	emStream_ReadString(stream, dst, len)	\
 	do{	\
 		emStream_ReadBytes(stream, dst, len);	\
-		*(((byte*)(&(dst))) + len) = 0;	\
+		*(((byte*)(dst)) + len) = 0;	\
 	}while(0)
 
 #if emStream_Shorthand >= 1
@@ -784,7 +776,7 @@ byte	emStream_LoopI = 0;
 
 
 // Function:
-// WriteBytes</Int>(stream, src, len)
+// WriteBytes</Int>(*stream, *src, len)
 // 
 // Writes a set of bytes to the stream. If the stream does not have sufficient free
 // space available, then the current task/thread will be blocked until sufficient
@@ -807,10 +799,10 @@ byte	emStream_LoopI = 0;
 		if(emStream_GetFree(stream) < (len)) break;	\
 		for(emStream_LoopI = 0; emStream_LoopI < (len); emStream_LoopI++)	\
 		{	\
-			(stream).Data[(stream).Rear] = *(((byte*)(&(src))) + emStream_LoopI);	\
-			(stream).Rear = ((stream).Rear + 1) & (stream).Max;	\
+			(*(stream)).Data[(*(stream)).Rear] = *(((byte*)(src)) + emStream_LoopI);	\
+			(*(stream)).Rear = ((*(stream)).Rear + 1) & (*(stream)).Max;	\
 		}	\
-		(stream).Count += (len);	\
+		(*(stream)).Count += (len);	\
 	}while(0)
 
 #define	emStream_WriteBytes(stream, src, len)	\
@@ -818,9 +810,9 @@ byte	emStream_LoopI = 0;
 		for(emStream_LoopI = 0; emStream_LoopI < (len); emStream_LoopI++)	\
 		{	\
 			emTask_WaitWhile(emStream_GetFree(stream) < 1, byte, emStream_LoopI);	\
-			(stream).Data[(stream).Rear] = *(((byte*)(&(src))) + emStream_LoopI);	\
-			(stream).Rear = ((stream).Rear + 1) & (stream).Max;	\
-			(stream).Count++;	\
+			(*(stream)).Data[(*(stream)).Rear] = *(((byte*)(src)) + emStream_LoopI);	\
+			(*(stream)).Rear = ((*(stream)).Rear + 1) & (*(stream)).Max;	\
+			(*(stream)).Count++;	\
 		}	\
 	}while(0)
 
@@ -837,7 +829,7 @@ byte	emStream_LoopI = 0;
 
 
 // Function:
-// Write<Type></Int>(stream, <Type>_value)
+// Write<Type></Int>(*stream, value)
 // 
 // Writes a type data to the stream. If the stream does not have sufficient free
 // space (bytes) available, then the current task/thread will be blocked until
@@ -849,38 +841,54 @@ byte	emStream_LoopI = 0;
 // 
 // Parameters:
 // stream:	the stream to which type data will be written
-// <Type>_value:	value of type data to be written
+// value:	value of type data to be written
 // 
 // Returns:
 // nothing
 //
-#define	emStream_WriteByteInt(stream, byte_value)	\
+#define	emStream_WriteByteInt(stream, value)	\
 	do{	\
-		if(emStream_GetFree(stream) < 1) break;	\
-		(stream).Data[(stream).Rear] = (byte_value);	\
-		(stream).Rear = ((stream).Rear + 1) & (stream).Max;	\
-		(stream).Count++;	\
+		if(emStream_GetFree(stream) >= 1)	\
+		{	\
+			(*(stream)).Data[(*(stream)).Rear] = (value);	\
+			(*(stream)).Rear = ((*(stream)).Rear + 1) & (*(stream)).Max;	\
+			(*(stream)).Count++;	\
+		}	\
 	}while(0)
 
-#define	emStream_WriteSbyteInt(stream, sbyte_value)	\
+#define	emStream_WriteSbyteInt(stream, value)	\
 	do{	\
-		if(emStream_GetFree(stream) < 1) break;	\
-		(stream).Data[(stream).Rear] = (byte)(sbyte_value);	\
-		(stream).Rear = ((stream).Rear + 1) & (stream).Max;	\
-		(stream).Count++;	\
+		if(emStream_GetFree(stream) >= 1)	\
+		{	\
+			(*(stream)).Data[(*(stream)).Rear] = (byte)(value);	\
+			(*(stream)).Rear = ((*(stream)).Rear + 1) & (*(stream)).Max;	\
+			(*(stream)).Count++;	\
+		}	\
 	}while(0)
 
-#define	emStream_WriteShortInt(stream, short_value)	\
-	emStream_WriteBytesInt(stream, short_value, 2)
+#define	emStream_WriteShortInt(stream, value)	\
+	do{	\
+	emType.Short[0] = (value);	\
+	emStream_WriteBytesInt(stream, emType.Short, 2);	\
+	}while(0)
 
-#define	emStream_WriteUshortInt(stream, ushort_value)	\
-	emStream_WriteBytesInt(stream, ushort_value, 2)
+#define	emStream_WriteUshortInt(stream, value)	\
+	do{	\
+	emType.Ushort[0] = (value);	\
+	emStream_WriteBytesInt(stream, emType.Ushort, 2);	\
+	}while(0)
 
-#define	emStream_WriteLongInt(stream, long_value)	\
-	emStream_WriteBytesInt(stream, long_value, 4)
+#define	emStream_WriteLongInt(stream, value)	\
+	do{	\
+	emType.Long[0] = (value);	\
+	emStream_WriteBytesInt(stream, emType.Long, 4);	\
+	}while(0)
 
 #define	emStream_WriteUlongInt(stream, ulong_value)	\
-	emStream_WriteBytesInt(stream, ulong_value, 2)
+	do{	\
+	emType.Ulong[0] = (value);	\
+	emStream_WriteBytesInt(stream, emType.Ulong, 4);	\
+	}while(0)
 
 #define	emStream_WriteCharInt	\
 	emStream_WriteByteInt
@@ -917,45 +925,69 @@ byte	emStream_LoopI = 0;
 	emStream_WriteUshortInt
 #endif
 
-#define	emStream_WriteInt64Int(stream, int64_value)	\
-	emStream_WriteBytesInt(stream, int64_value, 8)
-
-#define	emStream_WriteUint64Int(stream, uint64_value)	\
-	emStream_WriteBytesInt(stream, uint64_value, 8)
-
-#define	emStream_WriteFloatInt(stream, float_value)	\
-	emStream_WriteBytesInt(stream, float_value, 4)
-
-#define	emStream_WriteDoubleInt(stream, double_value)	\
-	emStream_WriteBytesInt(stream, double_value, 8)
-
-#define	emStream_WriteByte(stream, byte_value)	\
+#define	emStream_WriteInt64Int(stream, value)	\
 	do{	\
-		emTask_WaitWhile(emStream_GetFree(stream) < 1);	\
-		(stream).Data[(stream).Rear] = (byte_value);	\
-		(stream).Rear = ((stream).Rear + 1) & (stream).Max;	\
-		(stream).Count++;	\
+	emType.Int64[0] = (value);	\
+	emStream_WriteBytesInt(stream, emType.Int64, 8);	\
 	}while(0)
 
-#define	emStream_WriteSbyte(stream, sbyte_value)	\
+#define	emStream_WriteUint64Int(stream, value)	\
 	do{	\
-		emTask_WaitWhile(emStream_GetFree(stream) < 1);	\
-		(stream).Data[(stream).Rear] = (byte)(sbyte_value);	\
-		(stream).Rear = ((stream).Rear + 1) & (stream).Max;	\
-		(stream).Count++;	\
+	emType.Uint64[0] = (value);	\
+	emStream_WriteBytesInt(stream, emType.Uint64, 8);	\
 	}while(0)
 
-#define	emStream_WriteShort(stream, short_value)	\
-	emStream_WriteBytes(stream, short_value, 2)
+#define	emStream_WriteFloatInt(stream, value)	\
+	do{	\
+	emType.Float[0] = (value);	\
+	emStream_WriteBytesInt(stream, emType.Float, 4);	\
+	}while(0)
 
-#define	emStream_WriteUshort(stream, ushort_value)	\
-	emStream_WriteBytes(stream, ushort_value, 2)
+#define	emStream_WriteDoubleInt(stream, value)	\
+	do{	\
+	emType.Double[0] = (value);	\
+	emStream_WriteBytesInt(stream, emType.Double, 8);	\
+	}while(0)
 
-#define	emStream_WriteLong(stream, long_value)	\
-	emStream_WriteBytes(stream, long_value, 4)
+#define	emStream_WriteByte(stream, value)	\
+	do{	\
+		emTask_WaitWhile(emStream_GetFree(stream) < 1);	\
+		(*(stream)).Data[(*(stream)).Rear] = (value);	\
+		(*(stream)).Rear = ((*(stream)).Rear + 1) & (*(stream)).Max;	\
+		(*(stream)).Count++;	\
+	}while(0)
 
-#define	emStream_WriteUlong(stream, ulong_value)	\
-	emStream_WriteBytes(stream, ulong_value, 2)
+#define	emStream_WriteSbyte(stream, value)	\
+	do{	\
+		emTask_WaitWhile(emStream_GetFree(stream) < 1);	\
+		(*(stream)).Data[(*(stream)).Rear] = (byte)(value);	\
+		(*(stream)).Rear = ((*(stream)).Rear + 1) & (*(stream)).Max;	\
+		(*(stream)).Count++;	\
+	}while(0)
+
+#define	emStream_WriteShort(stream, value)	\
+	do{	\
+	emType.Short[0] = (value);	\
+	emStream_WriteBytes(stream, emType.Short, 2);	\
+	}while(0)
+
+#define	emStream_WriteUshort(stream, value)	\
+	do{	\
+	emType.Ushort[0] = (value);	\
+	emStream_WriteBytes(stream, emType.Ushort, 2);	\
+	}while(0)
+
+#define	emStream_WriteLong(stream, value)	\
+	do{	\
+	emType.Long[0] = (value);	\
+	emStream_WriteBytes(stream, emType.Long, 4);	\
+	}while(0)
+
+#define	emStream_WriteUlong(stream, value)	\
+	do{	\
+	emType.Ulong[0] = (value);	\
+	emStream_WriteBytes(stream, emType.Ulong, 4);	\
+	}while(0)
 
 #define	emStream_WriteChar	\
 	emStream_WriteByte
@@ -992,17 +1024,29 @@ byte	emStream_LoopI = 0;
 	emStream_WriteUshort
 #endif
 
-#define	emStream_WriteInt64(stream, int64_value)	\
-	emStream_WriteBytes(stream, int64_value, 8)
+#define	emStream_WriteInt64(stream, value)	\
+	do{	\
+	emType.Int64[0] = (value);	\
+	emStream_WriteBytes(stream, emType.Int64, 8);	\
+	}while(0)
 
-#define	emStream_WriteUint64(stream, uint64_value)	\
-	emStream_WriteBytes(stream, uint64_value, 8)
+#define	emStream_WriteUint64(stream, value)	\
+	do{	\
+	emType.Uint64[0] = (value);	\
+	emStream_WriteBytes(stream, emType.Uint64, 8);	\
+	}while(0)
 
-#define	emStream_WriteFloat(stream, float_value)	\
-	emStream_WriteBytes(stream, float_value, 4)
+#define	emStream_WriteFloat(stream, value)	\
+	do{	\
+	emType.Float[0] = (value);	\
+	emStream_WriteBytes(stream, emType.Float, 4);	\
+	}while(0)
 
-#define	emStream_WriteDouble(stream, double_value)	\
-	emStream_WriteBytes(stream, double_value, 8)
+#define	emStream_WriteDouble(stream, value)	\
+	do{	\
+	emType.Double[0] = (value);	\
+	emStream_WriteBytes(stream, emType.Double, 8);	\
+	}while(0)
 
 #if emStream_Shorthand >= 1
 #define	stream_WriteByteInt		emStream_WriteByteInt

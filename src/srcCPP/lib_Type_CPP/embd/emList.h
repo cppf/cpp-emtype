@@ -64,6 +64,8 @@ typedef struct _emList_##name##Mold##size	\
 {	\
 	byte	Count;	\
 	byte	Max;	\
+	byte	KeyLen;	\
+	byte	ValueLen;	\
 	key		Key[size];	\
 	value	Value[size];	\
 }emList_##name##Mold##size
@@ -73,21 +75,24 @@ typedef struct _emList_##name##Mold##size	\
 {	\
 	byte	Count;	\
 	byte	Max;	\
+	byte	KeyLen;	\
+	byte	ValueLen;	\
 	key		Key[size];	\
 	value	Value[size];	\
-}emList_##name##Mold##size
+}emList_##name##Mold##size, list_##name##Mold##size
 #elif	emList_Shorthand == 2
 #define	emList_MoldMake(name, key, value, size)	\
 typedef struct _emList_##name##Mold##size	\
 {	\
 	byte	Count;	\
 	byte	Max;	\
+	byte	KeyLen;	\
+	byte	ValueLen;	\
+	int16	ValueOff;	\
 	key		Key[size];	\
 	value	Value[size];	\
-}emList_##name##Mold##size
+}emList_##name##Mold##size, list_##name##Mold##size, lst##name##Mold##size
 #endif
-
-emList_MoldMake(ByteByte, byte, byte, 256);
 
 #if emList_Shorthand >= 1
 #define	list_MoldMake			emList_MoldMake
@@ -95,6 +100,20 @@ emList_MoldMake(ByteByte, byte, byte, 256);
 
 #if	emList_Shorthand >= 2
 #define	lstMoldMake				emList_MoldMake
+#endif
+
+emList_MoldMake(ByteByte, byte, byte, 256);
+
+#define	emList_ByteByteMold		emList_ByteByteMold256
+
+#if emList_Shorthand >= 1
+#define	list_ByteByteMold256	emList_ByteByteMold256
+#define	list_ByteByteMold		emList_ByteByteMold
+#endif
+
+#if	emList_Shorthand >= 2
+#define	lstByteByteMold256		emList_ByteByteMold256
+#define	lstByteByteMold			emList_ByteByteMold
 #endif
 
 
@@ -107,16 +126,19 @@ emList_MoldMake(ByteByte, byte, byte, 256);
 // size. When using list variable, just use Init(&list, size).
 // 
 // Parameters:
-// list:	the list to initialize
+// list:	the list to initialize (must be direct pointer to list)
 // size:	size of the list to be initialized
 // 
 // Returns:
 // nothing
 //
-#define	emList_Init(list, size)	\
+#define	emList_InitLst(list, size)	\
 	do{	\
 		(*(list)).Count = 0;	\
 		(*(list)).Max = (size) - 1;	\
+		(*(list)).KeyLen = sizeof((*(list)).Key[0]);	\
+		(*(list)).ValueLen = sizeof((*(list)).Value[0]);	\
+		(*(list)).ValueOff = (size) * sizeof((*(list)).Key[0]);	\
 	}while(0)
 
 #if emList_Shorthand >= 1
@@ -141,8 +163,11 @@ emList_MoldMake(ByteByte, byte, byte, 256);
 // Returns:
 // nothing
 //
-#define	emList_Clear(list)	\
+#define	emList_ClearLst(list)	\
 		((*(list)).Count = 0)
+
+#define	emList_Clear(list)	\
+	emList_ClearLst((emList_ByteByteMold*)list)
 
 #if emList_Shorthand >= 1
 #define	list_Clear				emList_Clear
@@ -166,8 +191,11 @@ emList_MoldMake(ByteByte, byte, byte, 256);
 // Returns:
 // pairs_avail:	number of available pairs in list
 //
-#define	emList_GetAvail(list)	\
+#define	emList_GetAvailLst(list)	\
 	((*(list)).Count)
+
+#define	emList_GetAvail(list)	\
+	emList_GetAvail((emList_ByteByteMold*)list)
 
 #if emList_Shorthand >= 1
 #define	list_GetAvail			emList_GetAvail
@@ -191,8 +219,11 @@ emList_MoldMake(ByteByte, byte, byte, 256);
 // Returns:
 // cells_free:	number of free cells in list
 //
-#define	emList_GetFree(list)	\
+#define	emList_GetFreeLst(list)	\
 	(1 + (*(list)).Max - (*(list)).Count)
+
+#define	emList_GetFree(list)	\
+	emList_GetFreeLst((emList_ByteByteMold*)list)
 
 #if emList_Shorthand >= 1
 #define	list_GetFree			emList_GetFree
@@ -233,14 +264,17 @@ byte emList_GetIndexFromElemFn(void* list, void* list_elements, byte elem_size, 
 	return index;
 }
 
-#define	emList_GetIndexFromElemRef(elem, list, key_value)	\
-	emList_GetIndexFromElemFn(list, ((list)->elem), key_value, sizeof((list)->elem[0]))
+#define	emList_GetIndexFromKeyLst(list, key)	\
+	emList_GetIndexFromElemFn(list, (*(list)).Key, (*(list)).KeyLen, key)
 
 #define	emList_GetIndexFromKey(list, key)	\
-	emList_GetIndexFromElemFn(list, (*(list)).Key, sizeof((*(list)).Key[0]), key)
+	emList_GetIndexFromKeyLst((emList_ByteByteMold*)list, key)
+
+#define	emList_GetIndexFromValueLst(list, value)	\
+	emList_GetIndexFromElemFn(list, (*(list)).Value, (*(list)).ValueLen, value)
 
 #define	emList_GetIndexFromValue(list, value)	\
-	emList_GetIndexFromElemFn(list, (*(list)).Value, sizeof((*(list)).Value[0]), value)
+	emList_GetIndexFromValueLst((emList_ByteByteMold*)list, key)
 
 #if emList_Shorthand >= 1
 #define	list_GetIndexFromKey	emList_GetIndexFromKey
@@ -269,24 +303,23 @@ byte emList_GetIndexFromElemFn(void* list, void* list_elements, byte elem_size, 
 // Returns:
 // status:	0 for success, 0xFF for full
 //
-byte emList_AddFn(void* list, void* list_keys, void* list_values, byte key_size, byte value_size, void* key, void* value)
+byte emList_Add(void* list, void* key, void* value)
 {
+	byte *ukey, *uval, *dst, i, indx;
 	emList_ByteByteMold256* lst = (emList_ByteByteMold256*)list;
-	if((lst->Count) > (lst->Max)) return 0xFF;	// list is full
-	byte *keys = (byte*)list_keys, *values = (byte*)list_values, *vkey = (byte*)key, *vvalue = (byte*)value;
-	byte *dst, i, index = emList_GetIndexFromElemFn(list, list_keys, key_size, key);
-	if(index == 0xFF) {index = lst->Count; lst->Count++; }
-	dst = keys + (key_size * index);
-	for(i=0; i<key_size; i++)
-		dst[i] = vkey[i];
-	dst = values + (value_size * index);
-	for(i=0; i<value_size; i++)
-		dst[i] = vvalue[i];
+	if((*lst).Count > (*lst).Max) return 0xFF;	// list is full
+	ukey = (byte*)key;
+	uval = (byte*)value;
+	indx = emList_GetIndexFromKey(lst, key);
+	if(indx == 0xFF) {indx = (*(lst)).Count; (*(lst)).Count++; }
+	dst = (byte*)((*lst).Key) + ((*lst).KeyLen * indx);
+	for(i=0; i<(*lst).KeyLen; i++)
+		dst[i] = ukey[i];
+	dst = (byte*)((*lst).Key) + ((*lst).ValueOff) + ((*lst).ValueLen * indx);
+	for(i=0; i<(*lst).ValueLen; i++)
+		dst[i] = uval[i];
 	return 0;
 }
-
-#define	emList_Add(list, key, value)	\
-	emList_AddFn(list, (*(list)).Key, (*(list)).Value, sizeof((*(list)).Key[0]), sizeof((*(list)).Value[0]), key, value)
 
 #if emList_Shorthand >= 1
 #define	list_Add				emList_Add
