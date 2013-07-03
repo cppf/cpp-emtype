@@ -110,11 +110,11 @@ byte	emStream_LoopI = 0;
 
 
 // Function:
-// Init(stream, size)
+// Init(*stream, size)
 // 
 // Initializes a stream before use. The size of stream (size) is required
 // to be specified to that the stream can be initialized according to its
-// size. When using a pointer to stream, just use Init(*stream, size).
+// size.
 // 
 // Parameters:
 // stream:	the stream to initialize
@@ -125,10 +125,10 @@ byte	emStream_LoopI = 0;
 //
 #define	emStream_Init(stream, size)	\
 	do{	\
-		(stream).Front = 0;	\
-		(stream).Rear = 0;	\
-		(stream).Count = 0;	\
-		(stream).Max = (size) - 1;	\
+		(*(stream)).Front = 0;	\
+		(*(stream)).Rear = 0;	\
+		(*(stream)).Count = 0;	\
+		(*(stream)).Max = (size) - 1;	\
 	}while(0)
 
 #if emStream_Shorthand >= 1
@@ -142,10 +142,9 @@ byte	emStream_LoopI = 0;
 
 
 // Function:
-// Clear(stream)
+// Clear(*stream)
 // 
-// Clears a stream of all data. When using a pointer to stream, just use
-// Clear(*stream).
+// Clears a stream of all data.
 // 
 // Parameters:
 // stream:	the stream to clear
@@ -155,9 +154,9 @@ byte	emStream_LoopI = 0;
 //
 #define	emStream_Clear(stream)	\
 	do{	\
-		(stream).Front = 0;	\
-		(stream).Rear = 0;	\
-		(stream).Count = 0;	\
+		(*(stream)).Front = 0;	\
+		(*(stream)).Rear = 0;	\
+		(*(stream)).Count = 0;	\
 	}while(0)
 
 #if emStream_Shorthand >= 1
@@ -171,11 +170,10 @@ byte	emStream_LoopI = 0;
 
 
 // Function:
-// GetAvail(stream)
+// GetAvail(*stream)
 // 
 // Gives the number of bytes available in a stream. Can be used to check if
-// sufficient number of bytes are available before reading. When using a
-// pointer to stream, just use GetAvail(*stream).
+// sufficient number of bytes are available before reading.
 // 
 // Parameters:
 // stream:	the stream whose available bytes are to be known
@@ -184,7 +182,7 @@ byte	emStream_LoopI = 0;
 // bytes_avail:	number of available bytes in stream
 //
 #define	emStream_GetAvail(stream)	\
-	((stream).Count)
+	((*(stream)).Count)
 
 #if emStream_Shorthand >= 1
 #define	stream_GetAvail			emStream_GetAvail
@@ -197,11 +195,10 @@ byte	emStream_LoopI = 0;
 
  
 // Function:
-// GetFree(stream)
+// GetFree(*stream)
 // 
 // Gives the amount of free space in bytes available in a stream. Can be
 // used to check if sufficient free space is available before writing.
-// When using a pointer to stream, just use GetFree(*stream).
 // 
 // Parameters:
 // stream:	the stream whose amount of free space in bytes are to be known
@@ -210,7 +207,7 @@ byte	emStream_LoopI = 0;
 // bytes_free:	amount of free space in stream (bytes)
 //
 #define	emStream_GetFree(stream)	\
-	(1 + (stream).Max - (stream).Count)
+	(1 + (*(stream)).Max - (*(stream)).Count)
 
 #if emStream_Shorthand >= 1
 #define	stream_GetFree			emStream_GetFree
@@ -223,8 +220,8 @@ byte	emStream_LoopI = 0;
 
 
 // Function:
-// ReadBytes</Int>(stream, dst, len)
-// ReadBytes</Int>(stream, len)
+// ReadBytes</Int>(*stream, *dst, len)
+// ReadBytes</Int>(*stream, len)
 // 
 // Reads a set of bytes from the stream, if destination address (dst) is
 // specified. If destination address (dst) is not specified, then just
@@ -248,20 +245,24 @@ byte	emStream_LoopI = 0;
 //
 #define	emStream_ReadBytesIntDel(stream, len)	\
 	do{	\
-		if(emStream_GetAvail(stream) < len) break;	\
-		(stream).Front = ((stream).Front + len) & (stream).Max;	\
-		(stream).Count -= len;	\
+		if(emStream_GetAvail(stream) >= (len))	\
+		{	\
+			(*(stream)).Front = ((*(stream)).Front + (len)) & (*(stream)).Max;	\
+			(*(stream)).Count -= (len);	\
+		}	\
 	}while(0)
 
 #define	emStream_ReadBytesIntDst(stream, dst, len)	\
 	do{	\
-		if(emStream_GetAvail(stream) < len) break;	\
-		for(emStream_LoopI = 0; emStream_LoopI < (len); emStream_LoopI++)	\
+		if(emStream_GetAvail(stream) >= (len))	\
 		{	\
-			*(((byte*)(&(dst))) + emStream_LoopI) = (stream).Data[(stream).Front];	\
-			(stream).Front = ((stream).Front + 1) * (stream).Max;	\
+			for(emStream_LoopI = 0; emStream_LoopI < (len); emStream_LoopI++)	\
+			{	\
+				*(((byte*)(dst)) + emStream_LoopI) = (*(stream)).Data[(*(stream)).Front];	\
+				(*(stream)).Front = ((*(stream)).Front + 1) & (*(stream)).Max;	\
+			}	\
+			(*(stream)).Count -= (len);	\
 		}	\
-		(stream).Count -= len;	\
 	}while(0)
 
 #define	emStream_ReadBytesInt(...)	\
@@ -272,8 +273,8 @@ byte	emStream_LoopI = 0;
 		for(emStream_LoopI = 0; emStream_LoopI < (len); emStream_LoopI++)	\
 		{	\
 			emTask_WaitWhile(emStream_GetAvail(stream) < 1, byte, emStream_LoopI);	\
-			(stream).Front = ((stream).Front + 1) * (stream).Max;	\
-			(stream).Count--;	\
+			(*(stream)).Front = ((*(stream)).Front + 1) & (*(stream)).Max;	\
+			(*(stream)).Count--;	\
 		}	\
 	}while(0)
 
@@ -282,9 +283,9 @@ byte	emStream_LoopI = 0;
 		for(emStream_LoopI = 0; emStream_LoopI < (len); emStream_LoopI++)	\
 		{	\
 			emTask_WaitWhile(emStream_GetAvail(stream) < 1, byte, emStream_LoopI);	\
-			*(((byte*)(&(dst))) + emStream_LoopI) = (stream).Data[(stream).Front];	\
-			(stream).Front = ((stream).Front + 1) & (stream).Max;	\
-			(stream).Count--;	\
+			*(((byte*)(dst)) + emStream_LoopI) = (*(stream)).Data[(*(stream)).Front];	\
+			(*(stream)).Front = ((*(stream)).Front + 1) & (*(stream)).Max;	\
+			(*(stream)).Count--;	\
 		}	\
 	}while(0)
 
@@ -304,8 +305,8 @@ byte	emStream_LoopI = 0;
 
 
 // Function:
-// Read<Type></Int>(stream)
-// Read<Type></Int>(stream, <Type>_var)
+// Read<Type></Int>(*stream)
+// Read<Type></Int>(*stream, <Type>_var)
 // 
 // Reads a type data from the stream. If the stream does not have sufficient
 // number of bytes available, then the current task/thread will be blocked

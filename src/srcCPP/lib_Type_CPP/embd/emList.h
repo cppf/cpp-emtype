@@ -365,7 +365,7 @@ byte emList_RemoveFn(void* list, void* list_keys, void* list_values, byte key_si
 	return emList_RemoveAtFn(list, list_keys, list_values, key_size, value_size, index);
 }
 
-#define	emList_RemoveRef(list, key)	\
+#define	emList_Remove(list, key)	\
 	emList_RemoveFn(list, (*(list)).Key, (*(list)).Value, sizeof((*(list)).Key[0]), sizeof((*(list)).Value[0]), key)
 
 #if emList_Shorthand >= 1
